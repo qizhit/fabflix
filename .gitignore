@@ -171,4 +171,5 @@ buildNumber.properties
 
 # Additional
 .idea
-*.iml
+#*.iml
+.DS_Store
