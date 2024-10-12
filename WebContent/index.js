@@ -51,7 +51,12 @@ function handleStarResult(resultData) {
         rowHTML += "<th>" + resultData[i]["year"] + "</th>";
         rowHTML += "<th>" + resultData[i]["director"] + "</th>";
         rowHTML += "<th>" + resultData[i]["genres"] + "</th>";
-        rowHTML += "<th>" + resultData[i]["stars"] + "</th>";
+
+        // Split the stars string into an array and create individual hyperlinks
+        let starsArray = resultData[i]["stars"].split(", ");
+        let starsHTML = starsArray.map(star => `<a href="star-details.html?name=${encodeURIComponent(star.trim())}">${star.trim()}</a>`).join(", ");
+        rowHTML += "<th>" + starsHTML + "</th>";
+
         rowHTML += "<th>" + resultData[i]["rating"] + "</th>";
         rowHTML += "</tr>";
 

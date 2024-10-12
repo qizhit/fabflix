@@ -18,29 +18,18 @@ function handleStarResult(resultData) {
 
     // Populate the star table
     // Find the empty table body by id "star_table_body"
-    let starTableBodyElement = jQuery("#star_table_body");
+    jQuery("#star_name").text(resultData["star_name"]);
+    jQuery("#star_dob").text(resultData["star_birthYear"]);
 
-    // Iterate through resultData, no more than 10 entries
-    for (let i = 0; i < Math.min(10, resultData.length); i++) {
+    let moviesListElement = jQuery("#star_movies_list");
+    let movies = resultData["movies"].split(', ');
 
-        // Concatenate the html tags with resultData jsonObject
-        let rowHTML = "";
-        rowHTML += "<tr>";
-        rowHTML +=
-            "<th>" +
-            // Add a link to single-star.html with id passed with GET url parameter
-            '<a href="single-star.html?id=' + resultData[i]['star_id'] + '">'
-            + resultData[i]["star_name"] +     // display star_name for the link text
-            '</a>' +
-            "</th>";
-        rowHTML += "<th>" + resultData[i]["star_dob"] + "</th>";
-        rowHTML += "</tr>";
-
-        // Append the row created to the table body, which will refresh the page
-        starTableBodyElement.append(rowHTML);
+    //Iterate all movies that acted by this star
+    for (let i = 0; i < movies.length; i++) {
+        let rowHTML = "<li>" + movies[i] + "</li>";
+        moviesListElement.append(rowHTML);
     }
 }
-
 
 /**
  * Once this .js is loaded, following scripts will be executed by the browser
@@ -50,6 +39,6 @@ function handleStarResult(resultData) {
 jQuery.ajax({
     dataType: "json", // Setting return data type
     method: "GET", // Setting request method
-    url: "api/stars", // Setting request url, which is mapped by StarsServlet in Stars.java
+    url: "api/stars?id=" + new URLSearchParams(window.location.search).get("id"), // Setting request url, which is mapped by StarsServlet in Stars.java
     success: (resultData) => handleStarResult(resultData) // Setting callback function to handle data returned successfully by the StarsServlet
 });
