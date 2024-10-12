@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -35,35 +36,48 @@ public class SingleStarsServlet extends HttpServlet {
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        response.setContentType("application/json"); // Response mime type
+    response.setContentType("application/json"); // Response mime type
 
-        // Output stream to STDOUT
-        PrintWriter out = response.getWriter();
+    // Retrieve parameter id from url request.
+    String id = request.getParameter("id");
 
-        // Get a connection from dataSource and let resource manager close the connection after usage.
-        try (Connection conn = dataSource.getConnection()) {
+    // The log message can be found in localhost log
+    request.getServletContext().log("getting star id: " + id);
 
-            // Declare our statement
-            Statement statement = conn.createStatement();
+    // Output stream to STDOUT
+    PrintWriter out = response.getWriter();
 
-            String query = "SELECT s.id, s.name, s.birthYear, GROUP_CONCAT(m.title ORDER BY m.title SEPARATOR ', ') AS movies " +
-                    "FROM stars s " +
-                    "JOIN stars_in_movies sim ON s.id = sim.starId " +
-                    "JOIN movies m ON sim.movieId = m.id " +
-                    "WHERE s.id = ? " +
-                    "GROUP BY s.id";
+    // Get a connection from dataSource and let resource manager close the connection after usage.
+    try (Connection conn = dataSource.getConnection()) {
+        // Get a connection from dataSource
 
-            // Perform the query
-            ResultSet rs = statement.executeQuery(query);
+        // Construct a query with parameter represented by "?"
+        String query = "SELECT s.id as starId, s.name as starName, s.birthYear, " +
+                "GROUP_CONCAT(DISTINCT m.title ORDER BY m.title SEPARATOR ', ') AS movies " +
+                "FROM stars s " +
+                "JOIN stars_in_movies sim ON s.id = sim.starId " +
+                "JOIN movies m ON sim.movieId = m.id " +
+                "WHERE s.id = ? " +
+                "GROUP BY s.id";
 
-            JsonArray jsonArray = new JsonArray();
+        // Declare our statement
+        PreparedStatement statement = conn.prepareStatement(query);
 
-            // Iterate through each row of rs
+        // Set the parameter represented by "?" in the query to the id we get from url,
+        // num 1 indicates the first "?" in the query
+        statement.setString(1, id);
+
+        // Perform the query
+        ResultSet rs = statement.executeQuery();
+
+        JsonArray jsonArray = new JsonArray();
+
+        // Iterate through each row of rs
             while (rs.next()) {
                 String star_name = rs.getString("name");
-                String star_dob = rs.getString("birthYear");
+                String star_dob = rs.getString("birthYear") != null ? rs.getString("birthYear") : "N/A";;
                 String star_movie = rs.getString("movies");
 
                 // Create a JsonObject based on the data we retrieve from rs
