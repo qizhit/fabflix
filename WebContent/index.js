@@ -41,20 +41,20 @@
 // }
 
 function handleStarResult(resultData) {
-    console.log("handleStarResult: populating star table from resultData");
+    console.log("handleStarResult: populating movie table from resultData");
     let MovieTableBodyElement = jQuery("#movie_table_body");
 
     for (let i = 0; i < Math.min(20, resultData.length); i++) {
         let rowHTML = "";
         rowHTML += "<tr>";
-        rowHTML += "<th><a href=' " + resultData[i]['movie_id'] + "'>" + resultData[i]["title"] + "</a></th>";
+        rowHTML += "<th><a href='single-movie.html?id=" + resultData[i]['movie_id'] + "'>" + resultData[i]["title"] + "</a></th>";
         rowHTML += "<th>" + resultData[i]["year"] + "</th>";
         rowHTML += "<th>" + resultData[i]["director"] + "</th>";
         rowHTML += "<th>" + resultData[i]["genres"] + "</th>";
 
         // Split the stars string into an array and create individual hyperlinks
         let starsArray = resultData[i]["stars"].split(", ");
-        let starsHTML = starsArray.map(star => `<a href="star-details.html?name=${encodeURIComponent(star.trim())}">${star.trim()}</a>`).join(", ");
+        let starsHTML = starsArray.map(star => `<a href="single-star.html?id=${encodeURIComponent(star.trim())}">${star.trim()}</a>`).join(", ");
         rowHTML += "<th>" + starsHTML + "</th>";
 
         rowHTML += "<th>" + resultData[i]["rating"] + "</th>";

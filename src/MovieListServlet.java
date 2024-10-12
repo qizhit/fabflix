@@ -49,12 +49,7 @@ public class MovieListServlet extends HttpServlet {
             Statement statement = conn.createStatement();
 
 //            String query = "SELECT * from stars";
-            String query = "SELECT \n" +
-                    "    m.id, \n" +
-                    "    m.title, \n" +
-                    "    m.year, \n" +
-                    "    m.director, \n" +
-                    "    r.rating,\n" +
+            String query = "SELECT m.id, m.title, m.year, m.director, r.rating,\n" +
                     "    (SELECT GROUP_CONCAT(g.name ORDER BY g.name SEPARATOR ', ')\n" +
                     "     FROM genres_in_movies gm\n" +
                     "     JOIN genres g ON gm.genreId = g.id\n" +

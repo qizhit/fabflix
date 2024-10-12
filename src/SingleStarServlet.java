@@ -14,12 +14,11 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 
 
 // Declaring a WebServlet called StarsServlet, which maps to url "/api/stars"
-@WebServlet(name = "SingleStarsServlet", urlPatterns = "/api/single-stars")
-public class SingleStarsServlet extends HttpServlet {
+@WebServlet(name = "SingleStarServlet", urlPatterns = "/api/single-star")
+public class SingleStarServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     // Create a dataSource which registered in web.
