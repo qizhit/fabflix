@@ -16,7 +16,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 
-// Declaring a WebServlet called StarsServlet, which maps to url "/api/stars"
+// Declaring a WebServlet called MovieListServlet, which maps to url "/api/movie_list"
 @WebServlet(name = "MovieListServlet", urlPatterns = "/api/movie_list")
 public class MovieListServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -48,7 +48,6 @@ public class MovieListServlet extends HttpServlet {
             // Declare our statement
             Statement statement = conn.createStatement();
 
-//            String query = "SELECT * from stars";
             String query = "SELECT m.id, m.title, m.year, m.director, r.rating,\n" +
                     "    (SELECT GROUP_CONCAT(g.name ORDER BY g.name SEPARATOR ', ')\n" +
                     "     FROM genres_in_movies gm\n" +

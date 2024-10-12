@@ -15,7 +15,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-// Declaring a WebServlet called SingleStarServlet, which maps to url "/api/single-star"
+// Declaring a WebServlet called SingleMovieServlet, which maps to url "/api/single-movie"
 @WebServlet(name = "SingleMovieServlet", urlPatterns = "/api/single-movie")
 public class SingleMovieServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
@@ -40,10 +40,10 @@ public class SingleMovieServlet extends HttpServlet {
         response.setContentType("application/json"); // Response mime type
 
         // Retrieve parameter id from url request.
-        String id = request.getParameter("id");
+        String title = request.getParameter("title");
 
         // The log message can be found in localhost log
-        request.getServletContext().log("getting id: " + id);
+        request.getServletContext().log("getting title: " + title);
 
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
@@ -62,7 +62,7 @@ public class SingleMovieServlet extends HttpServlet {
                     "LEFT JOIN genres as g ON gim.genreId = g.id\n" +
                     "LEFT JOIN stars_in_movies as sim ON m.id = sim.movieId\n" +
                     "LEFT JOIN stars as s ON sim.starId = s.id\n" +
-                    "WHERE m.id = ?\n" +
+                    "WHERE m.title = ?\n" +
                     "GROUP BY m.id;";
 
             // Declare our statement
@@ -70,7 +70,7 @@ public class SingleMovieServlet extends HttpServlet {
 
             // Set the parameter represented by "?" in the query to the id we get from url,
             // num 1 indicates the first "?" in the query
-            statement.setString(1, id);
+            statement.setString(1, title);
 
             // Perform the query
             ResultSet rs = statement.executeQuery();

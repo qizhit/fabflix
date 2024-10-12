@@ -1,16 +1,4 @@
 /**
- * This example is following frontend and backend separation.
- *
- * Before this .js is loaded, the html skeleton is created.
- *
- * This .js performs three steps:
- *      1. Get parameter from request URL so it know which id to look for
- *      2. Use jQuery to talk to backend API to get the json data.
- *      3. Populate the data to correct html elements.
- */
-
-
-/**
  * Retrieve parameter from request URL, matching by parameter name
  * @param target String
  * @returns {*}
@@ -64,9 +52,8 @@ function handleResult(resultData) {
     let starsArray = resultData[0]["stars"].split(", ");
     // let starsHTML = starsArray.map(star => `<a href="single-star.html?id=${encodeURIComponent(star.trim())}">${star.trim()}</a>`).join(", ");
     let starsHTML = starsArray
-        .map(star => `<a href="single-star.html?id=${encodeURIComponent(star.trim())}">${star.trim()}</a>`)
+        .map(star => `<a href="single-star.html?name=${encodeURIComponent(star.trim())}">${star.trim()}</a>`)
         .join(", ");
-    console.log("starsHTML:", starsHTML);
     rowHTML += "<th>" + starsHTML + "</th>";  // Stars
     rowHTML += "<td>" + resultData[0]["rating"] + "</td>";  // Rating
     rowHTML += "</tr>";
@@ -80,12 +67,12 @@ function handleResult(resultData) {
  */
 
 // Get id from URL
-let movieId = getParameterByName('id');
+let movieTitle = getParameterByName('title');
 
 // Makes the HTTP GET request and registers on success callback function handleResult
 jQuery.ajax({
     dataType: "json",  // Setting return data type
     method: "GET",// Setting request method
-    url: "api/single-movie?id=" + movieId, // Setting request url, which is mapped by StarsServlet in Stars.java
+    url: "api/single-movie?title=" + movieTitle, // Setting request url, which is mapped by StarsServlet in Stars.java
     success: (resultData) => handleResult(resultData) // Setting callback function to handle data returned successfully by the SingleStarServlet
 });

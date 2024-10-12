@@ -1,13 +1,13 @@
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,13 +15,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-
-// Declaring a WebServlet called StarsServlet, which maps to url "/api/stars"
+// Declaring a WebServlet called SingleStarServlet, which maps to url "/api/single-star"
 @WebServlet(name = "SingleStarServlet", urlPatterns = "/api/single-star")
 public class SingleStarServlet extends HttpServlet {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
-    // Create a dataSource which registered in web.
+    // Create a dataSource which registered in web.xml
     private DataSource dataSource;
 
     public void init(ServletConfig config) {
@@ -33,65 +32,66 @@ public class SingleStarServlet extends HttpServlet {
     }
 
     /**
-     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+     * response)
      */
-protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-    response.setContentType("application/json"); // Response mime type
+        response.setContentType("application/json"); // Response mime type
 
-    // Retrieve parameter id from url request.
-    String id = request.getParameter("id");
+        // Retrieve parameter id from url request.
+        String name = request.getParameter("name");
 
-    // The log message can be found in localhost log
-    request.getServletContext().log("getting star id: " + id);
+        // The log message can be found in localhost log
+        request.getServletContext().log("getting name: " + name);
 
-    // Output stream to STDOUT
-    PrintWriter out = response.getWriter();
+        // Output stream to STDOUT
+        PrintWriter out = response.getWriter();
 
-    // Get a connection from dataSource and let resource manager close the connection after usage.
-    try (Connection conn = dataSource.getConnection()) {
-        // Get a connection from dataSource
+        // Get a connection from dataSource and let resource manager close the connection after usage.
+        try (Connection conn = dataSource.getConnection()) {
+            // Get a connection from dataSource
 
-        // Construct a query with parameter represented by "?"
-        String query = "SELECT s.id as starId, s.name as starName, s.birthYear, " +
-                "GROUP_CONCAT(DISTINCT m.title ORDER BY m.title SEPARATOR ', ') AS movies " +
-                "FROM stars s " +
-                "JOIN stars_in_movies sim ON s.id = sim.starId " +
-                "JOIN movies m ON sim.movieId = m.id " +
-                "WHERE s.id = ? " +
-                "GROUP BY s.id";
+            // Construct a query with parameter represented by "?"
+            String query = "SELECT s.id, s.name,\n" +
+                    "COALESCE(s.birthYear, 'N/A') AS birth_year,\n" +
+                    "GROUP_CONCAT(m.title ORDER BY m.title SEPARATOR ', ') AS movies\n" +
+                    "FROM stars s\n" +
+                    "LEFT JOIN stars_in_movies sim ON s.id = sim.starId\n" +
+                    "LEFT JOIN movies m ON sim.movieId = m.id\n" +
+                    "WHERE s.name = ?\n" +
+                    "GROUP BY s.id;";
 
-        // Declare our statement
-        PreparedStatement statement = conn.prepareStatement(query);
+            // Declare our statement
+            PreparedStatement statement = conn.prepareStatement(query);
 
-        // Set the parameter represented by "?" in the query to the id we get from url,
-        // num 1 indicates the first "?" in the query
-        statement.setString(1, id);
+            // Set the parameter represented by "?" in the query to the id we get from url,
+            // num 1 indicates the first "?" in the query
+            statement.setString(1, name);
 
-        // Perform the query
-        ResultSet rs = statement.executeQuery();
+            // Perform the query
+            ResultSet rs = statement.executeQuery();
 
-        JsonArray jsonArray = new JsonArray();
+            JsonArray jsonArray = new JsonArray();
 
-        // Iterate through each row of rs
+            // Iterate through each row of rs
             while (rs.next()) {
-                String star_name = rs.getString("name");
-                String star_dob = rs.getString("birthYear") != null ? rs.getString("birthYear") : "N/A";;
-                String star_movie = rs.getString("movies");
+                String starId = rs.getString("id");
+                String starName = rs.getString("name");
+                String starBirth = rs.getString("birth_year");
+                String starMovies = rs.getString("movies");
 
                 // Create a JsonObject based on the data we retrieve from rs
                 JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("star_name", star_name);
-                jsonObject.addProperty("star_dob", star_dob);
-                jsonObject.addProperty("star_movie", star_movie);
+                jsonObject.addProperty("star_id", starId);
+                jsonObject.addProperty("name", starName);
+                jsonObject.addProperty("birth_year", starBirth);
+                jsonObject.addProperty("movies", starMovies);
 
                 jsonArray.add(jsonObject);
             }
             rs.close();
             statement.close();
-
-            // Log to localhost log
-            request.getServletContext().log("getting " + jsonArray.size() + " results");
 
             // Write JSON string to output
             out.write(jsonArray.toString());
@@ -99,12 +99,13 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response) t
             response.setStatus(200);
 
         } catch (Exception e) {
-
             // Write error message JSON object to output
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("errorMessage", e.getMessage());
             out.write(jsonObject.toString());
 
+            // Log error to localhost log
+            request.getServletContext().log("Error:", e);
             // Set response status to 500 (Internal Server Error)
             response.setStatus(500);
         } finally {
@@ -114,4 +115,5 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response) t
         // Always remember to close db connection after usage. Here it's done by try-with-resources
 
     }
+
 }
