@@ -40,11 +40,10 @@ public class SingleStarServlet extends HttpServlet {
         response.setContentType("application/json"); // Response mime type
 
         // Retrieve parameter id from url request.
-        String name = request.getParameter("name");
+        String id = request.getParameter("id");
 
         // The log message can be found in localhost log
-        request.getServletContext().log("getting name: " + name);
-
+        request.getServletContext().log("getting id: " + id);
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
 
@@ -55,11 +54,12 @@ public class SingleStarServlet extends HttpServlet {
             // Construct a query with parameter represented by "?"
             String query = "SELECT s.id, s.name,\n" +
                     "COALESCE(s.birthYear, 'N/A') AS birth_year,\n" +
-                    "GROUP_CONCAT(m.title ORDER BY m.title SEPARATOR ', ') AS movies\n" +
+                    "GROUP_CONCAT(m.title ORDER BY m.title SEPARATOR ', ') AS movies,\n" +
+                    "GROUP_CONCAT(m.id ORDER BY m.title SEPARATOR ', ') AS movie_ids\n" +
                     "FROM stars s\n" +
                     "LEFT JOIN stars_in_movies sim ON s.id = sim.starId\n" +
                     "LEFT JOIN movies m ON sim.movieId = m.id\n" +
-                    "WHERE s.name = ?\n" +
+                    "WHERE s.id = ?\n" +
                     "GROUP BY s.id;";
 
             // Declare our statement
@@ -67,7 +67,7 @@ public class SingleStarServlet extends HttpServlet {
 
             // Set the parameter represented by "?" in the query to the id we get from url,
             // num 1 indicates the first "?" in the query
-            statement.setString(1, name);
+            statement.setString(1, id);
 
             // Perform the query
             ResultSet rs = statement.executeQuery();
@@ -80,6 +80,7 @@ public class SingleStarServlet extends HttpServlet {
                 String starName = rs.getString("name");
                 String starBirth = rs.getString("birth_year");
                 String starMovies = rs.getString("movies");
+                String starMovieIds = rs.getString("movie_ids");
 
                 // Create a JsonObject based on the data we retrieve from rs
                 JsonObject jsonObject = new JsonObject();
@@ -87,6 +88,7 @@ public class SingleStarServlet extends HttpServlet {
                 jsonObject.addProperty("name", starName);
                 jsonObject.addProperty("birth_year", starBirth);
                 jsonObject.addProperty("movies", starMovies);
+                jsonObject.addProperty("movie_ids", starMovieIds);
 
                 jsonArray.add(jsonObject);
             }

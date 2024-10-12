@@ -40,10 +40,10 @@ public class SingleMovieServlet extends HttpServlet {
         response.setContentType("application/json"); // Response mime type
 
         // Retrieve parameter id from url request.
-        String title = request.getParameter("title");
+        String id = request.getParameter("id");
 
         // The log message can be found in localhost log
-        request.getServletContext().log("getting title: " + title);
+        request.getServletContext().log("getting id: " + id);
 
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
@@ -55,14 +55,15 @@ public class SingleMovieServlet extends HttpServlet {
             // Construct a query with parameter represented by "?"
             String query = "SELECT m.id, m.title, m.year, m.director, r.rating,\n" +
                     "GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', ') as genres,\n" +
-                    "GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') as stars\n" +
+                    "GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') as stars,\n" +
+                    "GROUP_CONCAT(DISTINCT s.id ORDER BY s.name SEPARATOR ', ') as star_ids\n" +
                     "FROM movies as m\n" +
                     "LEFT JOIN ratings as r ON m.id = r.movieId\n" +
                     "LEFT JOIN genres_in_movies as gim ON m.id = gim.movieId\n" +
                     "LEFT JOIN genres as g ON gim.genreId = g.id\n" +
                     "LEFT JOIN stars_in_movies as sim ON m.id = sim.movieId\n" +
                     "LEFT JOIN stars as s ON sim.starId = s.id\n" +
-                    "WHERE m.title = ?\n" +
+                    "WHERE m.id = ?\n" +
                     "GROUP BY m.id;";
 
             // Declare our statement
@@ -70,7 +71,7 @@ public class SingleMovieServlet extends HttpServlet {
 
             // Set the parameter represented by "?" in the query to the id we get from url,
             // num 1 indicates the first "?" in the query
-            statement.setString(1, title);
+            statement.setString(1, id);
 
             // Perform the query
             ResultSet rs = statement.executeQuery();
@@ -86,6 +87,7 @@ public class SingleMovieServlet extends HttpServlet {
                 String movieGenres = rs.getString("genres");
                 String movieStars = rs.getString("stars");
                 String movieRating = rs.getString("rating");
+                String movieStarIds = rs.getString("star_ids");
 
                 // Create a JsonObject based on the data we retrieve from rs
                 JsonObject jsonObject = new JsonObject();
@@ -96,6 +98,7 @@ public class SingleMovieServlet extends HttpServlet {
                 jsonObject.addProperty("genres", movieGenres);
                 jsonObject.addProperty("stars", movieStars);
                 jsonObject.addProperty("rating", movieRating);
+                jsonObject.addProperty("star_ids", movieStarIds);
 
                 jsonArray.add(jsonObject);
             }

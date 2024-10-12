@@ -49,12 +49,15 @@ function handleResult(resultData) {
     rowHTML += "<td>" + resultData[0]["director"] + "</td>";  // Director
     rowHTML += "<td>" + resultData[0]["genres"] + "</td>";  // Genres
     // Stars as hyperlinks
-    let starsArray = resultData[0]["stars"].split(", ");
-    // let starsHTML = starsArray.map(star => `<a href="single-star.html?id=${encodeURIComponent(star.trim())}">${star.trim()}</a>`).join(", ");
-    let starsHTML = starsArray
-        .map(star => `<a href="single-star.html?name=${encodeURIComponent(star.trim())}">${star.trim()}</a>`)
-        .join(", ");
-    rowHTML += "<th>" + starsHTML + "</th>";  // Stars
+    // Split the stars string and create individual hyperlinks
+    const stars = resultData[0]["stars"].split(", ");
+    const star_ids = resultData[0]["star_ids"].split(", ");
+    // Create individual hyperlinks for each star name
+    let starLinks = stars.map((name, index) => {
+        const encodedStarId = encodeURIComponent(star_ids[index]); // Encode star ID
+        return `<a href='single-star.html?id=${encodedStarId}'>${name}</a>`;
+    }).join(", ");
+    rowHTML += "<th>" + starLinks + "</th>";  // Stars
     rowHTML += "<td>" + resultData[0]["rating"] + "</td>";  // Rating
     rowHTML += "</tr>";
 
@@ -67,12 +70,12 @@ function handleResult(resultData) {
  */
 
 // Get id from URL
-let movieTitle = getParameterByName('title');
+let movieId = getParameterByName('id');
 
 // Makes the HTTP GET request and registers on success callback function handleResult
 jQuery.ajax({
     dataType: "json",  // Setting return data type
     method: "GET",// Setting request method
-    url: "api/single-movie?title=" + movieTitle, // Setting request url, which is mapped by StarsServlet in Stars.java
+    url: "api/single-movie?id=" + movieId, // Setting request url, which is mapped by StarsServlet in Stars.java
     success: (resultData) => handleResult(resultData) // Setting callback function to handle data returned successfully by the SingleStarServlet
 });

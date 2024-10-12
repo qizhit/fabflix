@@ -15,10 +15,6 @@ function getParameterByName(target) {
     if (!results) return null;
     if (!results[2]) return '';
 
-    console.log("results");
-    console.log(results);
-    console.log(regex);
-
     // Return the decoded parameter value
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
@@ -50,12 +46,16 @@ function handleResult(resultData) {
     rowHTML += "<tr>";
     rowHTML += "<td>" + resultData[0]["name"] + "</td>"; // Name
     rowHTML += "<td>" + resultData[0]["birth_year"] + "</td>";  // Birth Year
-    // Stars as hyperlinks
-    let moviesArray = resultData[0]["movies"].split(", ");
-    let moviesHTML = moviesArray
-        .map(movie => `<a href="single-movie.html?title=${encodeURIComponent(movie.trim())}">${movie.trim()}</a>`)
-        .join(", ");
-    rowHTML += "<th>" + moviesHTML + "</th>";  // Stars
+    // Movies as hyperlinks
+    const movies = resultData[0]["movies"].split(", ");
+    const movie_ids = resultData[0]["movie_ids"].split(", ");
+    // Create individual hyperlinks for each movie title
+    let movieLinks = movies.map((title, index) => {
+        const encodedMovieId = encodeURIComponent(movie_ids[index]); // Encode star ID
+        return `<a href='single-movie.html?id=${encodedMovieId}'>${title}</a>`;
+    }).join(", ");
+    rowHTML += "<th>" + movieLinks + "</th>";
+
     rowHTML += "</tr>";
 
     // Append the row to the table
@@ -67,14 +67,12 @@ function handleResult(resultData) {
  */
 
 // Get id from URL
-let starName = getParameterByName('name');
-console.log("starName");
-console.log(starName);
+let starId = getParameterByName('id');
 
 // Makes the HTTP GET request and registers on success callback function handleResult
 jQuery.ajax({
     dataType: "json",  // Setting return data type
     method: "GET",// Setting request method
-    url: "api/single-star?name=" + starName, // Setting request url, which is mapped by StarsServlet in Stars.java
+    url: "api/single-star?id=" + starId, // Setting request url, which is mapped by StarsServlet in Stars.java
     success: (resultData) => handleResult(resultData) // Setting callback function to handle data returned successfully by the SingleStarServlet
 });

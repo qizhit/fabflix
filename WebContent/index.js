@@ -10,17 +10,20 @@ function handleStarResult(resultData) {
     for (let i = 0; i < Math.min(20, resultData.length); i++) {
         let rowHTML = "";
         rowHTML += "<tr>";
-        rowHTML += "<th><a href='single-movie.html?title=" + resultData[i]['title'] + "'>" + resultData[i]["title"] + "</a></th>";
+        rowHTML += "<th><a href='single-movie.html?id=" + resultData[i]['movie_id'] + "'>" + resultData[i]["title"] + "</a></th>";
         rowHTML += "<th>" + resultData[i]["year"] + "</th>";
         rowHTML += "<th>" + resultData[i]["director"] + "</th>";
         rowHTML += "<th>" + resultData[i]["genres"] + "</th>";
 
-        // Split the stars string into an array and create individual hyperlinks
-        let starsArray = resultData[i]["stars"].split(", ");
-        let starsHTML = starsArray
-            .map(star => `<a href='single-star.html?name=${encodeURIComponent(star.trim())}'>${star.trim()}</a>`)
-            .join(", ");
-        rowHTML += "<th>" + starsHTML + "</th>";
+        // Split the stars string and create individual hyperlinks
+        const stars = resultData[i]["stars"].split(", ");
+        const star_ids = resultData[i]["star_ids"].split(", ");
+        // Create individual hyperlinks for each star name
+        let starLinks = stars.map((name, index) => {
+            const encodedStarId = encodeURIComponent(star_ids[index]); // Encode star ID
+            return `<a href='single-star.html?id=${encodedStarId}'>${name}</a>`;
+        }).join(", ");
+        rowHTML += "<th>" + starLinks + "</th>";
 
         rowHTML += "<th>" + resultData[i]["rating"] + "</th>";
         rowHTML += "</tr>";
