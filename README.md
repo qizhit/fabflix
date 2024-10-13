@@ -35,6 +35,7 @@ This application is deployed on an AWS EC2 instance, which is configured with th
 - Java 11
 - Tomcat 10
 - MySQL 8.0
+
 Deployment Steps:
 - Access the EC2 instance via ssh
 - Prepared the instance, the existing database and Git repository are cleared, and the movie-data.sql and create_table.sql files are stored for later use.
