@@ -47,6 +47,7 @@ Deployment Steps:
 
 ## Demo Video
 A screen recording demo is available here: https://www.youtube.com/watch?v=8VkIdEvpiic
+
 The demo shows the application running on an AWS instance and covers all the required functionalities, including navigating between pages and displaying movie and star details.
 
 ## Team Contributions
