@@ -54,7 +54,7 @@ function handleResult(resultData) {
         const encodedMovieId = encodeURIComponent(movie_ids[index]); // Encode star ID
         return `<a href='single-movie.html?id=${encodedMovieId}'>${title}</a>`;
     }).join(", ");
-    rowHTML += "<th>" + movieLinks + "</th>";
+    rowHTML += "<th>" + movieLinks + "</th>";  // Movies
 
     rowHTML += "</tr>";
 

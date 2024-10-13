@@ -1,0 +1,15 @@
+/* The title color */
+h1 {
+    color: #4b0082;
+    text-align: center;
+}
+
+/* Page background color */
+body {
+    background: linear-gradient(to right, #fdeed3, #efbeef);
+}
+
+/* Add a dark border to the table */
+table {
+    border: 3px solid #d297fa;
+}
