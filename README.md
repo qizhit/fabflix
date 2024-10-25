@@ -51,6 +51,6 @@ A screen recording demo is available here: https://www.youtube.com/watch?v=8VkId
 The demo shows the application running on an AWS instance and covers all the required functionalities, including navigating between pages and displaying movie and star details.
 
 ## Team Contributions
-We collaborated on setting up the environment (Tasks 1-5) and worked together on the Movie List Page (MovieListServlet, index.html, and index.js). Our specific contributions were as follows:
+We collaborated on setting up the environment (Tasks 1-5) and worked together on the Movie List Page (MovieListServlet, index.html, and movie-list.js). Our specific contributions were as follows:
 - Xuan Gu: Developed the Single Movie feature, wrote the README.md file, and created the moviedb database.
 - Qizhi Tian:  Developed the Single Star feature, created the style.css file, and set up the AWS instance.
