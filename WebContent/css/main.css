@@ -1,98 +1,180 @@
-@charset "UTF-8";
-
-.naviul {
-    list-style-type: none;
+/* General Styles */
+body {
+    background-color: #C8E6C9;
+    font-family: Arial, sans-serif;
     margin: 0;
-    padding: 0 80px 0 80px;
-    overflow: hidden;
+    padding: 0;
+}
+
+/* Header Styles */
+header {
     background-color: #333;
-}
-
-.navili {
-    float: left;
-    width: 100px;
-}
-.naviliright {
-    float: right;
-    width:200px;
-}
-
-.naviliright a {
-    display: block;
     color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    align-items: center;
 }
 
-.naviliright a:hover {
-    background-color: #111;
+header h1 {
+    margin: 0;
 }
 
-.navili a {
-    display: block;
+header nav a {
     color: white;
-    text-align: center;
-    padding: 14px 16px;
+    margin-left: 15px;
     text-decoration: none;
+    font-weight: bold;
 }
 
-.navili a:hover {
-    background-color: #111;
-}
-
-h1{
-    padding:50px 0 0 0;
-
-}
-h1,h3{
+/* Main Content Styles */
+.container {
     text-align: center;
+    padding: 40px;
 }
 
-.bar{
-    padding:50px 0 0 100px;
-    width:315px;
-
-    margin:0 auto;
-}
-
-.bar input {
-    border:2px solid #c5464a;
-    border-radius:5px;
-    background:transparent;
-    width:200px;
-    height:40px;
-    font-size:20px;
-    top:0;
-    right:0;
-}
-input::-webkit-input-placeholder {
+/* Form Styles */
+input[type="text"] {
+    width: 300px;
+    margin: 10px 0;
     padding: 10px;
-}
-.bar button {
-    background:#c5464a;
-    border-radius:5px 5px 5px 5px;
-    width:100px;
-    height:46px;
-    top:0;
-    right:0;
-}
-.bar button:before {
-    content:"search";
-    font-size:20px;
-    color:#F9F0DA;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
-.genrelist{
-    float:left;
-    padding:0 200px 0 200px;
+input[type="submit"] {
+    background-color: #1976D2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
 }
-.titilelist{
-    float:right;
+
+input[type="submit"]:hover {
+    background-color: #0D47A1;
 }
-.autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
-.autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
-.autocomplete-selected { background: #f08073; }
-.autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
-.autocomplete-group { padding: 2px 5px; }
-.autocomplete-group strong { display: block; border-bottom: 1px solid #000; }
+
+/* Browse Section Styles */
+.browse-section {
+    margin-top: 30px;
+}
+
+.browse-section a {
+    margin: 5px;
+    text-decoration: none;
+    color: #1976D2;
+}
+
+.browse-section a:hover {
+    text-decoration: underline;
+}
+
+
+
+
+
+
+
+
+
+
+
+/*@charset "UTF-8";*/
+
+/*.naviul {*/
+/*    list-style-type: none;*/
+/*    margin: 0;*/
+/*    padding: 0 80px 0 80px;*/
+/*    overflow: hidden;*/
+/*    background-color: #333;*/
+/*}*/
+
+/*.navili {*/
+/*    float: left;*/
+/*    width: 100px;*/
+/*}*/
+/*.naviliright {*/
+/*    float: right;*/
+/*    width:200px;*/
+/*}*/
+
+/*.naviliright a {*/
+/*    display: block;*/
+/*    color: white;*/
+/*    text-align: center;*/
+/*    padding: 14px 16px;*/
+/*    text-decoration: none;*/
+/*}*/
+
+/*.naviliright a:hover {*/
+/*    background-color: #111;*/
+/*}*/
+
+/*.navili a {*/
+/*    display: block;*/
+/*    color: white;*/
+/*    text-align: center;*/
+/*    padding: 14px 16px;*/
+/*    text-decoration: none;*/
+/*}*/
+
+/*.navili a:hover {*/
+/*    background-color: #111;*/
+/*}*/
+
+/*h1{*/
+/*    padding:50px 0 0 0;*/
+
+/*}*/
+/*h1,h3{*/
+/*    text-align: center;*/
+/*}*/
+
+/*.bar{*/
+/*    padding:50px 0 0 100px;*/
+/*    width:315px;*/
+
+/*    margin:0 auto;*/
+/*}*/
+
+/*.bar input {*/
+/*    border:2px solid #c5464a;*/
+/*    border-radius:5px;*/
+/*    background:transparent;*/
+/*    width:200px;*/
+/*    height:40px;*/
+/*    font-size:20px;*/
+/*    top:0;*/
+/*    right:0;*/
+/*}*/
+/*input::-webkit-input-placeholder {*/
+/*    padding: 10px;*/
+/*}*/
+/*.bar button {*/
+/*    background:#c5464a;*/
+/*    border-radius:5px 5px 5px 5px;*/
+/*    width:100px;*/
+/*    height:46px;*/
+/*    top:0;*/
+/*    right:0;*/
+/*}*/
+/*.bar button:before {*/
+/*    content:"search";*/
+/*    font-size:20px;*/
+/*    color:#F9F0DA;*/
+/*}*/
+
+/*.genrelist{*/
+/*    float:left;*/
+/*    padding:0 200px 0 200px;*/
+/*}*/
+/*.titilelist{*/
+/*    float:right;*/
+/*}*/
+/*.autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }*/
+/*.autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }*/
+/*.autocomplete-selected { background: #f08073; }*/
+/*.autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }*/
+/*.autocomplete-group { padding: 2px 5px; }*/
+/*.autocomplete-group strong { display: block; border-bottom: 1px solid #000; }*/
