@@ -1,0 +1,112 @@
+<!-- This page will be seen if you logged in -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fablix - Checkout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 {
+            color: #4a934a;
+            margin-bottom: 20px;
+        }
+        .info {
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        .cart-form {
+            margin-top: 20px;
+        }
+        label {
+            font-weight: bold;
+            color: #4a934a;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-top: 8px;
+            background: #e6ffe6;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+            font-size: 16px;
+        }
+        input[type="submit"], .proceed-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #4a934a;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            margin-top: 15px;
+        }
+        input[type="submit"]:hover, .proceed-btn:hover {
+            background-color: #3b763b;
+        }
+        #item_list {
+            margin-top: 20px;
+            text-align: left;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Checkout - Fablix</h1>
+    <div class="info">
+        <p id="sessionID">Session ID: </p>
+        <p id="lastAccessTime">Last access time: </p>
+    </div>
+
+    <!-- Shopping Cart Form -->
+    <form id="cart" method="post" class="cart-form">
+        <label for="item">Add Item to Cart</label>
+        <input id="item" name="item" placeholder="Enter item name" required type="text">
+        <input type="submit" value="Add to Cart">
+    </form>
+
+    <!-- Display Cart Items -->
+    <div id="item_list"></div>
+
+    <!-- Proceed to Payment Button -->
+    <button class="proceed-btn" onclick="proceedToPayment()">Proceed to Payment</button>
+</div>
+
+<!-- jQuery for handling AJAX and form submissions -->
+<script src='https://code.jquery.com/jquery-3.1.0.min.js'></script>
+<script src='shopping.js'></script>
+<!--<script>-->
+<!--    function proceedToPayment() {-->
+<!--        window.location.href = 'payment.html';-->
+<!--    }-->
+<!--</script>-->
+
+</body>
+</html>
