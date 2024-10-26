@@ -54,13 +54,15 @@ function updatePaginationControls(totalPages) {
 function getQueryParameter() {
     const urlParams = new URLSearchParams(window.location.search); // Extract query params from URL
     const genre = urlParams.get("genre");
-    const title = urlParams.get("title");
+    const browseTitle = urlParams.get("browse_title");
 
     let apiUrl = "api/movie_list?";
+
+    // browsing
     if (genre) {
         apiUrl += `genre=${encodeURIComponent(genre)}`; // Add genre to API URL
-    } else if (title) {
-        apiUrl += `title=${encodeURIComponent(title)}`; // Add title to API URL
+    } else if (browseTitle) {
+        apiUrl += `browse_title=${encodeURIComponent(browseTitle)}`; // Add browseTitle to API URL
     }
 
     // Add sort parameter

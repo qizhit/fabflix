@@ -16,7 +16,7 @@ function handleMainResult(resultData) {
     let titleListElement = jQuery("#title-list");
     let titles = resultData["titles"]; // Gets an array of titles from the JSON data
     titles.forEach((title) => {
-        let titleLink = `<a href="movie-list.html?title=${encodeURIComponent(title)}">${title}</a> `;
+        let titleLink = `<a href="movie-list.html?browse_title=${encodeURIComponent(title)}">${title}</a> `;
         titleListElement.append(titleLink); // Add a title hyperlink dynamically
     });
 }

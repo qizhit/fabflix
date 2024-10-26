@@ -14,7 +14,6 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +45,7 @@ public class MovieListServlet extends HttpServlet {
 
         // Gets the genre or title parameters from the request
         String genre = request.getParameter("genre");
-        String title = request.getParameter("title");
+        String browseTitle = request.getParameter("browse_title");
 
         // Gets the sorting parameters from the request
         String sortBy = request.getParameter("sortBy");
@@ -79,8 +78,8 @@ public class MovieListServlet extends HttpServlet {
                 queryBuilder.append("AND m.id IN (SELECT gm.movieId FROM genres_in_movies gm " +
                         "JOIN genres g ON gm.genreId = g.id WHERE g.name = ?) ");
             }
-            if (title != null && !title.isEmpty()) {
-                if (title.equals("*")) {
+            if (browseTitle != null && !browseTitle.isEmpty()) {
+                if (browseTitle.equals("*")) {
                     queryBuilder.append("AND m.title REGEXP '^[^a-zA-Z0-9]' ");  // title = *, match non-alphanumerical characters.
                 } else {
                     queryBuilder.append("AND LOWER(m.title) LIKE ? ");  // title = 1-9A-Z
@@ -96,8 +95,8 @@ public class MovieListServlet extends HttpServlet {
             if (genre != null && !genre.isEmpty()) {
                 movieStatement.setString(paramIndex++, genre);
             }
-            if (title != null && !title.isEmpty() && !title.equals("*")) {
-                movieStatement.setString(paramIndex++, title.toLowerCase() + "%");
+            if (browseTitle != null && !browseTitle.isEmpty() && !browseTitle.equals("*")) {
+                movieStatement.setString(paramIndex++, browseTitle.toLowerCase() + "%");
             }
             movieStatement.setInt(paramIndex++, pageSize);
             movieStatement.setInt(paramIndex, offset);
@@ -189,7 +188,7 @@ public class MovieListServlet extends HttpServlet {
             // Returns movie data and total pages
             JsonObject resultJsonObject = new JsonObject();
             resultJsonObject.add("movies", jsonArray);  // Put the list of movies into the Movies field
-            resultJsonObject.addProperty("totalPages", getTotalPages(conn, genre, title, pageSize));  // totalPages
+            resultJsonObject.addProperty("totalPages", getTotalPages(conn, genre, browseTitle, pageSize));  // totalPages
 
             out.write(resultJsonObject.toString());  // Write the result to the output
             response.setStatus(200);
@@ -206,15 +205,15 @@ public class MovieListServlet extends HttpServlet {
 
 
     // Get movies' count, and determine the total pages
-    private int getTotalPages(Connection conn, String genre, String title, int pageSize) throws Exception {
+    private int getTotalPages(Connection conn, String genre, String browseTitle, int pageSize) throws Exception {
         // Construct the statement.
         StringBuilder countQuery = new StringBuilder("SELECT COUNT(*) AS total FROM movies m WHERE 1=1 ");
         if (genre != null && !genre.isEmpty()) {
             countQuery.append("AND m.id IN (SELECT gm.movieId FROM genres_in_movies gm " +
                     "JOIN genres g ON gm.genreId = g.id WHERE g.name = ?) ");
         }
-        if (title != null && !title.isEmpty()) {
-            if (title.equals("*")) {
+        if (browseTitle != null && !browseTitle.isEmpty()) {
+            if (browseTitle.equals("*")) {
                 countQuery.append("AND m.title REGEXP '^[^a-zA-Z0-9]' ");
             } else {
                 countQuery.append("AND LOWER(m.title) LIKE ? ");
@@ -227,8 +226,8 @@ public class MovieListServlet extends HttpServlet {
         if (genre != null && !genre.isEmpty()) {
             countStatement.setString(paramIndex++, genre);
         }
-        if (title != null && !title.isEmpty() && !title.equals("*")) {
-            countStatement.setString(paramIndex, title.toLowerCase() + "%");
+        if (browseTitle != null && !browseTitle.isEmpty() && !browseTitle.equals("*")) {
+            countStatement.setString(paramIndex, browseTitle.toLowerCase() + "%");
         }
 
         // execute and get the total pages
