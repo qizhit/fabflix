@@ -47,7 +47,15 @@ function handleResult(resultData) {
     rowHTML += "<td>" + resultData[0]["title"] + "</td>"; // Title
     rowHTML += "<td>" + resultData[0]["year"] + "</td>";  // Year
     rowHTML += "<td>" + resultData[0]["director"] + "</td>";  // Director
-    rowHTML += "<td>" + resultData[0]["genres"] + "</td>";  // Genres
+    //rowHTML += "<td>" + resultData[0]["genres"] + "</td>";  // Genres
+
+    // Genres as hyperlinks, sorted alphabetically
+    let genres = resultData[0]["genres"].split(", ");
+    let genreLinks = genres.map(genre => {
+        return `<a href='movie-list.html?genre=${encodeURIComponent(genre)}'>${genre}</a>`;
+    }).join(", ");
+    rowHTML += `<td>${genreLinks}</td>`;
+
     // Stars as hyperlinks
     // Split the stars string and create individual hyperlinks
     const stars = resultData[0]["stars"].split(", ");

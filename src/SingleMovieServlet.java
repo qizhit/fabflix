@@ -53,17 +53,31 @@ public class SingleMovieServlet extends HttpServlet {
             // Get a connection from dataSource
 
             // Construct a query with parameter represented by "?"
-            String query = "SELECT m.id, m.title, m.year, m.director, r.rating,\n" +
-                    "GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', ') as genres,\n" +
-                    "GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') as stars,\n" +
-                    "GROUP_CONCAT(DISTINCT s.id ORDER BY s.name SEPARATOR ', ') as star_ids\n" +
-                    "FROM movies as m\n" +
-                    "LEFT JOIN ratings as r ON m.id = r.movieId\n" +
-                    "LEFT JOIN genres_in_movies as gim ON m.id = gim.movieId\n" +
-                    "LEFT JOIN genres as g ON gim.genreId = g.id\n" +
-                    "LEFT JOIN stars_in_movies as sim ON m.id = sim.movieId\n" +
-                    "LEFT JOIN stars as s ON sim.starId = s.id\n" +
-                    "WHERE m.id = ?\n" +
+//            String query = "SELECT m.id, m.title, m.year, m.director, r.rating,\n" +
+//                    "GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', ') as genres,\n" +
+//                    "GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') as stars,\n" +
+//                    "GROUP_CONCAT(DISTINCT s.id ORDER BY s.name SEPARATOR ', ') as star_ids\n" +
+//                    "FROM movies as m\n" +
+//                    "LEFT JOIN ratings as r ON m.id = r.movieId\n" +
+//                    "LEFT JOIN genres_in_movies as gim ON m.id = gim.movieId\n" +
+//                    "LEFT JOIN genres as g ON gim.genreId = g.id\n" +
+//                    "LEFT JOIN stars_in_movies as sim ON m.id = sim.movieId\n" +
+//                    "LEFT JOIN stars as s ON sim.starId = s.id\n" +
+//                    "WHERE m.id = ?\n" +
+//                    "GROUP BY m.id;";
+
+            String query = "SELECT m.id, m.title, m.year, m.director, r.rating, " +
+                    "GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', ') AS genres, " +
+                    "GROUP_CONCAT(DISTINCT s.name ORDER BY movie_count DESC, s.name SEPARATOR ', ') AS stars, " +
+                    "GROUP_CONCAT(DISTINCT s.id ORDER BY movie_count DESC, s.name SEPARATOR ', ') AS star_ids " +
+                    "FROM movies AS m " +
+                    "LEFT JOIN ratings AS r ON m.id = r.movieId " +
+                    "LEFT JOIN genres_in_movies AS gim ON m.id = gim.movieId " +
+                    "LEFT JOIN genres AS g ON gim.genreId = g.id " +
+                    "LEFT JOIN stars_in_movies AS sim ON m.id = sim.movieId " +
+                    "LEFT JOIN stars AS s ON sim.starId = s.id " +
+                    "LEFT JOIN (SELECT starId, COUNT(*) AS movie_count FROM stars_in_movies GROUP BY starId) AS star_counts ON s.id = star_counts.starId " +
+                    "WHERE m.id = ? " +
                     "GROUP BY m.id;";
 
             // Declare our statement
