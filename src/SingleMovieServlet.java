@@ -65,6 +65,7 @@ public class SingleMovieServlet extends HttpServlet {
 //                    "LEFT JOIN stars as s ON sim.starId = s.id\n" +
 //                    "WHERE m.id = ?\n" +
 //                    "GROUP BY m.id;";
+
             String query = "SELECT m.id, m.title, m.year, m.director, r.rating, " +
                     "GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', ') AS genres, " +
                     "GROUP_CONCAT(DISTINCT s.name ORDER BY movie_count DESC, s.name SEPARATOR ', ') AS stars, " +
