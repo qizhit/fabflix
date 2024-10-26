@@ -18,27 +18,59 @@
 </head>
 <body>
 
+<div class="container">
+    <h1 class="my-4">Movies List Page</h1>
 
-<h1>Movies List Page</h1>
+    <!-- Sort Options -->
+    <div class="form-group row">
+        <label for="sortSelect" class="col-sm-2 col-form-label">Sort By:</label>
+        <div class="col-sm-4">
+            <select id="sortSelect" class="form-control">
+                <option value="title-asc">Title (A-Z), Rating</option>
+                <option value="title-desc">Title (Z-A), Rating</option>
+                <option value="rating-asc">Rating (Low-High), Title</option>
+                <option value="rating-desc">Rating (High-Low), Title</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Page Size Dropdown -->
+    <div class="form-group row">
+        <label for="pageSizeSelect" class="col-sm-2 col-form-label">Movies per page:</label>
+        <div class="col-sm-4">
+            <select id="pageSizeSelect" class="form-control">
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+        </div>
+    </div>
 
 <!-- Id "movie_table" is useful for jQuery to find the html element with id, class here is mapping to Bootstrap defined class CSS -->
-<table id=movie_table class="table table-striped">
-    <!-- Create a table header -->
-    <thead>
-    <tr>
-        <!-- Titles of each column-->
-        <th>Title</th>
-        <th>Year</th>
-        <th>Director</th>
-        <th>First Three Genres</th>
-        <th>First Three Stars</th>
-        <th>Rating</th>
-    </tr>
-    </thead>
+    <table id=movie_table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Year</th>
+            <th>Director</th>
+            <th>Genres</th>
+            <th>Stars</th>
+            <th>Rating</th>
+        </tr>
+        </thead>
     <!-- Table body is left empty here, will be populated with the data retrieved with movie-list.js -->
     <!-- Again, id "movie_table_body" is useful for jQuery to find this html element -->
-    <tbody id=movie_table_body></tbody>
+        <tbody id=movie_table_body></tbody>
+    </table>
 </table>
+    <!-- Pagination Controls -->
+    <div class="pagination-controls text-center">
+        <button id="prevPage" class="btn btn-primary">Previous</button>
+        <span id="pageInfo">Page 1</span>
+        <button id="nextPage" class="btn btn-primary">Next</button>
+    </div>
+</div>
 
 <!-- Load jQuery and Bootstrap JS -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -51,6 +83,5 @@
      otherwise the url is relative to the root path-->
 <script src="movie-list.js"></script>
 </body>
-
 
 </html>
