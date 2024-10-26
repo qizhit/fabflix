@@ -16,31 +16,38 @@
     <title>Single Movie</title>
 </head>
 <body>
-<h1>Single Movie Page</h1>
 
-<!-- H3 body is left empty here, will be populated with the data retrieved with single-movie.js -->
-<!-- single-movie.js will find this html element by it's id "movie_info" -->
-<h3 id="movie_info"></h3>
-<table id=movie_table class="table table-striped">
-    <thead>
-    <tr>
-        <th>Title</th>
-        <th>Year</th>
-        <th>Director</th>
-        <th>Genres</th>
-        <th>Stars</th>
-        <th>Rating</th>
-        <th>
-    </tr>
-    </thead>
+<div class="container my-4">
+    <h1 class="mb-4 text-center">Single Movie Page</h1>
+    <section>
+        <h3 id="movie_info" class="text-center"></h3>
+    </section>
 
-    <!-- Table body is left empty here, will be populated with the data retrieved with single-movie.js -->
-    <!-- single-movie.js will find this html element by it's id "movie_table_body" -->
-    <tbody id=movie_table_body></tbody>
-</table>
+    <!-- Movie Details Table -->
+    <div class="table-responsive">
+        <table id="movie_table" class="table table-striped">
+            <thead class="thead-dark">
+            <tr>
+                <th>Title</th>
+                <th>Year</th>
+                <th>Director</th>
+                <th>Genres</th>
+                <th>Stars</th>
+                <th>Rating</th>
+            </tr>
+            </thead>
+            <tbody id="movie_table_body">
+            <!-- Table body will be populated with data from single-movie.js -->
+            </tbody>
+        </table>
+    </div>
 
-<!--Back to Movie List Page-->
-<a href="movie-list.html" class="btn btn-primary" role="button">Back to Movie List Page</a>
+    <!--Back to Movie List Page-->
+    <!-- Back Button -->
+    <div class="text-center mt-4">
+        <a href="movie-list.html" class="btn btn-primary" role="button">Back to Movie List Page</a>
+    </div>
+</div>
 
 <!-- Load jQuery and Bootstrap JS -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -53,6 +60,5 @@
      otherwise the url is relative to the root path-->
 <script src="single-movie.js"></script>
 </body>
-
 
 </html>

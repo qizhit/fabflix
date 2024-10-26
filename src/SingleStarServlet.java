@@ -52,14 +52,24 @@ public class SingleStarServlet extends HttpServlet {
             // Get a connection from dataSource
 
             // Construct a query with parameter represented by "?"
-            String query = "SELECT s.id, s.name,\n" +
-                    "COALESCE(s.birthYear, 'N/A') AS birth_year,\n" +
-                    "GROUP_CONCAT(m.title ORDER BY m.title SEPARATOR ', ') AS movies,\n" +
-                    "GROUP_CONCAT(m.id ORDER BY m.title SEPARATOR ', ') AS movie_ids\n" +
-                    "FROM stars s\n" +
-                    "LEFT JOIN stars_in_movies sim ON s.id = sim.starId\n" +
-                    "LEFT JOIN movies m ON sim.movieId = m.id\n" +
-                    "WHERE s.id = ?\n" +
+//            String query = "SELECT s.id, s.name,\n" +
+//                    "COALESCE(s.birthYear, 'N/A') AS birth_year,\n" +
+//                    "GROUP_CONCAT(m.title ORDER BY m.title SEPARATOR ', ') AS movies,\n" +
+//                    "GROUP_CONCAT(m.id ORDER BY m.title SEPARATOR ', ') AS movie_ids\n" +
+//                    "FROM stars s\n" +
+//                    "LEFT JOIN stars_in_movies sim ON s.id = sim.starId\n" +
+//                    "LEFT JOIN movies m ON sim.movieId = m.id\n" +
+//                    "WHERE s.id = ?\n" +
+//                    "GROUP BY s.id;"+
+//                    "ORDER BY m.year DESC, m.title ASC";
+            String query = "SELECT s.id, s.name, " +
+                    "COALESCE(s.birthYear, 'N/A') AS birth_year, " +
+                    "GROUP_CONCAT(m.title ORDER BY m.year DESC, m.title ASC SEPARATOR ', ') AS movies, " +
+                    "GROUP_CONCAT(m.id ORDER BY m.year DESC, m.title ASC SEPARATOR ', ') AS movie_ids " +
+                    "FROM stars s " +
+                    "LEFT JOIN stars_in_movies sim ON s.id = sim.starId " +
+                    "LEFT JOIN movies m ON sim.movieId = m.id " +
+                    "WHERE s.id = ? " +
                     "GROUP BY s.id;";
 
             // Declare our statement
