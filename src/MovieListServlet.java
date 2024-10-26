@@ -44,6 +44,10 @@ public class MovieListServlet extends HttpServlet {
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
 
+        // Gets the genre or title parameters from the request
+        String genre = request.getParameter("genre");
+        String title = request.getParameter("title");
+
         // Gets the sorting parameters from the request
         String sortBy = request.getParameter("sortBy");
         String sortOrder1 = request.getParameter("sortOrder1");
@@ -66,51 +70,61 @@ public class MovieListServlet extends HttpServlet {
 
         // Get a connection from dataSource and let resource manager close the connection after usage.
         try (Connection conn = dataSource.getConnection()) {
-            // Get movies' count, and determine the total pages
-            String countQuery = "SELECT COUNT(*) AS total FROM movies";
-            Statement countStatement = conn.createStatement();
-            ResultSet countRs = countStatement.executeQuery(countQuery);
-            countRs.next();
-            int totalMovies = countRs.getInt("total");
-            countRs.close();
-            countStatement.close();
+            // Construct the query for selecting movies
+            StringBuilder queryBuilder = new StringBuilder(
+                    "SELECT m.id, m.title, m.year, m.director, COALESCE(r.rating, 'N/A') AS rating " +
+                            "FROM movies m LEFT JOIN ratings r ON m.id = r.movieId WHERE 1=1 ");
 
-            int totalPages = (int) Math.ceil((double) totalMovies / pageSize);
+            if (genre != null && !genre.isEmpty()) {
+                queryBuilder.append("AND m.id IN (SELECT gm.movieId FROM genres_in_movies gm " +
+                        "JOIN genres g ON gm.genreId = g.id WHERE g.name = ?) ");
+            }
+            if (title != null && !title.isEmpty()) {
+                if (title.equals("*")) {
+                    queryBuilder.append("AND m.title REGEXP '^[^a-zA-Z0-9]' ");  // title = *, match non-alphanumerical characters.
+                } else {
+                    queryBuilder.append("AND LOWER(m.title) LIKE ? ");  // title = 1-9A-Z
+                }
+            }
 
-            // Declare movieStatement
-            Statement movieStatement = conn.createStatement();
-            String movieQuery = "SELECT m.id, m.title, m.year, m.director, COALESCE(r.rating, 'N/A') AS rating " +
-                    "FROM movies m " +
-                    "LEFT JOIN ratings r ON m.id = r.movieId " +
-                    orderByClause +
-                    " LIMIT " + pageSize + " OFFSET " + offset;
+            queryBuilder.append(orderByClause);  // order by title/rating
+            queryBuilder.append(" LIMIT ? OFFSET ?;");  // pagination
 
-            ResultSet movieRs = movieStatement.executeQuery(movieQuery);
+            // prepare the query statement and pass parameters
+            PreparedStatement movieStatement = conn.prepareStatement(queryBuilder.toString());
+            int paramIndex = 1;
+            if (genre != null && !genre.isEmpty()) {
+                movieStatement.setString(paramIndex++, genre);
+            }
+            if (title != null && !title.isEmpty() && !title.equals("*")) {
+                movieStatement.setString(paramIndex++, title.toLowerCase() + "%");
+            }
+            movieStatement.setInt(paramIndex++, pageSize);
+            movieStatement.setInt(paramIndex, offset);
+            // execute
+            ResultSet movieRs = movieStatement.executeQuery();
 
+            // key: movieId, value: jsonObject with properties
             Map<String, JsonObject> movieMap = new HashMap<>();
-            JsonArray jsonArray = new JsonArray();
+            JsonArray jsonArray = new JsonArray();  // used to store all movie jsonObject
 
             while (movieRs.next()) {
                 String movieId = movieRs.getString("id");
-                String title = movieRs.getString("title");
-                String year = movieRs.getString("year");
-                String director = movieRs.getString("director");
-                String rating = movieRs.getString("rating");
 
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("movie_id", movieId);
-                jsonObject.addProperty("title", title);
-                jsonObject.addProperty("year", year);
-                jsonObject.addProperty("director", director);
-                jsonObject.addProperty("rating", rating);
+                jsonObject.addProperty("title", movieRs.getString("title"));
+                jsonObject.addProperty("year", movieRs.getString("year"));
+                jsonObject.addProperty("director", movieRs.getString("year"));
+                jsonObject.addProperty("rating", movieRs.getString("rating"));
 
-                movieMap.put(movieId, jsonObject);
+                movieMap.put(movieId, jsonObject);  // use to correspond to first-3-genres and first-3-stars
                 jsonArray.add(jsonObject);
             }
             movieRs.close();
             movieStatement.close();
 
-            // Format the list of movie ids into a string format in SQL
+            // Format the list of movie ids into a string format in SQL, prepare for genres and stars query
             String movieIdList = movieMap.keySet().stream()
                     .map(id -> "'" + id + "'")
                     .reduce((a, b) -> a + "," + b)
@@ -172,10 +186,10 @@ public class MovieListServlet extends HttpServlet {
             starRs.close();
             starStatement.close();
 
-            // 返回电影数据和总页数
+            // Returns movie data and total pages
             JsonObject resultJsonObject = new JsonObject();
             resultJsonObject.add("movies", jsonArray);  // Put the list of movies into the Movies field
-            resultJsonObject.addProperty("totalPages", totalPages);  // Total page information goes to "totalPages"
+            resultJsonObject.addProperty("totalPages", getTotalPages(conn, genre, title, pageSize));  // totalPages
 
             out.write(resultJsonObject.toString());  // Write the result to the output
             response.setStatus(200);
@@ -188,5 +202,42 @@ public class MovieListServlet extends HttpServlet {
         } finally {
             out.close();
         }
+    }
+
+
+    // Get movies' count, and determine the total pages
+    private int getTotalPages(Connection conn, String genre, String title, int pageSize) throws Exception {
+        // Construct the statement.
+        StringBuilder countQuery = new StringBuilder("SELECT COUNT(*) AS total FROM movies m WHERE 1=1 ");
+        if (genre != null && !genre.isEmpty()) {
+            countQuery.append("AND m.id IN (SELECT gm.movieId FROM genres_in_movies gm " +
+                    "JOIN genres g ON gm.genreId = g.id WHERE g.name = ?) ");
+        }
+        if (title != null && !title.isEmpty()) {
+            if (title.equals("*")) {
+                countQuery.append("AND m.title REGEXP '^[^a-zA-Z0-9]' ");
+            } else {
+                countQuery.append("AND LOWER(m.title) LIKE ? ");
+            }
+        }
+
+        // prepare the statement, pass the ? parameters.
+        PreparedStatement countStatement = conn.prepareStatement(countQuery.toString());
+        int paramIndex = 1;
+        if (genre != null && !genre.isEmpty()) {
+            countStatement.setString(paramIndex++, genre);
+        }
+        if (title != null && !title.isEmpty() && !title.equals("*")) {
+            countStatement.setString(paramIndex, title.toLowerCase() + "%");
+        }
+
+        // execute and get the total pages
+        ResultSet countRs = countStatement.executeQuery();
+        countRs.next();
+        int totalMovies = countRs.getInt("total");
+        countRs.close();
+        countStatement.close();
+
+        return (int) Math.ceil((double) totalMovies / pageSize);
     }
 }
