@@ -36,8 +36,8 @@ header nav a {
 /* Form Styles */
 input[type="text"] {
     width: 300px;
-    margin: 10px 0;
-    padding: 10px;
+    margin: 8px 0;
+    padding: 8px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
@@ -55,126 +55,29 @@ input[type="submit"]:hover {
     background-color: #0D47A1;
 }
 
-/* Browse Section Styles */
-.browse-section {
-    margin-top: 30px;
+/* Limit the genre list width, and have the content wrap automatically */
+#genre-list, #title-list {
+    display: flex;             /* Use the Flexbox layout */
+    flex-wrap: wrap;           /* Allows content wrap */
+    justify-content: center;   /* Centered horizontally */
+    max-width: 800px;          /* Limit the maximum width and make sure it's not too wide */
+    margin: 0 auto;            /* Center the entire block horizontally */
+    gap: 10px;                 /* Control the spacing between each genre/title */
 }
 
-.browse-section a {
-    margin: 5px;
+/* Style for each link */
+#genre-list a, #title-list a {
     text-decoration: none;
-    color: #1976D2;
+    color: rgba(252, 247, 247, 0.9);
+    padding: 5px 10px;
+    border: 2px solid rgba(2, 159, 2, 0.75);
+    border-radius: 5px;
+    background-color: rgba(2, 159, 2, 0.75); /* fill color */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition effect */
 }
 
-.browse-section a:hover {
+/* hover effect */
+#genre-list a:hover, #title-list a:hover {
+    background-color: #038f03;
     text-decoration: underline;
 }
-
-
-
-
-
-
-
-
-
-
-
-/*@charset "UTF-8";*/
-
-/*.naviul {*/
-/*    list-style-type: none;*/
-/*    margin: 0;*/
-/*    padding: 0 80px 0 80px;*/
-/*    overflow: hidden;*/
-/*    background-color: #333;*/
-/*}*/
-
-/*.navili {*/
-/*    float: left;*/
-/*    width: 100px;*/
-/*}*/
-/*.naviliright {*/
-/*    float: right;*/
-/*    width:200px;*/
-/*}*/
-
-/*.naviliright a {*/
-/*    display: block;*/
-/*    color: white;*/
-/*    text-align: center;*/
-/*    padding: 14px 16px;*/
-/*    text-decoration: none;*/
-/*}*/
-
-/*.naviliright a:hover {*/
-/*    background-color: #111;*/
-/*}*/
-
-/*.navili a {*/
-/*    display: block;*/
-/*    color: white;*/
-/*    text-align: center;*/
-/*    padding: 14px 16px;*/
-/*    text-decoration: none;*/
-/*}*/
-
-/*.navili a:hover {*/
-/*    background-color: #111;*/
-/*}*/
-
-/*h1{*/
-/*    padding:50px 0 0 0;*/
-
-/*}*/
-/*h1,h3{*/
-/*    text-align: center;*/
-/*}*/
-
-/*.bar{*/
-/*    padding:50px 0 0 100px;*/
-/*    width:315px;*/
-
-/*    margin:0 auto;*/
-/*}*/
-
-/*.bar input {*/
-/*    border:2px solid #c5464a;*/
-/*    border-radius:5px;*/
-/*    background:transparent;*/
-/*    width:200px;*/
-/*    height:40px;*/
-/*    font-size:20px;*/
-/*    top:0;*/
-/*    right:0;*/
-/*}*/
-/*input::-webkit-input-placeholder {*/
-/*    padding: 10px;*/
-/*}*/
-/*.bar button {*/
-/*    background:#c5464a;*/
-/*    border-radius:5px 5px 5px 5px;*/
-/*    width:100px;*/
-/*    height:46px;*/
-/*    top:0;*/
-/*    right:0;*/
-/*}*/
-/*.bar button:before {*/
-/*    content:"search";*/
-/*    font-size:20px;*/
-/*    color:#F9F0DA;*/
-/*}*/
-
-/*.genrelist{*/
-/*    float:left;*/
-/*    padding:0 200px 0 200px;*/
-/*}*/
-/*.titilelist{*/
-/*    float:right;*/
-/*}*/
-/*.autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }*/
-/*.autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }*/
-/*.autocomplete-selected { background: #f08073; }*/
-/*.autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }*/
-/*.autocomplete-group { padding: 2px 5px; }*/
-/*.autocomplete-group strong { display: block; border-bottom: 1px solid #000; }*/
