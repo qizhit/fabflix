@@ -14,7 +14,9 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -43,38 +45,55 @@ public class MovieListServlet extends HttpServlet {
         // Output stream to STDOUT
         PrintWriter out = response.getWriter();
 
-        // Gets the genre or title parameters from the request
-        String genre = request.getParameter("genre");
+        // Gets browsing parameters
+        String browseGenre = request.getParameter("genre");
         String browseTitle = request.getParameter("browse_title");
 
-        // Gets the sorting parameters from the request
+        // Get search parameters
+        String searchTitle = request.getParameter("title");
+        String searchYear = request.getParameter("year");
+        String searchDirector = request.getParameter("director");
+        String searchStar = request.getParameter("star");
+
+        // Gets the sorting parameters
         String sortBy = request.getParameter("sortBy");
         String sortOrder1 = request.getParameter("sortOrder1");
         String sortOrder2 = request.getParameter("sortOrder2");
 
-        // Address Pagination
+        // Get Pagination parameters
         int page = Integer.parseInt(request.getParameter("page"));  // currentPage
         int pageSize = Integer.parseInt(request.getParameter("pageSize"));  // Number of movies per page
+        // Calculated offset
+        int offset = (page - 1) * pageSize;
 
         // Construct sort statement
         String orderByClause = "";
         if ("title".equals(sortBy)) {
-            orderByClause = "ORDER BY m.title " + sortOrder1 + ", r.rating " + sortOrder2;  // ORDER BY m.title ase, r.rating ase
+            orderByClause = "ORDER BY m.title " + sortOrder1 + ", m.rating " + sortOrder2;  // ORDER BY m.title ase, r.rating ase
         } else if ("rating".equals(sortBy)) {
-            orderByClause = "ORDER BY r.rating " + sortOrder1 + ", m.title " + sortOrder2;
+            orderByClause = "ORDER BY m.rating " + sortOrder1 + ", m.title " + sortOrder2;
         }
-
-        // Calculated offset
-        int offset = (page - 1) * pageSize;
 
         // Get a connection from dataSource and let resource manager close the connection after usage.
         try (Connection conn = dataSource.getConnection()) {
             // Construct the query for selecting movies
+//            StringBuilder queryBuilder = new StringBuilder(
+//                    "SELECT DISTINCT m.id, m.title, m.year, m.director, COALESCE(r.rating, 'N/A') AS rating " +
+//                            "FROM movies m LEFT JOIN ratings r ON m.id = r.movieId " +
+//                            "LEFT JOIN stars_in_movies sim ON m.id = sim.movieId " +
+//                            "LEFT JOIN stars s ON sim.starId = s.id WHERE 1=1 ");
             StringBuilder queryBuilder = new StringBuilder(
-                    "SELECT m.id, m.title, m.year, m.director, COALESCE(r.rating, 'N/A') AS rating " +
-                            "FROM movies m LEFT JOIN ratings r ON m.id = r.movieId WHERE 1=1 ");
+                    "SELECT m.id, m.title, m.year, m.director, m.rating " +
+                            "FROM ( " +
+                            "   SELECT DISTINCT m.id, m.title, m.year, m.director, r.rating " +
+                            "   FROM movies m " +
+                            "   LEFT JOIN ratings r ON m.id = r.movieId " +
+                            "   LEFT JOIN stars_in_movies sim ON m.id = sim.movieId " +
+                            "   LEFT JOIN stars s ON sim.starId = s.id " +
+                            "   WHERE 1=1 ");
 
-            if (genre != null && !genre.isEmpty()) {
+            // Browsing function: filter by genres or title(first letter)
+            if (browseGenre != null && !browseGenre.isEmpty()) {
                 queryBuilder.append("AND m.id IN (SELECT gm.movieId FROM genres_in_movies gm " +
                         "JOIN genres g ON gm.genreId = g.id WHERE g.name = ?) ");
             }
@@ -86,26 +105,63 @@ public class MovieListServlet extends HttpServlet {
                 }
             }
 
-            queryBuilder.append(orderByClause);  // order by title/rating
-            queryBuilder.append(" LIMIT ? OFFSET ?;");  // pagination
+            // Search function: Filter by film title, year, director, star
+            if (searchTitle != null && !searchTitle.isEmpty()) {
+                queryBuilder.append("AND LOWER(m.title) LIKE ? ");
+            }
+            if (searchYear != null && !searchYear.isEmpty()) {
+                queryBuilder.append("AND m.year = ? ");
+            }
+            if (searchDirector != null && !searchDirector.isEmpty()) {
+                queryBuilder.append("AND LOWER(m.director) LIKE ? ");
+            }
+            if (searchStar != null && !searchStar.isEmpty()) {
+                queryBuilder.append("AND LOWER(s.name) LIKE ? ");
+            }
+
+            queryBuilder.append(") AS m "); // Close subquery!!!
+
+            // Sorting and paginatioin function
+            queryBuilder.append(orderByClause);
+            queryBuilder.append(" LIMIT ? OFFSET ?;");
 
             // prepare the query statement and pass parameters
             PreparedStatement movieStatement = conn.prepareStatement(queryBuilder.toString());
+
+            // Browsing parameter binding
             int paramIndex = 1;
-            if (genre != null && !genre.isEmpty()) {
-                movieStatement.setString(paramIndex++, genre);
+            if (browseGenre != null && !browseGenre.isEmpty()) {
+                movieStatement.setString(paramIndex++, browseGenre);
             }
             if (browseTitle != null && !browseTitle.isEmpty() && !browseTitle.equals("*")) {
                 movieStatement.setString(paramIndex++, browseTitle.toLowerCase() + "%");
             }
+
+            // Searching parameter binding
+            if (searchTitle != null && !searchTitle.isEmpty()) {
+                movieStatement.setString(paramIndex++, "%" + searchTitle.toLowerCase() + "%");
+            }
+            if (searchYear != null && !searchYear.isEmpty()) {
+                movieStatement.setInt(paramIndex++, Integer.parseInt(searchYear));
+            }
+            if (searchDirector != null && !searchDirector.isEmpty()) {
+                movieStatement.setString(paramIndex++, "%" + searchDirector.toLowerCase() + "%");
+            }
+            if (searchStar != null && !searchStar.isEmpty()) {
+                movieStatement.setString(paramIndex++, "%" + searchStar.toLowerCase() + "%");
+            }
+
+            // Pagination parameter binding
             movieStatement.setInt(paramIndex++, pageSize);
             movieStatement.setInt(paramIndex, offset);
+
             // execute
             ResultSet movieRs = movieStatement.executeQuery();
 
             // key: movieId, value: jsonObject with properties
             Map<String, JsonObject> movieMap = new HashMap<>();
-            JsonArray jsonArray = new JsonArray();  // used to store all movie jsonObject
+            // used to store all movieId for keep correct order and assign to jsonArray later
+            List<String> movieIdArray = new ArrayList<>();
 
             while (movieRs.next()) {
                 String movieId = movieRs.getString("id");
@@ -114,11 +170,11 @@ public class MovieListServlet extends HttpServlet {
                 jsonObject.addProperty("movie_id", movieId);
                 jsonObject.addProperty("title", movieRs.getString("title"));
                 jsonObject.addProperty("year", movieRs.getString("year"));
-                jsonObject.addProperty("director", movieRs.getString("year"));
+                jsonObject.addProperty("director", movieRs.getString("director"));
                 jsonObject.addProperty("rating", movieRs.getString("rating"));
 
                 movieMap.put(movieId, jsonObject);  // use to correspond to first-3-genres and first-3-stars
-                jsonArray.add(jsonObject);
+                movieIdArray.add(movieId);
             }
             movieRs.close();
             movieStatement.close();
@@ -155,7 +211,6 @@ public class MovieListServlet extends HttpServlet {
 
             // first three genres: sort by the star's movie count desc, then use alphabetical order to break ties.
             // Batch query "stars"
-            System.out.println(String.join(",", movieMap.keySet()));
             String starQuery = "WITH RankedStars AS (" +
                     "SELECT sim.movieId, s.id, s.name, COUNT(sim2.movieId) AS movie_count," +
                     "    ROW_NUMBER() OVER (PARTITION BY sim.movieId ORDER BY COUNT(sim2.movieId) DESC, s.name ASC) AS star_rank" +
@@ -181,14 +236,22 @@ public class MovieListServlet extends HttpServlet {
 
                 movieMap.get(movieId).addProperty("stars", starName);
                 movieMap.get(movieId).addProperty("star_ids", starId);
+
             }
             starRs.close();
             starStatement.close();
 
+            JsonArray jsonArray = new JsonArray();  // used to store all movie jsonObject
+
+            for (String movieId : movieIdArray) {
+                JsonObject movieObject = movieMap.get(movieId);
+                jsonArray.add(movieObject);
+            }
+
             // Returns movie data and total pages
             JsonObject resultJsonObject = new JsonObject();
             resultJsonObject.add("movies", jsonArray);  // Put the list of movies into the Movies field
-            resultJsonObject.addProperty("totalPages", getTotalPages(conn, genre, browseTitle, pageSize));  // totalPages
+            resultJsonObject.addProperty("totalPages", getTotalPages(conn, browseGenre, browseTitle, searchTitle, searchYear, searchDirector, searchStar, pageSize));  // totalPages
 
             out.write(resultJsonObject.toString());  // Write the result to the output
             response.setStatus(200);
@@ -205,10 +268,16 @@ public class MovieListServlet extends HttpServlet {
 
 
     // Get movies' count, and determine the total pages
-    private int getTotalPages(Connection conn, String genre, String browseTitle, int pageSize) throws Exception {
+    private int getTotalPages(Connection conn, String browseGenre, String browseTitle, String searchTitle,
+                              String searchYear, String searchDirector, String searchStar, int pageSize) throws Exception {
         // Construct the statement.
-        StringBuilder countQuery = new StringBuilder("SELECT COUNT(*) AS total FROM movies m WHERE 1=1 ");
-        if (genre != null && !genre.isEmpty()) {
+        StringBuilder countQuery = new StringBuilder(
+                "SELECT COUNT(DISTINCT m.id) AS total FROM movies m " +
+                        "LEFT JOIN stars_in_movies sim ON m.id = sim.movieId " +
+                        "LEFT JOIN stars s ON sim.starId = s.id WHERE 1=1 "
+        );
+        // Browsing:
+        if (browseGenre != null && !browseGenre.isEmpty()) {
             countQuery.append("AND m.id IN (SELECT gm.movieId FROM genres_in_movies gm " +
                     "JOIN genres g ON gm.genreId = g.id WHERE g.name = ?) ");
         }
@@ -219,15 +288,42 @@ public class MovieListServlet extends HttpServlet {
                 countQuery.append("AND LOWER(m.title) LIKE ? ");
             }
         }
+        // Searching:
+        if (searchTitle != null && !searchTitle.isEmpty()) {
+            countQuery.append("AND LOWER(m.title) LIKE ? ");
+        }
+        if (searchYear != null && !searchYear.isEmpty()) {
+            countQuery.append("AND m.year = ? ");
+        }
+        if (searchDirector != null && !searchDirector.isEmpty()) {
+            countQuery.append("AND LOWER(m.director) LIKE ? ");
+        }
+        if (searchStar != null && !searchStar.isEmpty()) {
+            countQuery.append("AND LOWER(s.name) LIKE ? ");
+        }
 
         // prepare the statement, pass the ? parameters.
         PreparedStatement countStatement = conn.prepareStatement(countQuery.toString());
         int paramIndex = 1;
-        if (genre != null && !genre.isEmpty()) {
-            countStatement.setString(paramIndex++, genre);
+        // Browsing
+        if (browseGenre != null && !browseGenre.isEmpty()) {
+            countStatement.setString(paramIndex++, browseGenre);
         }
         if (browseTitle != null && !browseTitle.isEmpty() && !browseTitle.equals("*")) {
             countStatement.setString(paramIndex, browseTitle.toLowerCase() + "%");
+        }
+        // Searching
+        if (searchTitle != null && !searchTitle.isEmpty()) {
+            countStatement.setString(paramIndex++, "%" + searchTitle.toLowerCase() + "%");
+        }
+        if (searchYear != null && !searchYear.isEmpty()) {
+            countStatement.setInt(paramIndex++, Integer.parseInt(searchYear));
+        }
+        if (searchDirector != null && !searchDirector.isEmpty()) {
+            countStatement.setString(paramIndex++, "%" + searchDirector.toLowerCase() + "%");
+        }
+        if (searchStar != null && !searchStar.isEmpty()) {
+            countStatement.setString(paramIndex, "%" + searchStar.toLowerCase() + "%");
         }
 
         // execute and get the total pages

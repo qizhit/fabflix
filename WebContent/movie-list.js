@@ -7,7 +7,6 @@ let currentPage = 1;  // Initialize the current page number to 1
 
 function handleStarResult(resultData) {
     console.log("resultdata", resultData);
-    console.log("resultdata", resultData.movies);
     console.log("handleStarResult: populating movie table from resultData");
     let MovieTableBodyElement = jQuery("#movie_table_body");
     MovieTableBodyElement.empty();  // Empty old data each time you populate new data
@@ -28,7 +27,7 @@ function handleStarResult(resultData) {
         ).join(", ");
         rowHTML += `<th>${starLinks}</th>`;
 
-        rowHTML += `<th>${movie.rating}</th>`;
+        rowHTML += `<th>${movie.rating || 'N/A'}</th>`;
         rowHTML += "</tr>";
 
         MovieTableBodyElement.append(rowHTML);
@@ -55,24 +54,42 @@ function getQueryParameter() {
     const urlParams = new URLSearchParams(window.location.search); // Extract query params from URL
     const genre = urlParams.get("genre");
     const browseTitle = urlParams.get("browse_title");
+    const searchTitle = urlParams.get("title");
+    const year = urlParams.get("year");
+    const director = urlParams.get("director");
+    const star = urlParams.get("star");
 
     let apiUrl = "api/movie_list?";
 
     // browsing
     if (genre) {
-        apiUrl += `genre=${encodeURIComponent(genre)}`; // Add genre to API URL
-    } else if (browseTitle) {
-        apiUrl += `browse_title=${encodeURIComponent(browseTitle)}`; // Add browseTitle to API URL
+        apiUrl += `genre=${encodeURIComponent(genre)}&`; // Add genre to API URL
+    }
+    if (browseTitle) {
+        apiUrl += `browse_title=${encodeURIComponent(browseTitle)}&`; // Add browseTitle to API URL
+    }
+    if (searchTitle) {
+        apiUrl += `title=${encodeURIComponent(searchTitle)}&`;
+    }
+    if (year) {
+        apiUrl += `year=${encodeURIComponent(year)}&`;
+    }
+    if (director) {
+        apiUrl += `director=${encodeURIComponent(director)}&`;
+    }
+    if (star) {
+        apiUrl += `star=${encodeURIComponent(star)}&`;
     }
 
     // Add sort parameter
     const sortSelect = document.getElementById("sortSelect").value;
     let [sortBy, sortOrder1, sortOrder2] = sortSelect.split("-");
-    apiUrl += `&sortBy=${sortBy}&sortOrder1=${sortOrder1}&sortOrder2=${sortOrder2}`;
+    console.log(sortBy, sortOrder1, sortOrder2)
+    apiUrl += `sortBy=${sortBy}&sortOrder1=${sortOrder1}&sortOrder2=${sortOrder2}&`;
 
     // Add paging parameters
     const pageSize = document.getElementById("pageSizeSelect").value;
-    apiUrl += `&page=${currentPage}&pageSize=${pageSize}`;
+    apiUrl += `page=${currentPage}&pageSize=${pageSize}`;
 
     return apiUrl;
 }
