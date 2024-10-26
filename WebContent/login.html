@@ -1,34 +1,133 @@
-<!-- This page will be redirected from any url if you are not logged in -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login to Fablix</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fablix</title>
+    <style>
+        /* Basic reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Background and main layout */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #a0d3a1; /* Light green background */
+            font-family: Arial, sans-serif;
+        }
+
+        /* Starry overlay */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/stardust.png') repeat;
+            opacity: 0.3;
+        }
+
+        /* Main container */
+        .login-container {
+            position: relative;
+            background-color: rgba(255, 255, 255, 0.9); /* Light translucent color */
+            border-radius: 15px;
+            padding: 30px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Header */
+        .login-container h2 {
+            color: #ffffff;
+            background-color: #4a934a; /* Dark green */
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        /* Form styling */
+        .login-container form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .login-container label {
+            text-align: left;
+            color: #4a934a;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .login-container input[type="text"],
+        .login-container input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: rgba(230, 255, 230, 0.7); /* Light green with transparency */
+            border: none;
+            border-radius: 20px;
+            box-sizing: border-box;
+            outline: none;
+            font-size: 16px;
+        }
+
+        /* Login button */
+        .login-container input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #4a934a; /* Dark green */
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        /* Button hover effect */
+        .login-container input[type="submit"]:hover {
+            background-color: #366d36; /* Darker green */
+        }
+
+        /* Error message styling */
+        #login_error_message {
+            color: red;
+            margin-top: 15px;
+        }
+    </style>
 </head>
 <body>
-<h2>Login to Fablix</h2>
-<!-- Set the method to POST to avoid showing the username/password in the URL
-     The default action is disabled to allow your own implementation. -->
-<form id="login_form" method="post" action="#">
-    <label><b>Username</b></label>
-    <label>
-        <input name="username" placeholder="Enter Username" type="text">
-    </label>
-    <br>
-    <label><b>Password</b></label>
-    <label>
-        <!-- type = "password" allows password column to be hidden (as ***) -->
-        <input name="password" placeholder="Enter Password" type="password">
-    </label>
-    <br>
-    <input type="submit" value="Login">
-</form>
 
-<div id="login_error_message"></div>
+<div class="login-container">
+    <h2>Fablix</h2>
+    <form id="login_form" method="post" action="#">
+        <label for="username">Username</label>
+        <input id="username" name="username" placeholder="Enter Username" type="text">
+
+        <label for="password">Password</label>
+        <input id="password" name="password" placeholder="Enter Password" type="password">
+
+        <input type="submit" value="Login">
+    </form>
+
+    <!-- Error message placeholder -->
+    <div id="login_error_message"></div>
+</div>
 
 <!-- include jQuery-->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<!-- include our own JS file -->
+<!-- include custom JS for form handling -->
 <script src="./login.js"></script>
 
 </body>

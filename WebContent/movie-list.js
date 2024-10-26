@@ -3,153 +3,118 @@
  * @param resultData jsonObject
  */
 
-let currentPage = 1;   // Track current page
-let pageSize = 10;     // Default page size
-let currentSortOption = "title";
-let currentSortOrder = "ASC";
+let currentPage = 1;  // Initialize the current page number to 1
 
 function handleStarResult(resultData) {
+    console.log("resultdata", resultData);
+    console.log("resultdata", resultData.movies);
     console.log("handleStarResult: populating movie table from resultData");
     let MovieTableBodyElement = jQuery("#movie_table_body");
-    MovieTableBodyElement.empty();
+    MovieTableBodyElement.empty();  // Empty old data each time you populate new data
 
-    // Populate the table with movie data from resultData
-    resultData.forEach((movie) => {
+    // Iterate through the movie data and fill the table
+    resultData.movies.forEach(movie => {
         let rowHTML = "<tr>";
+        rowHTML += `<th><a href='single-movie.html?id=${movie.movie_id}'>${movie.title}</a></th>`;
+        rowHTML += `<th>${movie.year}</th>`;
+        rowHTML += `<th>${movie.director}</th>`;
+        rowHTML += `<th>${movie.genres}</th>`;
 
-        // Title linked to the single movie page
-        rowHTML += `<th><a href='single-movie.html?id=${movie['movie_id']}'>${movie["title"]}</a></th>`;
-        rowHTML += `<th>${movie["year"]}</th>`;
-        rowHTML += `<th>${movie["director"]}</th>`;
-
-        let genres = movie["genres"].map(genre => genre["genre_name"]).join(", ");
-        rowHTML += `<th>${genres}</th>`;
-
-        let starLinks = movie["stars"].map(star => {
-            return `<a href='single-star.html?id=${star["star_id"]}'>${star["star_name"]}</a>`;
-        }).join(", ");
+        // Split the stars string and create individual hyperlinks
+        const stars = movie.stars.split(", ");
+        const star_ids = movie.star_ids.split(", ");
+        let starLinks = stars.map((name, index) =>
+            `<a href='single-star.html?id=${encodeURIComponent(star_ids[index])}'>${name}</a>`
+        ).join(", ");
         rowHTML += `<th>${starLinks}</th>`;
 
-        // Create hyperlinks for each star name with their IDs
-        // const stars = movie["stars"].split(", ");
-        // const star_ids = movie["star_ids"].split(", ");
-        // let starLinks = stars.map((name, index) => {
-        //     const encodedStarId = encodeURIComponent(star_ids[index]);
-        //     return `<a href='single-star.html?id=${encodedStarId}'>${name}</a>`;
-        // }).join(", ");
-        // rowHTML += `<th>${starLinks}</th>`;
-
-        // Rating
-        rowHTML += `<th>${movie["rating"]}</th>`;
+        rowHTML += `<th>${movie.rating}</th>`;
         rowHTML += "</tr>";
 
-        // Append the row HTML to the table body
         MovieTableBodyElement.append(rowHTML);
     });
 
-    //
-    // for (let i = 0; i < Math.min(20, resultData.length); i++) {
-    //     let rowHTML = "";
-    //     rowHTML += "<tr>";
-    //     rowHTML += "<th><a href='single-movie.html?id=" + resultData[i]['movie_id'] + "'>" + resultData[i]["title"] + "</a></th>";
-    //     rowHTML += "<th>" + resultData[i]["year"] + "</th>";
-    //     rowHTML += "<th>" + resultData[i]["director"] + "</th>";
-    //     rowHTML += "<th>" + resultData[i]["genres"] + "</th>";
-    //
-    //     // Split the stars string and create individual hyperlinks
-    //     const stars = resultData[i]["stars"].split(", ");
-    //     const star_ids = resultData[i]["star_ids"].split(", ");
-    //     // Create individual hyperlinks for each star name
-    //     let starLinks = stars.map((name, index) => {
-    //         const encodedStarId = encodeURIComponent(star_ids[index]); // Encode star ID
-    //         return `<a href='single-star.html?id=${encodedStarId}'>${name}</a>`;
-    //     }).join(", ");
-    //     rowHTML += "<th>" + starLinks + "</th>";
-    //
-    //     rowHTML += "<th>" + resultData[i]["rating"] + "</th>";
-    //     rowHTML += "</tr>";
-    //
-    //     MovieTableBodyElement.append(rowHTML);
-    // }
+    updatePaginationControls(resultData.totalPages);
 }
 
-function loadMovies(sortOption = "title", sortOrder = "ASC", page = 1, pageSize = 10) {
-    // Makes the HTTP GET request with sort parameters and registers the handleStarResult callback
+/**
+ * Updates the pagination controls (Previous, Next, and Page Info).
+ */
+function updatePaginationControls(totalPages) {
+    document.getElementById("pageInfo").innerText = `${currentPage} / ${totalPages}`;
+
+    document.getElementById("prevPage").disabled = currentPage === 1;
+    document.getElementById("nextPage").disabled = currentPage >= totalPages;
+}
+
+
+/**
+ * Extracts `genre` or `title` parameters from the URL and constructs the API request URL.
+ */
+function getQueryParameter() {
+    const urlParams = new URLSearchParams(window.location.search); // Extract query params from URL
+    const genre = urlParams.get("genre");
+    const title = urlParams.get("title");
+
+    let apiUrl = "api/movie_list?";
+    if (genre) {
+        apiUrl += `genre=${encodeURIComponent(genre)}`; // Add genre to API URL
+    } else if (title) {
+        apiUrl += `title=${encodeURIComponent(title)}`; // Add title to API URL
+    }
+
+    // Add sort parameter
+    const sortSelect = document.getElementById("sortSelect").value;
+    let [sortBy, sortOrder1, sortOrder2] = sortSelect.split("-");
+    apiUrl += `&sortBy=${sortBy}&sortOrder1=${sortOrder1}&sortOrder2=${sortOrder2}`;
+
+    // Add paging parameters
+    const pageSize = document.getElementById("pageSizeSelect").value;
+    apiUrl += `&page=${currentPage}&pageSize=${pageSize}`;
+
+    return apiUrl;
+}
+
+
+// Listen for changes to the "Movies per page" option and reload the data.
+document.getElementById("pageSizeSelect").addEventListener("change", () => {
+    currentPage = 1;  // Reset to page 1 on sort change
+    reloadTable();
+});
+
+// Listen for changes in sorting options and reload the data.
+document.getElementById("sortSelect").addEventListener("change", () => {
+    currentPage = 1;  // Reset to page 1 on page size change
+    reloadTable();
+});
+
+// Event listeners for pagination buttons
+document.getElementById("prevPage").addEventListener("click", () => {
+    if (currentPage > 1) {
+        currentPage--;
+        reloadTable();
+    }
+});
+
+document.getElementById("nextPage").addEventListener("click", () => {
+    currentPage++;
+    reloadTable();
+});
+
+/**
+ * Get the data from the API and refresh the table.
+ */
+function reloadTable() {
+    const apiUrl = getQueryParameter();
+    console.log("Requesting data from: " + apiUrl);
+
     jQuery.ajax({
         dataType: "json",
         method: "GET",
-        url: `api/movie_list?page=${currentPage}&size=${pageSize}&sortOption=${sortOption}&sortOrder=${sortOrder}`,
-        success: (resultData) => {
-            handleStarResult(resultData);
-            updatePageInfo();
-        }
+        url: apiUrl,
+        success: (resultData) => handleStarResult(resultData),
     });
 }
-function updatePageInfo() {
-    // Updates the page info display
-    jQuery("#pageInfo").text(`Page ${currentPage}`);
-}
 
-jQuery(document).ready(() => {
-    loadMovies();
-
-    // Event listeners for sorting options
-    jQuery("#sort-title-asc").click(() => {
-        sortOption = "title";
-        sortOrder = "ASC";
-        currentPage = 1; // Reset to first page
-        loadMovies();
-    });
-
-    jQuery("#sort-title-desc").click(() => {
-        sortOption = "title";
-        sortOrder = "DESC";
-        currentPage = 1;
-        loadMovies();
-    });
-
-    jQuery("#sort-rating-asc").click(() => {
-        sortOption = "rating";
-        sortOrder = "ASC";
-        currentPage = 1;
-        loadMovies();
-    });
-
-    jQuery("#sort-rating-desc").click(() => {
-        sortOption = "rating";
-        sortOrder = "DESC";
-        currentPage = 1;
-        loadMovies();
-    });
-
-    // Event listener for movies per page dropdown
-    jQuery("#pageSizeSelect").change(() => {
-        pageSize = parseInt(jQuery("#pageSizeSelect").val());
-        currentPage = 1;
-        loadMovies();
-    });
-
-    // Pagination controls
-    jQuery("#prevPage").click(() => {
-        if (currentPage > 1) {
-            currentPage--;
-            loadMovies();
-        }
-    });
-
-    jQuery("#nextPage").click(() => {
-        currentPage++;
-        loadMovies();
-    });
-});
-/**
- * Once this .js is loaded, following scripts will be executed by the browser
- */
-
-// Makes the HTTP GET request and registers on success callback function handleStarResult
-// jQuery.ajax({
-//     dataType: "json", // Setting return data type
-//     method: "GET", // Setting request method
-//     url: "api/movie_list", // Setting request url, which is mapped by MovieListServlet in MovieListServlet.java
-//     success: (resultData) => handleStarResult(resultData) // Setting callback function to handle data returned successfully by the StarsServlet
-// });
+// Load table data at initialization
+reloadTable();
