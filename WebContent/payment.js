@@ -5,49 +5,52 @@ $(document).ready(function () {
 
     /**
      * Handle the data returned by the server for session info and cart
-     * @param resultDataString JSON object with session and cart info
+     * @param resultData JSON object with session and cart info
      */
-    function handleSessionData(resultDataString) {
+    function handleSessionData(resultData) {
         try {
-            let resultDataJson = JSON.parse(resultDataString);
-
-
             console.log("handle session response");
-            console.log(resultDataJson);
+            console.log(resultData);
 
             // Display session information
-            $("#sessionID").text("Session ID: " + resultDataJson["sessionID"]);
-            $("#lastAccessTime").text("Last access time: " + resultDataJson["lastAccessTime"]);
+            if (resultData.sessionID && resultData.lastAccessTime) {
+                $("#sessionID").text("Session ID: " + resultData.sessionID);
+                $("#lastAccessTime").text("Last access time: " + resultData.lastAccessTime);
+            }
 
             // Calculate and display total price from shopping cart items
-            const shoppingCart = resultDataJson["shoppingCart"];
-            if (shoppingCart && shoppingCart.length > 0) {
+            const shoppingCart = resultData.shoppingCart;
+            if (Array.isArray(shoppingCart) && shoppingCart.length > 0) {
                 const totalPrice = shoppingCart.reduce((total, item) => total + item.price * item.quantity, 0);
                 $("#totalPrice").text("Total Price: $" + totalPrice.toFixed(2));
             } else {
                 $("#totalPrice").text("Total Price: $0.00");
             }
         } catch (e) {
-            console.error("Error parsing JSON response:", e);
+            console.error("Error handling session data:", e);
+            $("#errorMessage").text("An error occurred while retrieving session data.");
         }
     }
 
     /**
      * Handle the response from the server after submitting payment
-     * @param resultDataString JSON object with payment success or failure
+     * @param resultData JSON object with payment success or failure
      */
-    function handlePaymentResponse(resultDataString) {
-        let resultDataJson = JSON.parse(resultDataString);
+    function handlePaymentResponse(resultData) {
+        try {
+            console.log("handle payment response");
+            console.log(resultData);
 
-        console.log("handle payment response");
-        console.log(resultDataJson);
-
-        if (resultDataJson.success) {
-            // Redirect to confirmation page on successful payment
-            window.location.href = "confirmation.html";
-        } else {
-            // Show error message if payment failed
-            $("#errorMessage").text(resultDataJson.errorMessage);
+            if (resultData.success) {
+                // Redirect to confirmation page on successful payment
+                window.location.href = "confirmation.html";
+            } else {
+                // Show error message if payment failed
+                $("#errorMessage").text(resultData.errorMessage || "Payment failed. Please try again.");
+            }
+        } catch (e) {
+            console.error("Error handling payment response:", e);
+            $("#errorMessage").text("An error occurred during payment processing.");
         }
     }
 
@@ -68,23 +71,28 @@ $(document).ready(function () {
                 creditCardNumber: $("#creditCardNumber").val(),
                 expirationDate: $("#expirationDate").val()
             },
-            success: handlePaymentResponse,
+            success: function (resultData) {
+                handlePaymentResponse(resultData);
+
+                // Clear input form only on successful submission
+                if (resultData.success) {
+                    paymentForm[0].reset();
+                }
+            },
             error: function () {
                 $("#errorMessage").text("An error occurred while processing your payment. Please try again.");
             }
         });
-
-        // Clear input form after submission
-        paymentForm[0].reset();
     }
 
     // Load session data to show total price
     $.ajax("api/payment", {
         method: "GET",
-        dataType:"json",
+        dataType: "json", // Expecting JSON response
         success: handleSessionData,
         error: function () {
             console.log("Error occurred while loading session data");
+            $("#errorMessage").text("An error occurred while retrieving session data.");
         }
     });
 

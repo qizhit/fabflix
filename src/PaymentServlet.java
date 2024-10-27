@@ -47,37 +47,38 @@ public class PaymentServlet extends HttpServlet {
             try (Connection conn = dataSource.getConnection()) {
                 // Validate credit card
                 String cardQuery = "SELECT id FROM creditcards WHERE firstName = ? AND lastName = ? AND id = ? AND expiration = ?";
-                PreparedStatement cardStmt = conn.prepareStatement(cardQuery);
-                cardStmt.setString(1, firstName);
-                cardStmt.setString(2, lastName);
-                cardStmt.setString(3, creditCardNumber);
-                cardStmt.setString(4, expirationDate);
+                try (PreparedStatement cardStmt = conn.prepareStatement(cardQuery)) {
+                    cardStmt.setString(1, firstName);
+                    cardStmt.setString(2, lastName);
+                    cardStmt.setString(3, creditCardNumber);
+                    cardStmt.setString(4, expirationDate);
 
-                try (ResultSet rs = cardStmt.executeQuery()) {
-                    if (!rs.next()) {
-                        message = "Invalid credit card details. Please try again.";
-                    } else {
-                        // Check if the shopping cart has items
-                        List<CartItem> cart = (List<CartItem>) session.getAttribute("shoppingCart");
-                        if (cart == null || cart.isEmpty()) {
-                            message = "Your shopping cart is empty.";
+                    try (ResultSet rs = cardStmt.executeQuery()) {
+                        if (!rs.next()) {
+                            message = "Invalid credit card details. Please try again.";
                         } else {
-                            String saleInsert = "INSERT INTO sales (customerId, movieId, saleDate, quantity) VALUES (?, ?, ?, ?)";
-                            PreparedStatement saleStmt = conn.prepareStatement(saleInsert);
-                            int customerId = (Integer) session.getAttribute("customerId");
+                            // Check if the shopping cart has items
+                            List<CartItem> cart = (List<CartItem>) session.getAttribute("shoppingCart");
+                            if (cart == null || cart.isEmpty()) {
+                                message = "Your shopping cart is empty.";
+                            } else {
+                                String saleInsert = "INSERT INTO sales (customerId, movieId, saleDate, quantity) VALUES (?, ?, ?, ?)";
+                                PreparedStatement saleStmt = conn.prepareStatement(saleInsert);
+                                int customerId = (Integer) session.getAttribute("customerId");
 
-                            for (CartItem item : cart) {
-                                saleStmt.setInt(1, customerId);
-                                saleStmt.setString(2, item.getMovieId());
-                                saleStmt.setDate(3, new java.sql.Date(new Date().getTime()));
-                                saleStmt.setInt(4, item.getQuantity());
-                                saleStmt.executeUpdate();
+                                for (CartItem item : cart) {
+                                    saleStmt.setInt(1, customerId);
+                                    saleStmt.setString(2, item.getMovieId());
+                                    saleStmt.setDate(3, new java.sql.Date(new Date().getTime()));
+                                    saleStmt.setInt(4, item.getQuantity());
+                                    saleStmt.executeUpdate();
+                                }
+
+                                // Order successful
+                                orderSuccess = true;
+                                message = "Your order has been placed successfully!";
+                                session.removeAttribute("shoppingCart");  // Clear the cart
                             }
-
-                            // Order successful
-                            orderSuccess = true;
-                            message = "Your order has been placed successfully!";
-                            session.removeAttribute("shoppingCart");  // Clear the cart
                         }
                     }
                 }
