@@ -71,7 +71,7 @@ $(document).on('click', '.add-to-cart', function () {
             movieId: movieId,
             title: movieTitle,
             price: moviePrice,
-            quantity: 1  // 默认添加一个数量
+            quantity: 1  // By default, an amount is added
         },
         success: function (response) {
             alert(`"${movieTitle}" added to cart!`);
