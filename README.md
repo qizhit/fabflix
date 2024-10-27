@@ -23,11 +23,11 @@ It was developed using following technologies:
 
 ## Features Implemented
 1. Login Page
-   - Provides secure login for users with error handling for incorrect email or password.
-   - Prevents unauthenticated access to other pages by redirecting to the Login Page.
+   - Allows secure user login, with error handling for incorrect email or password.
+   - Prevents access to other pages without authentication, redirecting to the Login Page if necessary.
    - On successful login, redirects users to the Main Page.
 2. Main Page
-   - Home page after login, with options for movie browsing and search by title, year, director, or star's name, allowing flexible search terms.
+   - The home page after login, providing options to browse movies and search by title, year, director, or star’s name with flexible search terms.
 3. Movie List Page
    - Displays movie information: title, year, director, genres, stars, and rating.
    - Hyperlinks allow navigation to corresponding Single Movie or Single Star pages.
@@ -48,8 +48,14 @@ It was developed using following technologies:
 7. Payment Page
    - customers enter credit card details, then submit the order.
    - Records successful payments and displays a confirmation page; if payment fails, provides an error prompt.
+
 ## Substring matching design
---------------
+The substring matching feature in the MovieListServlet is designed to provide flexible search options for users by allowing partial matches on movie titles, directors, and star names. This is implemented using SQL LIKE queries with wildcard characters (%), enabling users to find results that match their input in various ways.
+**Matching Patterns**:
+- Starts with ('ABC%'): Matches titles starting with "ABC".
+- Contains ('%AN%'): Matches text containing "AN" anywhere. 
+- Ends with ('%XYZ'): Matches names ending with "XYZ".
+
 ## AWS Deployment
 This application is deployed on an AWS EC2 instance, which is configured with the necessary software to support the application, including:
 - Java 11
@@ -68,10 +74,10 @@ Deployment Steps:
 ## Demo Video
 A screen recording demo is available here:
 
-The demo shows the application running on an AWS instance and covers all the required functionalities, including navigating between pages and displaying movie and star details.
+The demo showcases the application running on an AWS instance, highlighting all key features, including page navigation, movie and star detail displays, and the shopping experience.
 
 ## Team Contributions
-We collaborated on setting up the environment
+We collaborated on setting up the environment and demo recording.
 Our specific contributions were as follows:
-- Xuan Gu: wrote the README.md file, single-movie/star, Payment frame.
-- Qizhi Tian: wrote the login functionality, Movie list functionalities, 
+- Xuan Gu: wrote the README.md file,  implemented the single-movie and single-star functionalities, Checkout/Payment/Confirmation frame and components.
+- Qizhi Tian: Developed the Login, Movie List, AddtoCart, Checkout, and Payment functionalities; designed the sorting, searching, and pagination features; and worked on page styling.
