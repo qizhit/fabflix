@@ -85,14 +85,8 @@ public class PaymentServlet extends HttpServlet {
                         }
                         System.out.println("i m here in after insert");
 
-                        Double totalPrice = (Double) session.getAttribute("totalPrice");
-                        totalPrice = totalPrice != null ? totalPrice : 0.0;
-                        responseJson.addProperty("totalPrice", totalPrice);
                         responseJson.addProperty("success", true);
                         responseJson.addProperty("message", "Order placed successfully.");
-
-                        session.removeAttribute("shoppingCart"); // 清空购物车
-                        session.removeAttribute("totalPrice");
 
                         System.out.println("responseJson: ---" + responseJson);
                     }

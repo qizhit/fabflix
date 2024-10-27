@@ -74,18 +74,15 @@ public class CheckoutServlet extends HttpServlet {
             switch (action) {
                 case "add":
                     addItemToCart(shoppingCart, movieId, title, price, quantity);
-                    updateTotalPrice(totalPrice, price, "add", session, quantity);
                     System.out.println(shoppingCart);
                     break;
                 case "update":
                     // 注意这里的quantity是change value： +1/-1
                     updateItemQuantity(shoppingCart, movieId, quantity);
-                    updateTotalPrice(totalPrice, price, "update", session, quantity);
                     System.out.println(shoppingCart);
                     break;
                 case "remove":
                     removeItemFromCart(shoppingCart, movieId);
-                    updateTotalPrice(totalPrice, price, "remove", session, quantity);
                     break;
                 default:
                     response.setStatus(500); // Bad request
@@ -142,16 +139,6 @@ public class CheckoutServlet extends HttpServlet {
     // Remove items from shopping cart
     private void removeItemFromCart(ArrayList<CartItem> cart, String movieId) {
         cart.removeIf(item -> item.getMovieId().equals(movieId));
-    }
-
-    private void updateTotalPrice(double totalPrice, double price, String action, HttpSession session, int quantity) {
-        if (action.equals("add")) {
-            session.setAttribute("totalPrice", totalPrice + price);
-        } else if (action.equals("update")) {
-            session.setAttribute("totalPrice", totalPrice - price);
-        } else if (action.equals("remove")) {
-            session.setAttribute("totalPrice", totalPrice - price * quantity);
-        }
     }
 
 }

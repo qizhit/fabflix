@@ -31,7 +31,7 @@ public class CartItem {
         this.quantity = quantity;
     }
 
-//    public double getTotalPrice() {
+//    public double getSingleMovieTotalPrice() {
 //        return price * quantity;
 //    }
 }
