@@ -4,81 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment - Fablix</title>
-    <style>
-        /* Basic styling */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-        }
-
-        /* Navbar styling */
-        .navbar {
-            background-color: #4a934a;
-            color: #fff;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .navbar div {
-            font-size: 14px;
-        }
-
-        /* Centered container styling */
-        .container-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 90vh;
-        }
-
-        .container {
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        h1 {
-            color: #4a934a;
-            margin-bottom: 20px;
-        }
-        .total-price {
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        input[type="text"], input[type="number"], input[type="date"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        input[type="submit"] {
-            width: 100%;
-            padding: 12px;
-            background-color: #4a934a;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-        input[type="submit"]:hover {
-            background-color: #3b763b;
-        }
-        .error-message {
-            color: red;
-            margin-top: 15px;
-        }
-    </style>
+    <link rel="stylesheet" href="css/shopping.css">
 </head>
 <body>
 
-<!-- N
+<header>
+    <h1>Fabflix</h1>
+    <nav>
+        <a href="index.html">Home</a>
+        <!--        <a href="#">Movies</a>-->
+        <a href="checkout.html">Checkout</a>
+    </nav>
+</header>
+
+<div class="container-wrapper">
+    <div class="container">
+        <h1>Payment</h1>
+        <div class="total-price" id="total-price">Total Price: $0.00</div>
+
+        <form id="payment-form" method="post" action="#">
+            <label for="first-name">First Name</label>
+            <input id="first-name" name="firstName" required type="text">
+
+            <label for="last-name">Last Name</label>
+            <input id="last-name" name="lastName" required type="text">
+
+            <label for="creditCardNumber">Credit Card Number</label>
+            <input type="text" id="creditCardNumber" name="creditCardNumber" placeholder="Credit Card Number" required>
+
+            <label for="exp-date">Expiration Date</label>
+            <input id="exp-date" name="expDate" required type="date">
+
+            <input type="submit" value="Place Order">
+        </form>
+
+        <div id="error-message" class="error-message"></div>
+    </div>
+</div>
+
+<!-- Footer with session information -->
+<footer class="footer">
+    <p id="sessionID">Session ID: </p>
+    <p id="lastAccessTime">Last access time: </p>
+</footer>
+
+</body>
+</html>

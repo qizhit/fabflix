@@ -70,7 +70,7 @@ $(document).ready(function () {
     }
 
     // Load session data to show total price
-    $.ajax("api/checkout", {
+    $.ajax("api/payment", {
         method: "GET",
         success: handleSessionData,
         error: function () {

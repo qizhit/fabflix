@@ -1,0 +1,136 @@
+/* Basic styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+}
+
+/* Header Styles */
+header {
+    background-color: #333;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    align-items: center;
+}
+
+header h1 {
+    color: white;
+    margin: 0;
+}
+
+header nav a {
+    color: white;
+    margin-left: 15px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+header nav a:hover {
+    color: #FF4081;
+}
+
+.footer {
+    background-color: #4a934a;
+    color: #fff;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.footer div {
+    font-size: 14px;
+}
+
+/* Centered container styling */
+.container-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+}
+
+.container {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+h1 {
+    color: #4a934a;
+    margin-bottom: 20px;
+}
+
+input[type="submit"], .proceed-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #4a934a;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover {
+    background-color: #3b763b;
+}
+
+
+/* For checkout.html */
+input[type="submit"]:hover, .proceed-btn:hover {
+    background-color: #3b763b;
+}
+
+.info {
+    margin: 15px 0;
+    font-weight: bold;
+}
+
+.cart-form {
+    margin-top: 20px;
+}
+
+
+#item_list {
+    margin-top: 20px;
+    text-align: left;
+}
+
+ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    color: #555;
+}
+
+
+/* For payment.html */
+.total-price {
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+input[type="text"], input[type="number"], input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.error-message {
+    color: red;
+    margin-top: 15px;
+}
