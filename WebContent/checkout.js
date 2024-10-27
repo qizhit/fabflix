@@ -44,12 +44,9 @@ $(document).ready(function () {
 
     // Updated total price display
     function updateTotalPrice(cartItems) {
-        // let totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-        // $("#proceed-button").val(`Proceed to Payment - $${totalPrice.toFixed(2)}`);
         let totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
         $("#proceed-button").text(`Proceed to Payment - $${totalPrice.toFixed(2)}`);
-        // $("#proceed-button").data("total-price", totalPrice.toFixed(2));
-
+        sessionStorage.setItem("totalPrice", totalPrice.toFixed(2));
     }
 
     $(document).on('click', '#proceed-button', function () {

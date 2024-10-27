@@ -32,16 +32,6 @@ $(document).ready(function () {
         });
     });
 
-    // 处理服务器响应
-    // function handlePaymentResponse(resultData) {
-    //     console.log("Payment response:", resultData);
-    //
-    //     if (resultData.success) {
-    //         window.location.href = "confirmation.html"; // 成功后跳转到确认页面
-    //     } else {
-    //         $("#error-message").text(resultData.message || "Payment failed. Please try again.");
-    //     }
-    // }
     function handlePaymentResponse(resultData) {
         console.log("Payment response:", resultData);
 
@@ -57,87 +47,3 @@ $(document).ready(function () {
         }
     }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// $(document).ready(function () {
-//     console.log("JavaScript loaded");
-//
-//     let paymentForm = $("#paymentForm");
-//
-//     /**
-//      * Handle the data returned by the server for session info and cart
-//      * @param resultData JSON object with session and cart info
-//      */
-//     function handleSessionData(resultData) {
-//
-//     }
-//
-//     /**
-//      * Handle the response from the server after submitting payment
-//      * @param resultData JSON object with payment success or failure
-//      */
-//     function handlePaymentResponse(resultData) {
-//         try {
-//             console.log("handle payment response");
-//             console.log(resultData);
-//
-//             if (resultData.success) {
-//                 // Redirect to confirmation page on successful payment
-//                 window.location.href = "confirmation.html";
-//             } else {
-//                 // Show error message if payment failed
-//                 $("#errorMessage").text(resultData.errorMessage || "Payment failed. Please try again.");
-//             }
-//         } catch (e) {
-//             console.error("Error handling payment response:", e);
-//             $("#errorMessage").text("An error occurred during payment processing.");
-//         }
-//     }
-//
-//     /**
-//      * Submit payment form with POST method
-//      * @param event Form submit event
-//      */
-//     function handleCartInfo(event) {
-//         console.log("submit payment form");
-//
-//         event.preventDefault();
-//
-//         $.ajax("api/payment", {
-//             method: "POST",
-//             data: {
-//                 firstName: $("#firstName").val(),
-//                 lastName: $("#lastName").val(),
-//                 creditCardNumber: $("#creditCardNumber").val(),
-//                 expirationDate: $("#expirationDate").val()
-//             },
-//             success: function (resultData) {
-//                 handlePaymentResponse(resultData);
-//
-//                 // Clear input form only on successful submission
-//                 if (resultData.success) {
-//                     paymentForm[0].reset();
-//                 }
-//             },
-//             error: function () {
-//                 $("#errorMessage").text("An error occurred while processing your payment. Please try again.");
-//             }
-//         });
-//     }
-//
-//     // Bind the submit action of the form to the correct event handler function
-//     paymentForm.submit(handleCartInfo);
-// });
