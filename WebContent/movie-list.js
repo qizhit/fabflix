@@ -35,6 +35,9 @@ function handleStarResult(resultData) {
         rowHTML += `<th>${starLinks}</th>`;
 
         rowHTML += `<th>${movie.rating || 'N/A'}</th>`;
+        // Add to Cart
+        rowHTML += `<th class="text-center align-middle">
+                    <button class="btn btn-success add-to-cart" data-id="${movie.movieId}" data-title="${movie.title}">Add</button></th>`;
         rowHTML += "</tr>";
 
         MovieTableBodyElement.append(rowHTML);
@@ -51,6 +54,17 @@ function handleStarResult(resultData) {
     apiUrlInfo = concatenateUrl(resultData.browseGenre, resultData.browseTitle,
         resultData.searchTitle, resultData.year, resultData.director, resultData.star);
 }
+
+// /**
+//  * Event handler for "Add to Cart" button
+//  */
+$(document).on('click', '.add-to-cart', function () {
+    const movieId = $(this).data('id');
+    const movieTitle = $(this).data('title');
+    alert(`Movie with ID: "${movieId}", Title: "${movieTitle}"  added to cart!`);
+    console.log(`Movie with ID: "${movieId}", Title: "${movieTitle}" added to cart!`);
+    // Future functionality: Store this movie in the user's shopping cart (session/localStorage)
+});
 
 /**
  * Updates the pagination controls (Previous, Next, and Page Info).

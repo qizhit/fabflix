@@ -66,16 +66,30 @@ function handleResult(resultData) {
     }).join(", ");
     rowHTML += "<th>" + starLinks + "</th>";  // Stars
     rowHTML += "<th>" + resultData[0]["rating"] + "</th>";  // Rating
+    // Add to Cart
+    rowHTML += `<th class="text-center align-middle">
+                <button class="btn btn-success add-to-cart" 
+                data-id="${resultData[0]["movie_id"]}" data-title="${resultData[0]["title"]}">Add</button></th>`;
     rowHTML += "</tr>";
 
     // Append the row to the table
     movieTableBodyElement.append(rowHTML);
 }
 
+// /**
+//  * Event handler for "Add to Cart" button
+//  */
+$(document).on('click', '.add-to-cart', function () {
+    const movieId = $(this).data('id');
+    const movieTitle = $(this).data('title');
+    alert(`Movie with ID: "${movieId}", Title: "${movieTitle}"  added to cart!`);
+    console.log(`Movie with ID: "${movieId}", Title: "${movieTitle}" added to cart!`);
+    // Future functionality: Store this movie in the user's shopping cart (session/localStorage)
+});
+
 /**
  * Once this .js is loaded, following scripts will be executed by the browser\
  */
-
 // Get id from URL
 let movieId = getParameterByName('id');
 
