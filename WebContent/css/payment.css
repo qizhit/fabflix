@@ -32,21 +32,6 @@ header nav a:hover {
     color: #FF4081;
 }
 
-.center-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: #4a934a;
-    color: #fff;
-    text-align: center;
-}
-
-.center-container p {
-    margin: 5px 0;
-    font-size: 15px;
-}
-
 /* Centered container styling */
 .container-wrapper {
     display: flex;
@@ -88,7 +73,7 @@ input[type="text"], input[type="number"], input[type="date"] {
     margin-top: 15px;
 }
 
-.place-order-btn {
+input[type="submit"] {
     width: 100%;
     padding: 12px;
     background-color: #4a934a;
@@ -100,6 +85,6 @@ input[type="text"], input[type="number"], input[type="date"] {
     transition: background-color 0.3s;
 }
 
-.place-order-btn:hover {
+input[type="submit"]:hover {
     background-color: #3b763b;
 }

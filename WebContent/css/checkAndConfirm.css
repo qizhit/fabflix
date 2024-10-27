@@ -82,7 +82,7 @@ button {
     color: white;
 }
 
-.proceed-btn {
+input[type="submit"] {
     margin: 20px;
     padding: 10px 20px;
     background-color: #4CAF50;
@@ -90,11 +90,7 @@ button {
     text-decoration: none;
     border-radius: 5px;
     display: inline-block;
-}
-
-.total-price {
-    font-weight: bold;
-    margin-left: 10px;
+    border-color: #4CAF50;
 }
 
 /* For confirmation.html only */

@@ -5,22 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment - Fablix</title>
     <link rel="stylesheet" href="css/payment.css">
-    <style>
-        .place-order-btn {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .place-order-btn:hover {
-            background-color: #45a049;
-        }
-    </style>
 </head>
 <body>
 
@@ -28,6 +12,7 @@
     <h1>Fabflix</h1>
     <nav>
         <a href="index.html">Home</a>
+        <!--        <a href="#">Movies</a>-->
         <a href="checkout.html">Checkout</a>
     </nav>
 </header>
@@ -37,7 +22,7 @@
         <h1>Payment</h1>
         <div class="total-price" id="total-price">Total Price: $0.00</div>
 
-        <form id="payment-form">
+        <form id="payment-form" method="post" action="#">
             <label for="first-name">First Name</label>
             <input id="first-name" name="firstName" required type="text">
 
@@ -50,36 +35,12 @@
             <label for="exp-date">Expiration Date</label>
             <input id="exp-date" name="expDate" required type="date">
 
-            <button type="button" class="place-order-btn" onclick="placeOrder()">Place Order</button>
+            <input type="submit" value="Place Order">
         </form>
 
         <div id="error-message" class="error-message"></div>
     </div>
 </div>
-
-<!-- Footer with session information -->
-<div class="center-container">
-    <p id="sessionID">Session ID: </p>
-    <p id="lastAccessTime">Last access time: </p>
-</div>
-
-<script>
-    function placeOrder() {
-        // 这里可以加入验证逻辑，比如检查输入的信用卡号码是否有效。
-        const firstName = document.getElementById('first-name').value;
-        const lastName = document.getElementById('last-name').value;
-        const creditCardNumber = document.getElementById('creditCardNumber').value;
-        const expDate = document.getElementById('exp-date').value;
-
-        if (!firstName || !lastName || !creditCardNumber || !expDate) {
-            document.getElementById('error-message').textContent = "Please fill in all required fields.";
-            return;
-        }
-
-        // 假设所有验证通过，跳转到确认页面
-        window.location.href = 'confirmation.html';
-    }
-</script>
 
 </body>
 </html>

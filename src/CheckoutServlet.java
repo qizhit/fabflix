@@ -16,8 +16,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Date;
 
-@WebServlet(name = "ShoppingServlet", urlPatterns = "/api/checkout")
-public class ShoppingServlet extends HttpServlet {
+@WebServlet(name = "CheckoutServlet", urlPatterns = "/api/checkout")
+public class CheckoutServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private DataSource dataSource;
 
