@@ -32,33 +32,19 @@ header nav a:hover {
     color: #FF4081;
 }
 
-/*.footer {*/
-/*    background-color: #4a934a;*/
-/*    color: #fff;*/
-/*    padding: 10px 20px;*/
-/*    display: flex;*/
-/*    justify-content: space-between;*/
-/*    align-items: center;*/
-/*    position: fixed;*/
-/*    bottom: 0;*/
-/*    !*width: 100%;*!*/
-/*    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);*/
-/*    z-index: 1000;*/
-/*}*/
-
 .center-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: #4a934a; /* 背景颜色 */
-    color: #fff; /* 字体颜色 */
+    background-color: #4a934a;
+    color: #fff;
     text-align: center;
 }
 
 .center-container p {
-    margin: 5px 0; /* 每行之间添加一点间距 */
-    font-size: 15px; /* 调整字体大小 */
+    margin: 5px 0;
+    font-size: 15px;
 }
 
 /* Centered container styling */

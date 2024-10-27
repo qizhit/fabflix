@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fablix - Checkout</title>
-    <link rel="stylesheet" href="css/shopping.css">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="./css/checkout.css">
 </head>
 <body>
-
 <header>
     <h1>Fabflix</h1>
     <nav>
@@ -17,40 +16,91 @@
     </nav>
 </header>
 
-<div class="container-wrapper">
-    <div class="container">
-        <h1>Checkout - Fablix</h1>
-
-        <!-- Shopping Cart Form -->
-        <form id="cart" method="post" class="cart-form">
-            <label for="item">Add Item to Cart</label>
-            <input id="item" name="item" placeholder="Enter item name" required type="text">
-            <input type="submit" value="Add to Cart">
-        </form>
-
-        <!-- Display Cart Items -->
-        <div id="item_list">Your cart is empty</div>
-
-        <!-- Proceed to Payment Button -->
-        <button class="proceed-btn" onclick="proceedToPayment()">Proceed to Payment</button>
-    </div>
+<div class="cart-container">
+    <h1>Shopping Cart</h1>
+    <table id="cart-table">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Quantity</th>
+            <th>Delete</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody id="cart-body">
+        <tr>
+            <td>The Terminal</td>
+            <td>
+                <button class="quantity-btn" onclick="changeQuantity(this, -1)">↓</button>
+                <span>2</span>
+                <button class="quantity-btn" onclick="changeQuantity(this, 1)">↑</button>
+            </td>
+            <td><button class="delete-btn" onclick="deleteRow(this)">X</button></td>
+            <td>$12</td>
+            <td>$24</td>
+        </tr>
+        <tr>
+            <td>Asylum</td>
+            <td>
+                <button class="quantity-btn" onclick="changeQuantity(this, -1)">↓</button>
+                <span>1</span>
+                <button class="quantity-btn" onclick="changeQuantity(this, 1)">↑</button>
+            </td>
+            <td><button class="delete-btn" onclick="deleteRow(this)">X</button></td>
+            <td>$6</td>
+            <td>$6</td>
+        </tr>
+        <tr>
+            <td>11 Minutes Ago</td>
+            <td>
+                <button class="quantity-btn" onclick="changeQuantity(this, -1)">↓</button>
+                <span>1</span>
+                <button class="quantity-btn" onclick="changeQuantity(this, 1)">↑</button>
+            </td>
+            <td><button class="delete-btn" onclick="deleteRow(this)">X</button></td>
+            <td>$8</td>
+            <td>$8</td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 
-<!-- Footer for session information -->
-<div class="center-container">
-    <p id="sessionID">Session ID: </p>
-    <p id="lastAccessTime">Last access time: </p>
+<div style="text-align: center;">
+    <a href="payment.html" class="proceed-btn">
+        Proceed to Payment - <span id="total-price">$38</span>
+    </a>
 </div>
 
-<!-- jQuery for handling AJAX and form submissions -->
-<script src='https://code.jquery.com/jquery-3.1.0.min.js'></script>
-<script src='checkout.js'></script>
+<!--<script>-->
+<!--    function changeQuantity(button, change) {-->
+<!--        const row = button.closest('tr');-->
+<!--        const quantitySpan = row.querySelector('td:nth-child(2) span');-->
+<!--        let quantity = parseInt(quantitySpan.textContent);-->
+<!--        const price = parseInt(row.querySelector('td:nth-child(4)').textContent.replace('$', ''));-->
+<!--        if (quantity + change > 0) {-->
+<!--            quantity += change;-->
+<!--            quantitySpan.textContent = quantity;-->
+<!--            row.querySelector('td:nth-child(5)').textContent = '$' + (quantity * price);-->
+<!--            updateTotalPrice();-->
+<!--        }-->
+<!--    }-->
 
-<script>
-    function proceedToPayment() {
-        window.location.href = 'payment.html';
-    }
-</script>
+<!--    function deleteRow(button) {-->
+<!--        const row = button.closest('tr');-->
+<!--        row.remove();-->
+<!--        updateTotalPrice();-->
+<!--    }-->
+
+<!--    function updateTotalPrice() {-->
+<!--        let total = 0;-->
+<!--        document.querySelectorAll('#cart-body tr').forEach(row => {-->
+<!--            const rowTotal = parseInt(row.querySelector('td:nth-child(5)').textContent.replace('$', ''));-->
+<!--            total += rowTotal;-->
+<!--        });-->
+<!--        document.getElementById('total-price').textContent = '$' + total;-->
+<!--    }-->
+<!--</script>-->
 
 </body>
 </html>
