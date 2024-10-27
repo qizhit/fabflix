@@ -4,10 +4,8 @@ $(document).ready(function () {
 
     // 处理表单提交事件
     paymentForm.submit(function (event) {
-        $("#payment-form").on("submit", function (event) {
-            event.preventDefault(); // 阻止默认表单提交
-            console.log("Submitting payment...");
-        });
+        event.preventDefault();
+        console.log("Submitting payment...");
 
         // 获取用户输入
         const firstName = $("#first-name").val();
@@ -35,13 +33,27 @@ $(document).ready(function () {
     });
 
     // 处理服务器响应
+    // function handlePaymentResponse(resultData) {
+    //     console.log("Payment response:", resultData);
+    //
+    //     if (resultData.success) {
+    //         window.location.href = "confirmation.html"; // 成功后跳转到确认页面
+    //     } else {
+    //         $("#error-message").text(resultData.message || "Payment failed. Please try again.");
+    //     }
+    // }
     function handlePaymentResponse(resultData) {
         console.log("Payment response:", resultData);
 
         if (resultData.success) {
+            alert("Order placed successfully!");
             window.location.href = "confirmation.html"; // 成功后跳转到确认页面
         } else {
             $("#error-message").text(resultData.message || "Payment failed. Please try again.");
+        }
+
+        if (resultData.totalPrice) {
+            $("#total-price").text(`Total Price: $${resultData.totalPrice}`);
         }
     }
 });

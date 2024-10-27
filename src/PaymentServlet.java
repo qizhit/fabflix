@@ -39,20 +39,26 @@ public class PaymentServlet extends HttpServlet {
         String expirationDate = request.getParameter("expirationDate");
         HttpSession session = request.getSession();
 
+        System.out.println("ENTER PAYMENT DO POST");
+
         System.out.println("Received: " + firstName + ", " + lastName + ", " + creditCardNumber + ", " + expirationDate);
 
         JsonObject responseJson = new JsonObject();
 
         try (Connection conn = dataSource.getConnection()) {
             // 验证信用卡信息
-            String cardQuery = "SELECT id FROM creditcards WHERE firstName = ? AND lastName = ? AND id = ? AND expiration = ?";
+            String cardQuery = "SELECT cc.id AS cardNumber, c.id AS customerId FROM creditcards AS cc, customers AS c " +
+                    "WHERE cc.id = ? AND cc.firstName = ? AND cc.lastName = ? AND cc.expiration = ? AND cc.id = c.ccId;";
             PreparedStatement cardStmt = conn.prepareStatement(cardQuery);
-            cardStmt.setString(1, firstName);
-            cardStmt.setString(2, lastName);
-            cardStmt.setString(3, creditCardNumber);
+            cardStmt.setString(1, creditCardNumber);
+            cardStmt.setString(2, firstName);
+            cardStmt.setString(3, lastName);
             cardStmt.setString(4, expirationDate);
 
+            System.out.println("i m here in first try");
+
             try (ResultSet rs = cardStmt.executeQuery()) {
+                System.out.println("i m here in second try");
                 if (!rs.next()) {
                     responseJson.addProperty("success", false);
                     responseJson.addProperty("message", "Invalid credit card details.");
@@ -64,24 +70,31 @@ public class PaymentServlet extends HttpServlet {
                         responseJson.addProperty("message", "Your shopping cart is empty.");
                     } else {
                         // 插入销售记录
-                        String saleInsert = "INSERT INTO sales (customerId, movieId, saleDate, quantity) VALUES (?, ?, ?, ?)";
+                        System.out.println("i m here in before insert");
+                        String saleInsert = "INSERT INTO sales (customerId, movieId, saleDate, quantity) VALUES (?, ?, ?, ?);";
                         PreparedStatement saleStmt = conn.prepareStatement(saleInsert);
-                        int customerId = (Integer) session.getAttribute("customerId");
 
+                        int customerId = Integer.parseInt(rs.getString("customerId"));
                         for (CartItem item : cart) {
                             saleStmt.setInt(1, customerId);
                             saleStmt.setString(2, item.getMovieId());
                             saleStmt.setDate(3, new java.sql.Date(new Date().getTime()));
+                            System.out.println(new java.sql.Date(new Date().getTime()));
                             saleStmt.setInt(4, item.getQuantity());
                             saleStmt.executeUpdate();
                         }
+                        System.out.println("i m here in after insert");
 
                         Double totalPrice = (Double) session.getAttribute("totalPrice");
                         totalPrice = totalPrice != null ? totalPrice : 0.0;
                         responseJson.addProperty("totalPrice", totalPrice);
                         responseJson.addProperty("success", true);
                         responseJson.addProperty("message", "Order placed successfully.");
+
                         session.removeAttribute("shoppingCart"); // 清空购物车
+                        session.removeAttribute("totalPrice");
+
+                        System.out.println("responseJson: ---" + responseJson);
                     }
                 }
             }
