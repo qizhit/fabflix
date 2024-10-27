@@ -49,6 +49,33 @@ $(document).ready(function () {
         itemListElement.html(cartContent);
     }
 
+$(".add-to-cart").click(function () {
+    const movieId = $(this).data("movie-id");
+    const title = $(this).data("title");
+    const price = $(this).data("price");
+
+    // AJAX POST to add the item to the cart
+    $.ajax({
+        url: "api/checkout",
+        method: "POST",
+        data: {
+            action: "add",
+            movieId: movieId,
+            title: title,
+            price: price,
+            quantity: 1
+        },
+        success: function (response) {
+            console.log("Movie added to cart:", response);
+            alert("Movie added to cart!");
+            loadSessionData(); // Refresh cart after adding item
+        },
+        error: function () {
+            alert("Error adding movie to cart. Please try again.");
+        }
+    });
+});
+
     /**
      * Submit form content with POST method
      * @param cartEvent
