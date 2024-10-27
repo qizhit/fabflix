@@ -53,20 +53,7 @@ public class SingleMovieServlet extends HttpServlet {
             // Get a connection from dataSource
 
             // Construct a query with parameter represented by "?"
-//            String query = "SELECT m.id, m.title, m.year, m.director, r.rating,\n" +
-//                    "GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', ') as genres,\n" +
-//                    "GROUP_CONCAT(DISTINCT s.name ORDER BY s.name SEPARATOR ', ') as stars,\n" +
-//                    "GROUP_CONCAT(DISTINCT s.id ORDER BY s.name SEPARATOR ', ') as star_ids\n" +
-//                    "FROM movies as m\n" +
-//                    "LEFT JOIN ratings as r ON m.id = r.movieId\n" +
-//                    "LEFT JOIN genres_in_movies as gim ON m.id = gim.movieId\n" +
-//                    "LEFT JOIN genres as g ON gim.genreId = g.id\n" +
-//                    "LEFT JOIN stars_in_movies as sim ON m.id = sim.movieId\n" +
-//                    "LEFT JOIN stars as s ON sim.starId = s.id\n" +
-//                    "WHERE m.id = ?\n" +
-//                    "GROUP BY m.id;";
-
-            String query = "SELECT m.id, m.title, m.year, m.director, r.rating, " +
+            String query = "SELECT m.id, m.title, m.year, m.director, r.rating, m.price, " +
                     "GROUP_CONCAT(DISTINCT g.name ORDER BY g.name SEPARATOR ', ') AS genres, " +
                     "GROUP_CONCAT(DISTINCT s.name ORDER BY movie_count DESC, s.name SEPARATOR ', ') AS stars, " +
                     "GROUP_CONCAT(DISTINCT s.id ORDER BY movie_count DESC, s.name SEPARATOR ', ') AS star_ids " +
@@ -102,6 +89,7 @@ public class SingleMovieServlet extends HttpServlet {
                 String movieStars = rs.getString("stars");
                 String movieRating = rs.getString("rating");
                 String movieStarIds = rs.getString("star_ids");
+                String moviePrice = rs.getString("price");
 
                 // Create a JsonObject based on the data we retrieve from rs
                 JsonObject jsonObject = new JsonObject();
@@ -113,6 +101,7 @@ public class SingleMovieServlet extends HttpServlet {
                 jsonObject.addProperty("stars", movieStars);
                 jsonObject.addProperty("rating", movieRating);
                 jsonObject.addProperty("star_ids", movieStarIds);
+                jsonObject.addProperty("price", moviePrice);
 
                 jsonArray.add(jsonObject);
             }

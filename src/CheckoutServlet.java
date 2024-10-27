@@ -13,17 +13,17 @@ public class CheckoutServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // 从 session 中获取购物车
+        // Get the shopping cart from session
         HttpSession session = request.getSession();
         ArrayList<CartItem> shoppingCart = (ArrayList<CartItem>) session.getAttribute("shoppingCart");
 
-        // 如果购物车为空，初始化购物车并存入 session
+        // If the cart is empty, initialize the cart and store the session
         if (shoppingCart == null) {
             shoppingCart = new ArrayList<>();
             session.setAttribute("shoppingCart", shoppingCart);
         }
 
-        // 将购物车数据转为 JSON 格式
+        // Convert shopping cart data to JSON format
         JsonArray cartJsonArray = new JsonArray();
         for (CartItem item : shoppingCart) {
             JsonObject itemJson = new JsonObject();
@@ -34,7 +34,7 @@ public class CheckoutServlet extends HttpServlet {
             cartJsonArray.add(itemJson);
         }
 
-        // 返回 JSON 响应给前端
+        // Returns a JSON response to the front-end
         JsonObject responseJson = new JsonObject();
         responseJson.add("shoppingCart", cartJsonArray);
 
@@ -48,14 +48,14 @@ public class CheckoutServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession();
 
-        // 从 session 中获取购物车，如果为空则创建新的购物车
+        // Get the cart from the session and create a new cart if it is empty
         ArrayList<CartItem> shoppingCart = (ArrayList<CartItem>) session.getAttribute("shoppingCart");
         if (shoppingCart == null) {
             shoppingCart = new ArrayList<>();
             session.setAttribute("shoppingCart", shoppingCart);
         }
 
-        // 获取请求参数
+        // Get request parameters
         String action = request.getParameter("action"); // "add", "update", "remove"
         String movieId = request.getParameter("movieId");
         String title = request.getParameter("title");
@@ -64,7 +64,7 @@ public class CheckoutServlet extends HttpServlet {
 
         JsonObject responseJson = new JsonObject();
 
-        // 根据 action 执行相应的操作
+        // Perform the corresponding action according to the action
         synchronized (shoppingCart) {
             switch (action) {
                 case "add":
@@ -87,7 +87,7 @@ public class CheckoutServlet extends HttpServlet {
             }
         }
 
-        // 将购物车内容转换为 JSON 并返回给前端
+        // Converts the cart contents to JSON and returns them to the front end
         JsonArray cartJsonArray = new JsonArray();
         for (CartItem item : shoppingCart) {
             JsonObject itemJson = new JsonObject();
@@ -108,30 +108,30 @@ public class CheckoutServlet extends HttpServlet {
     private void addItemToCart(ArrayList<CartItem> cart, String movieId, String title, double price, int quantity) {
         for (CartItem item : cart) {
             if (item.getMovieId().equals(movieId)) {
-                // 如果商品已经在购物车中，则增加数量
+                // If the item is already in the cart, increase the amount
                 item.setQuantity(item.getQuantity() + quantity);
                 return;
             }
         }
-        // 如果商品不在购物车中，添加新的商品
+        // If the item is not in the cart, add a new item
         cart.add(new CartItem(movieId, title, price, quantity));
     }
 
-    // 更新购物车中某个商品的数量
+    // Update the amount of an item in your cart
     private void updateItemQuantity(ArrayList<CartItem> cart, String movieId, int quantity) {
         for (CartItem item : cart) {
             if (item.getMovieId().equals(movieId)) {
                 if (quantity > 0) {
                     item.setQuantity(quantity);
                 } else {
-                    cart.remove(item); // 如果数量为 0，移除商品
+                    cart.remove(item); // If the quantity is 0, remove the item
                 }
                 return;
             }
         }
     }
 
-    // 从购物车中移除商品
+    // Remove items from shopping cart
     private void removeItemFromCart(ArrayList<CartItem> cart, String movieId) {
         cart.removeIf(item -> item.getMovieId().equals(movieId));
     }

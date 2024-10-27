@@ -1,7 +1,7 @@
 $(document).ready(function () {
     console.log("Checkout JS Loaded");
 
-    // 加载购物车内容并更新表格和总价
+    // Load the cart contents and update the table and total price
     function loadCart() {
         $.ajax({
             url: "api/checkout",
@@ -16,7 +16,7 @@ $(document).ready(function () {
         });
     }
 
-    // 更新购物车表格内容
+    // Update cart table contents
     function updateCartTable(cartItems) {
         let cartBody = $("#cart-body");
         cartBody.empty(); // 清空旧的内容
@@ -42,13 +42,13 @@ $(document).ready(function () {
         });
     }
 
-    // 更新总价显示
+    // Updated total price display
     function updateTotalPrice(cartItems) {
         let totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
         $("#proceed-button").val(`Proceed to Payment - $${totalPrice.toFixed(2)}`);
     }
 
-    // 增加或减少商品数量
+    // Increase or decrease the quantity of goods
     $(document).on('click', '.quantity-btn', function () {
         const movieId = $(this).data('id');
         const action = $(this).data('action');
@@ -68,7 +68,7 @@ $(document).ready(function () {
                 quantity: newQuantity
             },
             success: function () {
-                loadCart(); // 重新加载购物车内容
+                loadCart(); // Reload the cart contents
             },
             error: function () {
                 alert("Failed to update quantity. Please try again.");
@@ -76,7 +76,7 @@ $(document).ready(function () {
         });
     });
 
-    // 删除购物车中的商品
+    // Delete items from your shopping cart
     $(document).on('click', '.delete-btn', function () {
         const movieId = $(this).data('id');
         const movieTitle = $(this).data('title');
@@ -94,7 +94,7 @@ $(document).ready(function () {
                 quantity: movieQuantity
             },
             success: function () {
-                loadCart(); // 重新加载购物车内容
+                loadCart(); // Reload the cart contents
             },
             error: function () {
                 alert("Failed to remove item from cart. Please try again.");
@@ -102,6 +102,6 @@ $(document).ready(function () {
         });
     });
 
-    // 页面加载时加载购物车内容
+    // The cart contents are loaded when the page loads
     loadCart();
 });

@@ -69,7 +69,7 @@ function handleResult(resultData) {
     // Add to Cart
     rowHTML += `<th class="text-center align-middle">
                 <button class="btn btn-success add-to-cart" 
-                data-id="${resultData[0]["movie_id"]}" data-title="${resultData[0]["title"]}">Add</button></th>`;
+                data-id="${resultData[0]["movie_id"]}" data-title="${resultData[0]["title"]}" data-price="${resultData[0]["price"]}">Add</button></th>`;
     rowHTML += "</tr>";
 
     // Append the row to the table
@@ -82,9 +82,30 @@ function handleResult(resultData) {
 $(document).on('click', '.add-to-cart', function () {
     const movieId = $(this).data('id');
     const movieTitle = $(this).data('title');
-    alert(`Movie with ID: "${movieId}", Title: "${movieTitle}"  added to cart!`);
-    console.log(`Movie with ID: "${movieId}", Title: "${movieTitle}" added to cart!`);
-    // Future functionality: Store this movie in the user's shopping cart (session/localStorage)
+    const moviePrice = $(this).data('price');
+    console.log("print button data");
+    console.log(movieId);
+    console.log(movieTitle);
+    console.log(moviePrice)
+
+    $.ajax({
+        url: "api/checkout",
+        method: "POST",
+        data: {
+            action: "add",
+            movieId: movieId,
+            title: movieTitle,
+            price: moviePrice,
+            quantity: 1
+        },
+        success: function (response) {
+            alert(`"${movieTitle}" added to cart!`);
+            console.log(`Movie with ID: "${movieId}" added to cart.`);
+        },
+        error: function () {
+            alert("Failed to add movie to cart. Please try again.");
+        }
+    });
 });
 
 /**
