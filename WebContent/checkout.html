@@ -66,11 +66,6 @@
     </table>
 </div>
 
-<!--<div style="text-align: center;">-->
-<!--    <a href="payment.html" class="proceed-btn">-->
-<!--        Proceed to Payment - <span id="total-price">$38</span>-->
-<!--    </a>-->
-<!--</div>-->
 <div style="text-align: center; margin-top: 20px;">
     <form action="payment.html" method="get">
         <input type="submit" value="Proceed to Payment - $0" class="proceed-btn">
@@ -80,34 +75,5 @@
 </body>
 </html>
 
-<!--<script>-->
-<!--    function changeQuantity(button, change) {-->
-<!--        const row = button.closest('tr');-->
-<!--        const quantitySpan = row.querySelector('td:nth-child(2) span');-->
-<!--        let quantity = parseInt(quantitySpan.textContent);-->
-<!--        const price = parseInt(row.querySelector('td:nth-child(4)').textContent.replace('$', ''));-->
-<!--        if (quantity + change > 0) {-->
-<!--            quantity += change;-->
-<!--            quantitySpan.textContent = quantity;-->
-<!--            row.querySelector('td:nth-child(5)').textContent = '$' + (quantity * price);-->
-<!--            updateTotalPrice();-->
-<!--        }-->
-<!--    }-->
-
-<!--    function deleteRow(button) {-->
-<!--        const row = button.closest('tr');-->
-<!--        row.remove();-->
-<!--        updateTotalPrice();-->
-<!--    }-->
-
-<!--    function updateTotalPrice() {-->
-<!--        let total = 0;-->
-<!--        document.querySelectorAll('#cart-body tr').forEach(row => {-->
-<!--            const rowTotal = parseInt(row.querySelector('td:nth-child(5)').textContent.replace('$', ''));-->
-<!--            total += rowTotal;-->
-<!--        });-->
-<!--        document.getElementById('total-price').textContent = '$' + total;-->
-<!--    }-->
-<!--</script>-->
 
 
