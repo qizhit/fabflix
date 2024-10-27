@@ -51,7 +51,7 @@ function handleResult(resultData) {
     // Genres as hyperlinks, sorted alphabetically
     let genres = resultData[0]["genres"].split(", ");
     let genreLinks = genres.map(genre => {
-        return `<a href='movie-list.html?genre=${encodeURIComponent(genre)}'>${genre}</a>`;
+        return `<a href='movie-list.html?browse_genre=${encodeURIComponent(genre)}'>${genre}</a>`;
     }).join(", ");
     rowHTML += `<td>${genreLinks}</td>`;
 

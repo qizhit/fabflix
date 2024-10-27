@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -14,10 +15,7 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 // Declaring a WebServlet called MovieListServlet, which maps to url "/api/movie_list"
@@ -46,25 +44,62 @@ public class MovieListServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         // Gets browsing parameters
-        String browseGenre = request.getParameter("genre");
+        String browseGenre = request.getParameter("browse_genre");
         String browseTitle = request.getParameter("browse_title");
-
         // Get search parameters
         String searchTitle = request.getParameter("title");
         String searchYear = request.getParameter("year");
         String searchDirector = request.getParameter("director");
         String searchStar = request.getParameter("star");
+        String sortBy;
+        String sortOrder1;
+        String sortOrder2;
+        int page;
+        int pageSize;
+        boolean isSessionData;
 
-        // Gets the sorting parameters
-        String sortBy = request.getParameter("sortBy");
-        String sortOrder1 = request.getParameter("sortOrder1");
-        String sortOrder2 = request.getParameter("sortOrder2");
-
-        // Get Pagination parameters
-        int page = Integer.parseInt(request.getParameter("page"));  // currentPage
-        int pageSize = Integer.parseInt(request.getParameter("pageSize"));  // Number of movies per page
+        // Get the HttpSession object: restore the sorting, pagination, currentPage when return from a single page.
+        HttpSession session = request.getSession();
+        if (browseGenre == null && browseTitle == null && searchTitle == null
+                && searchYear == null && searchDirector == null && searchStar == null) {
+            // return page, need retore from session
+            browseGenre = (String) session.getAttribute("browseGenre");
+            browseTitle = (String) session.getAttribute("browseTitle");
+            searchTitle = (String) session.getAttribute("searchTitle");
+            searchYear = (String) session.getAttribute("searchYear");
+            searchDirector = (String) session.getAttribute("searchDirector");
+            searchStar = (String) session.getAttribute("searchStar");
+            sortBy = (String) session.getAttribute("sortBy");
+            sortOrder1 = (String) session.getAttribute("sortOrder1");
+            sortOrder2 = (String) session.getAttribute("sortOrder2");
+            page = (int) session.getAttribute("page");
+            pageSize = (int) session.getAttribute("pageSize");
+            isSessionData = true;
+        } else {  // new browse or search page
+            // Gets the sorting parameters
+            sortBy = request.getParameter("sortBy");
+            sortOrder1 = request.getParameter("sortOrder1");
+            sortOrder2 = request.getParameter("sortOrder2");
+            // Get Pagination parameters
+            page = Integer.parseInt(request.getParameter("page"));  // currentPage
+            pageSize = Integer.parseInt(request.getParameter("pageSize"));  // Number of movies per page
+            isSessionData = false;
+        }
         // Calculated offset
         int offset = (page - 1) * pageSize;
+        // Save the state to the session
+        session.setAttribute("browseGenre", browseGenre);
+        session.setAttribute("browseTitle", browseTitle);
+        session.setAttribute("searchTitle", searchTitle);
+        session.setAttribute("searchYear", searchYear);
+        session.setAttribute("searchDirector", searchDirector);
+        session.setAttribute("searchStar", searchStar);
+        session.setAttribute("sortBy", sortBy);
+        session.setAttribute("sortOrder1", sortOrder1);
+        session.setAttribute("sortOrder2", sortOrder2);
+        session.setAttribute("page", page);
+        session.setAttribute("pageSize", pageSize);
+
 
         // Construct sort statement
         String orderByClause = "";
@@ -77,11 +112,6 @@ public class MovieListServlet extends HttpServlet {
         // Get a connection from dataSource and let resource manager close the connection after usage.
         try (Connection conn = dataSource.getConnection()) {
             // Construct the query for selecting movies
-//            StringBuilder queryBuilder = new StringBuilder(
-//                    "SELECT DISTINCT m.id, m.title, m.year, m.director, COALESCE(r.rating, 'N/A') AS rating " +
-//                            "FROM movies m LEFT JOIN ratings r ON m.id = r.movieId " +
-//                            "LEFT JOIN stars_in_movies sim ON m.id = sim.movieId " +
-//                            "LEFT JOIN stars s ON sim.starId = s.id WHERE 1=1 ");
             StringBuilder queryBuilder = new StringBuilder(
                     "SELECT m.id, m.title, m.year, m.director, m.rating " +
                             "FROM ( " +
@@ -167,7 +197,7 @@ public class MovieListServlet extends HttpServlet {
                 String movieId = movieRs.getString("id");
 
                 JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("movie_id", movieId);
+                jsonObject.addProperty("movieId", movieId);
                 jsonObject.addProperty("title", movieRs.getString("title"));
                 jsonObject.addProperty("year", movieRs.getString("year"));
                 jsonObject.addProperty("director", movieRs.getString("director"));
@@ -251,6 +281,18 @@ public class MovieListServlet extends HttpServlet {
             // Returns movie data and total pages
             JsonObject resultJsonObject = new JsonObject();
             resultJsonObject.add("movies", jsonArray);  // Put the list of movies into the Movies field
+            resultJsonObject.addProperty("isSessionData", isSessionData);
+            resultJsonObject.addProperty("browseGenre", browseGenre);
+            resultJsonObject.addProperty("browseTitle", browseTitle);
+            resultJsonObject.addProperty("searchTitle", searchTitle);
+            resultJsonObject.addProperty("searchYear", searchYear);
+            resultJsonObject.addProperty("searchDirector", searchDirector);
+            resultJsonObject.addProperty("searchStar", searchStar);
+            resultJsonObject.addProperty("sortBy", sortBy);
+            resultJsonObject.addProperty("sortOrder1", sortOrder1);
+            resultJsonObject.addProperty("sortOrder2", sortOrder2);
+            resultJsonObject.addProperty("page", page); // currentPage
+            resultJsonObject.addProperty("pageSize", pageSize); // currentPage
             resultJsonObject.addProperty("totalPages", getTotalPages(conn, browseGenre, browseTitle, searchTitle, searchYear, searchDirector, searchStar, pageSize));  // totalPages
 
             out.write(resultJsonObject.toString());  // Write the result to the output

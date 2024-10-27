@@ -8,7 +8,7 @@ function handleMainResult(resultData) {
     let genreListElement = jQuery("#genre-list");
     let genres = resultData["genres"]; // Gets a genres array from JSON data
     genres.forEach((genre) => {
-        let genreLink = `<a href="movie-list.html?genre=${encodeURIComponent(genre)}">${genre}</a> `;
+        let genreLink = `<a href="movie-list.html?browse_genre=${encodeURIComponent(genre)}">${genre}</a> `;
         genreListElement.append(genreLink); // Add a genre hyperlink dynamically
     });
 

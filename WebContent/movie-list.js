@@ -4,6 +4,7 @@
  */
 
 let currentPage = 1;  // Initialize the current page number to 1
+let apiUrlInfo = "";
 
 function handleStarResult(resultData) {
     console.log("resultdata", resultData);
@@ -14,10 +15,16 @@ function handleStarResult(resultData) {
     // Iterate through the movie data and fill the table
     resultData.movies.forEach(movie => {
         let rowHTML = "<tr>";
-        rowHTML += `<th><a href='single-movie.html?id=${movie.movie_id}'>${movie.title}</a></th>`;
+        rowHTML += `<th><a href='single-movie.html?id=${movie.movieId}'>${movie.title}</a></th>`;
         rowHTML += `<th>${movie.year}</th>`;
         rowHTML += `<th>${movie.director}</th>`;
-        rowHTML += `<th>${movie.genres}</th>`;
+
+        // Split the genres string and create individual hyperlinks
+        const genres = movie.genres.split(", ");
+        let genreLinks = genres.map(genre =>
+            `<a href='movie-list.html?browse_genre=${encodeURIComponent(genre.trim())}'>${genre}</a>`
+        ).join(", ");
+        rowHTML += `<th>${genreLinks}</th>`;
 
         // Split the stars string and create individual hyperlinks
         const stars = movie.stars.split(", ");
@@ -33,52 +40,71 @@ function handleStarResult(resultData) {
         MovieTableBodyElement.append(rowHTML);
     });
 
-    updatePaginationControls(resultData.totalPages);
+    if (resultData.isSessionData === true) {
+        currentPage = resultData.page;
+        document.getElementById("sortSelect").value = `${resultData.sortBy}-${resultData.sortOrder1}-${resultData.sortOrder2}`;
+        document.getElementById("pageSizeSelect").value = resultData.pageSize;
+    }
+
+    updateSortPaginationControls(resultData.totalPages);
+
+    apiUrlInfo = concatenateUrl(resultData.browseGenre, resultData.browseTitle,
+        resultData.searchTitle, resultData.year, resultData.director, resultData.star);
 }
 
 /**
  * Updates the pagination controls (Previous, Next, and Page Info).
  */
-function updatePaginationControls(totalPages) {
+function updateSortPaginationControls(totalPages) {
     document.getElementById("pageInfo").innerText = `${currentPage} / ${totalPages}`;
-
     document.getElementById("prevPage").disabled = currentPage === 1;
     document.getElementById("nextPage").disabled = currentPage >= totalPages;
 }
 
+
+function concatenateUrl(browseGenre, browseTitle, searchTitle, year, director, star) {
+    let apiUrlInfo = "";
+    // browsing
+    if (browseGenre) {
+        apiUrlInfo += `browse_genre=${encodeURIComponent(browseGenre)}&`; // Add genre to API URL
+    }
+    if (browseTitle) {
+        apiUrlInfo += `browse_title=${encodeURIComponent(browseTitle)}&`; // Add browseTitle to API URL
+    }
+    if (searchTitle) {
+        apiUrlInfo += `title=${encodeURIComponent(searchTitle)}&`;
+    }
+    if (year) {
+        apiUrlInfo += `year=${encodeURIComponent(year)}&`;
+    }
+    if (director) {
+        apiUrlInfo += `director=${encodeURIComponent(director)}&`;
+    }
+    if (star) {
+        apiUrlInfo += `star=${encodeURIComponent(star)}&`;
+    }
+
+    return apiUrlInfo;
+}
 
 /**
  * Extracts `genre` or `title` parameters from the URL and constructs the API request URL.
  */
 function getQueryParameter() {
     const urlParams = new URLSearchParams(window.location.search); // Extract query params from URL
-    const genre = urlParams.get("genre");
-    const browseTitle = urlParams.get("browse_title");
-    const searchTitle = urlParams.get("title");
-    const year = urlParams.get("year");
-    const director = urlParams.get("director");
-    const star = urlParams.get("star");
-
     let apiUrl = "api/movie_list?";
 
-    // browsing
-    if (genre) {
-        apiUrl += `genre=${encodeURIComponent(genre)}&`; // Add genre to API URL
-    }
-    if (browseTitle) {
-        apiUrl += `browse_title=${encodeURIComponent(browseTitle)}&`; // Add browseTitle to API URL
-    }
-    if (searchTitle) {
-        apiUrl += `title=${encodeURIComponent(searchTitle)}&`;
-    }
-    if (year) {
-        apiUrl += `year=${encodeURIComponent(year)}&`;
-    }
-    if (director) {
-        apiUrl += `director=${encodeURIComponent(director)}&`;
-    }
-    if (star) {
-        apiUrl += `star=${encodeURIComponent(star)}&`;
+    if (urlParams.toString().length === 0) {
+        apiUrl += apiUrlInfo;
+    } else {
+        const browseGenre = urlParams.get("browse_genre");
+        const browseTitle = urlParams.get("browse_title");
+        const searchTitle = urlParams.get("title");
+        const year = urlParams.get("year");
+        const director = urlParams.get("director");
+        const star = urlParams.get("star");
+
+        apiUrl += concatenateUrl(browseGenre, browseTitle, searchTitle, year, director, star)
     }
 
     // Add sort parameter
@@ -135,5 +161,4 @@ function reloadTable() {
     });
 }
 
-// Load table data at initialization
 reloadTable();
