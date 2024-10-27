@@ -1,7 +1,7 @@
 $(document).ready(function () {
     console.log("Confirmation JS loaded");
 
-    // 调用 API 获取销售数据并填充表格
+    // Call the API to get the sales data and fill the table
     function loadConfirmationData() {
         $.ajax({
             url: "api/confirm", // 对应 ConfirmationServlet
@@ -16,7 +16,7 @@ $(document).ready(function () {
         });
     }
 
-    // 填充确认表格数据
+    // Fill in the confirmation form data
     function populateConfirmationTable(sales) {
         let confirmationBody = $("#confirmation-body");
         confirmationBody.empty(); // 清空旧数据
@@ -34,11 +34,11 @@ $(document).ready(function () {
         });
     }
 
-    // 更新总价显示
+    // Updated total price display
     function updateTotalCost(totalPrice) {
         $("#total-cost").text(`$${totalPrice.toFixed(2)}`);
     }
 
-    // 页面加载时获取确认数据
+    // Get confirmation data when the page loads
     loadConfirmationData();
 });

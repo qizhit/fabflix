@@ -82,15 +82,15 @@ public class ConfirmationServlet extends HttpServlet {
             rs.close();
             queryStmt.close();
 
-            // 创建响应JSON对象
+            // Create the response JSON object
             JsonObject responseJson = new JsonObject();
             responseJson.add("sales", salesArray);
             responseJson.addProperty("totalPrice", totalPrice);
 
-            // 清空购物车
+            // Empty shopping cart
             session.removeAttribute("shoppingCart");
 
-            // 返回响应
+            // Returning Responses
             out.write(responseJson.toString());
             response.setStatus(200);
 

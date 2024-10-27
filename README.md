@@ -46,15 +46,10 @@ It was developed using following technologies:
 6. Checkout Page
    - The Shopping Cart allows customers to add movies for purchase, including multiple copies of each.
 7. Payment Page
-   - customers enter credit card details, then submit the order.
+   - Customers enter credit card details, then submit the order.
    - Records successful payments and displays a confirmation page; if payment fails, provides an error prompt.
-
-## Substring matching design
-The substring matching feature in the MovieListServlet is designed to provide flexible search options for users by allowing partial matches on movie titles, directors, and star names. This is implemented using SQL LIKE queries with wildcard characters (%), enabling users to find results that match their input in various ways.
-**Matching Patterns**:
-- Starts with ('ABC%'): Matches titles starting with "ABC".
-- Contains ('%AN%'): Matches text containing "AN" anywhere. 
-- Ends with ('%XYZ'): Matches names ending with "XYZ".
+8. Confirmation Page
+   - Show order details including sale ID, movies purchased and the quantities, and total price after successfully placing a order.
 
 ## AWS Deployment
 This application is deployed on an AWS EC2 instance, which is configured with the necessary software to support the application, including:
@@ -70,6 +65,28 @@ Deployment Steps:
 - Use the prepared SQL files to create and populate the MySQL database
 - Use Maven to package the project and deploy the WAR file
 - Once the deployment is complete, the application is accessible via the EC2 instance’s public IP
+
+
+## Substring matching design
+The substring matching feature in the MovieListServlet is designed to provide flexible search options for users by allowing partial matches on movie titles, directors, and star names. This is implemented using SQL LIKE queries with wildcard characters (%), enabling users to find results that match their input in various ways.
+
+**Matching Patterns**:
+- Starts with ('ABC%'): Matches titles starting with "ABC".
+- Contains ('%AN%'): Matches text containing "AN" anywhere.
+- Ends with ('%XYZ'): Matches names ending with "XYZ".
+
+**The matching happens in two main areas:**
+- Browsing Title Matching:
+  - If you are browsing titles, and you provide a letter, it will find titles starting with that letter.
+  The line:
+  `countStatement.setString(paramIndex, browseTitle.toLowerCase() + "%");`
+  adds the % after the browseTitle, meaning it matches all titles that start with the given browseTitle (case-insensitive).
+  
+- Searching Specific Fields (Title, Director, Star):
+  - When searching for a movie title, director, or star, the matching is more flexible.
+  The line:
+  `countStatement.setString(paramIndex++, "%" + searchTitle.toLowerCase() + "%");`
+  adds % to both sides of the search text, which means it will match the given text anywhere in the field. For example, if searchTitle is "star", it will match "Star Wars", "The Starry Night", or "A Star is Born".
 
 ## Demo Video
 A screen recording demo is available here:

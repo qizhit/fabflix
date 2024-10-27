@@ -1,4 +1,3 @@
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,7 +10,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -46,7 +44,7 @@ public class PaymentServlet extends HttpServlet {
         JsonObject responseJson = new JsonObject();
 
         try (Connection conn = dataSource.getConnection()) {
-            // 验证信用卡信息
+            // Verify credit card information
             String cardQuery = "SELECT cc.id AS cardNumber, c.id AS customerId FROM creditcards AS cc, customers AS c " +
                     "WHERE cc.id = ? AND cc.firstName = ? AND cc.lastName = ? AND cc.expiration = ? AND cc.id = c.ccId;";
             PreparedStatement cardStmt = conn.prepareStatement(cardQuery);
@@ -63,13 +61,13 @@ public class PaymentServlet extends HttpServlet {
                     responseJson.addProperty("success", false);
                     responseJson.addProperty("message", "Invalid credit card details.");
                 } else {
-                    // 检查购物车是否为空
+                    // Check whether the cart is empty
                     ArrayList<CartItem> cart = (ArrayList<CartItem>) session.getAttribute("shoppingCart");
                     if (cart == null || cart.isEmpty()) {
                         responseJson.addProperty("success", false);
                         responseJson.addProperty("message", "Your shopping cart is empty.");
                     } else {
-                        // 插入销售记录
+                        // Insert sales record
                         System.out.println("i m here in before insert");
                         String saleInsert = "INSERT INTO sales (customerId, movieId, saleDate, quantity) VALUES (?, ?, ?, ?);";
                         PreparedStatement saleStmt = conn.prepareStatement(saleInsert);

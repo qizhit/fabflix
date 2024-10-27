@@ -77,7 +77,6 @@ public class CheckoutServlet extends HttpServlet {
                     System.out.println(shoppingCart);
                     break;
                 case "update":
-                    // 注意这里的quantity是change value： +1/-1
                     updateItemQuantity(shoppingCart, movieId, quantity);
                     System.out.println(shoppingCart);
                     break;
