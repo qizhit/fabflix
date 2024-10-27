@@ -2,6 +2,11 @@ $(document).ready(function () {
     console.log("Payment JS loaded");
     const paymentForm = $("#payment-form");
 
+    const totalPrice = sessionStorage.getItem("totalPrice");
+    if (totalPrice) {
+        $("#total-price").text(`Total Price: $${totalPrice}`);
+    }
+
     // 处理表单提交事件
     paymentForm.submit(function (event) {
         event.preventDefault();
