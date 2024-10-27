@@ -1,3 +1,28 @@
+/* Header Styles */
+header {
+    background-color: #333;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0;
+}
+
+header nav a {
+    color: white;
+    margin-left: 15px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+header nav a:hover {
+    color: #FF4081;
+}
+
 /* The title color */
 h1 {
     color: #4b0082;
@@ -12,4 +37,39 @@ body {
 /* Add a dark border to the table */
 table {
     border: 3px solid #d297fa;
+}
+
+
+/*---------------------------*/
+/* Pagination Controls */
+.pagination-controls {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.pagination-controls button {
+    margin: 0 10px;
+}
+
+/* Table Styling */
+.table-hover {
+    margin-top: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table-hover thead {
+    background-color: #6200EA;
+    color: white;
+}
+
+.table-hover th, .table-hover td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 12px;
+}
+
+.table-hover tr:hover {
+    background-color: #EDE7F6;
 }

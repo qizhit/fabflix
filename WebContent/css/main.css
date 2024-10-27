@@ -27,6 +27,10 @@ header nav a {
     font-weight: bold;
 }
 
+header nav a:hover {
+    color: #FF4081;
+}
+
 /* Main Content Styles */
 .container {
     text-align: center;
