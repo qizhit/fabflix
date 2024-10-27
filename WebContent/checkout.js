@@ -1,126 +1,107 @@
 $(document).ready(function () {
-    console.log("JavaScript loaded");
+    console.log("Checkout JS Loaded");
 
-    let cart = $("#cart");
-
-    /**
-     * Handle the data returned by IndexServlet
-     * @param resultDataString jsonObject, consists of session info
-     */
-    function handleSessionData(resultDataString) {
-        let resultDataJson = JSON.parse(resultDataString);
-
-        console.log("handle session response");
-        console.log(resultDataJson);
-        console.log(resultDataJson["sessionID"]);
-
-        // show the session information
-        $("#sessionID").text("Session ID: " + resultDataJson["sessionID"]);
-        $("#lastAccessTime").text("Last access time: " + resultDataJson["lastAccessTime"]);
-
-        // show cart information
-        handleCartArray(resultDataJson["shoppingCart"]);
-    }
-
-    /**
-     * Handle the items in item list
-     * @param resultArray jsonObject, needs to be parsed to html
-     */
-    function handleCartArray(cartItems) {
-        console.log("Cart Items:", cartItems);
-        // change it to html list
-        let itemListElement = $("#item_list");
-        let cartContent = "<ul>";
-
-        if (cartItems.length === 0) {
-            cartContent = "<p>Your cart is empty</p>";
-        } else {
-            cartItems.forEach(item => {
-                cartContent += `<li>
-                                    ${item.title} - Quantity: ${item.quantity}, 
-                                    Price: $${item.price.toFixed(2)}, 
-                                    Total: $${(item.quantity * item.price).toFixed(2)}
-                                </li>`;
-            });
-            cartContent += "</ul>";
-        }
-
-        // Refresh the item list on the front end
-        itemListElement.html(cartContent);
-    }
-
-$(".add-to-cart").click(function () {
-    const movieId = $(this).data("movie-id");
-    const title = $(this).data("title");
-    const price = $(this).data("price");
-
-    // AJAX POST to add the item to the cart
-    $.ajax({
-        url: "api/checkout",
-        method: "POST",
-        data: {
-            action: "add",
-            movieId: movieId,
-            title: title,
-            price: price,
-            quantity: 1
-        },
-        success: function (response) {
-            console.log("Movie added to cart:", response);
-            alert("Movie added to cart!");
-            loadSessionData(); // Refresh cart after adding item
-        },
-        error: function () {
-            alert("Error adding movie to cart. Please try again.");
-        }
-    });
-});
-
-    /**
-     * Submit form content with POST method
-     * @param cartEvent
-     */
-    function handleCartInfo(cartEvent) {
-        console.log("submit cart form");
-        /**
-         * When users click the submit button, the browser will not direct
-         * users to the url defined in HTML form. Instead, it will call this
-         * event handler when the event is triggered.
-         */
-        cartEvent.preventDefault();
-
-        $.ajax("api/checkout", {
-            method: "POST",
-            data: {
-                item: $("#item").val(),
-                action: "add"
-            },
-            success: function (resultDataString) {
-                let resultDataJson = JSON.parse(resultDataString);
-                handleCartArray(resultDataJson["shoppingCart"]);
-            },
-            error: function () {
-                console.log("Error occurred while submitting the cart data");
-            }
-        });
-
-        // clear input form
-        cart[0].reset();
-    }
-
-    function loadSessionData() {
+    // 加载购物车内容并更新表格和总价
+    function loadCart() {
         $.ajax({
             url: "api/checkout",
             method: "GET",
-            success: handleSessionData,
+            success: function (response) {
+                updateCartTable(response.shoppingCart);
+                updateTotalPrice(response.shoppingCart);
+            },
             error: function () {
-                console.error("Error occurred while loading session data");
-                $("#item_list").html("<p style='color:red;'>Failed to load session data. Please refresh the page.</p>");
+                alert("Failed to load cart. Please refresh the page.");
             }
         });
     }
 
-// Bind the submit action of the form to a event handler function
-    cart.submit(handleCartInfo);
-    loadSessionData();
+    // 更新购物车表格内容
+    function updateCartTable(cartItems) {
+        let cartBody = $("#cart-body");
+        cartBody.empty(); // 清空旧的内容
+
+        cartItems.forEach(item => {
+            const total = (item.price * item.quantity).toFixed(2); // 计算每项的总价
+            const rowHTML = `
+                <tr>
+                    <td>${item.title}</td>
+                    <td>
+                        <button class="quantity-btn" data-id="${item.movieId}" data-title="${item.title}" 
+                                data-quantity="${item.quantity}" data-price="${item.price}" data-action="decrease">↓</button>
+                        <span>${item.quantity}</span>
+                        <button class="quantity-btn" data-id="${item.movieId}" data-title="${item.title}" 
+                                data-quantity="${item.quantity}" data-price="${item.price}" data-action="increase">↑</button>
+                    </td>
+                    <td><button class="delete-btn" data-id="${item.movieId}" data-title="${item.title}" 
+                                data-quantity="${item.quantity}" data-price="${item.price}" >X</button></td>
+                    <td>$${item.price.toFixed(2)}</td>
+                    <td>$${total}</td>
+                </tr>`;
+            cartBody.append(rowHTML);
+        });
+    }
+
+    // 更新总价显示
+    function updateTotalPrice(cartItems) {
+        let totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        $("#proceed-button").val(`Proceed to Payment - $${totalPrice.toFixed(2)}`);
+    }
+
+    // 增加或减少商品数量
+    $(document).on('click', '.quantity-btn', function () {
+        const movieId = $(this).data('id');
+        const action = $(this).data('action');
+        const movieTitle = $(this).data('title');
+        const moviePrice = $(this).data('price');
+        const currentQuantity = $(this).data('quantity');
+        const newQuantity = action === 'increase' ? currentQuantity + 1 : currentQuantity - 1;
+
+        $.ajax({
+            url: "api/checkout",
+            method: "POST",
+            data: {
+                action: "update",
+                movieId: movieId,
+                title: movieTitle,
+                price: moviePrice,
+                quantity: newQuantity
+            },
+            success: function () {
+                loadCart(); // 重新加载购物车内容
+            },
+            error: function () {
+                alert("Failed to update quantity. Please try again.");
+            }
+        });
+    });
+
+    // 删除购物车中的商品
+    $(document).on('click', '.delete-btn', function () {
+        const movieId = $(this).data('id');
+        const movieTitle = $(this).data('title');
+        const moviePrice = $(this).data('price');
+        const movieQuantity = $(this).data('quantity');
+
+        $.ajax({
+            url: "api/checkout",
+            method: "POST",
+            data: {
+                action: "remove",
+                movieId: movieId,
+                title: movieTitle,
+                price: moviePrice,
+                quantity: movieQuantity
+            },
+            success: function () {
+                loadCart(); // 重新加载购物车内容
+            },
+            error: function () {
+                alert("Failed to remove item from cart. Please try again.");
+            }
+        });
+    });
+
+    // 页面加载时加载购物车内容
+    loadCart();
 });

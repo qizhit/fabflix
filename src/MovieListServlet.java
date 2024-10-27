@@ -113,9 +113,9 @@ public class MovieListServlet extends HttpServlet {
         try (Connection conn = dataSource.getConnection()) {
             // Construct the query for selecting movies
             StringBuilder queryBuilder = new StringBuilder(
-                    "SELECT m.id, m.title, m.year, m.director, m.rating " +
+                    "SELECT m.id, m.title, m.year, m.director, m.rating, m.price " +
                             "FROM ( " +
-                            "   SELECT DISTINCT m.id, m.title, m.year, m.director, r.rating " +
+                            "   SELECT DISTINCT m.id, m.title, m.year, m.director, r.rating, m.price " +
                             "   FROM movies m " +
                             "   LEFT JOIN ratings r ON m.id = r.movieId " +
                             "   LEFT JOIN stars_in_movies sim ON m.id = sim.movieId " +
@@ -202,6 +202,7 @@ public class MovieListServlet extends HttpServlet {
                 jsonObject.addProperty("year", movieRs.getString("year"));
                 jsonObject.addProperty("director", movieRs.getString("director"));
                 jsonObject.addProperty("rating", movieRs.getString("rating"));
+                jsonObject.addProperty("price", movieRs.getString("price"));
 
                 movieMap.put(movieId, jsonObject);  // use to correspond to first-3-genres and first-3-stars
                 movieIdArray.add(movieId);

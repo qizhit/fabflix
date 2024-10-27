@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping Cart</title>
     <link rel="stylesheet" href="css/checkAndConfirm.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="checkout.js" defer></script> <!-- 引入checkout.js -->
 </head>
 <body>
 <header>
     <h1>Fabflix</h1>
     <nav>
         <a href="index.html">Home</a>
-        <!--        <a href="#">Movies</a>-->
         <a href="checkout.html">Checkout</a>
     </nav>
 </header>
@@ -29,51 +30,16 @@
         </tr>
         </thead>
         <tbody id="cart-body">
-        <tr>
-            <td>The Terminal</td>
-            <td>
-                <button class="quantity-btn" onclick="changeQuantity(this, -1)">↓</button>
-                <span>2</span>
-                <button class="quantity-btn" onclick="changeQuantity(this, 1)">↑</button>
-            </td>
-            <td><button class="delete-btn" onclick="deleteRow(this)">X</button></td>
-            <td>$12</td>
-            <td>$24</td>
-        </tr>
-        <tr>
-            <td>Asylum</td>
-            <td>
-                <button class="quantity-btn" onclick="changeQuantity(this, -1)">↓</button>
-                <span>1</span>
-                <button class="quantity-btn" onclick="changeQuantity(this, 1)">↑</button>
-            </td>
-            <td><button class="delete-btn" onclick="deleteRow(this)">X</button></td>
-            <td>$6</td>
-            <td>$6</td>
-        </tr>
-        <tr>
-            <td>11 Minutes Ago</td>
-            <td>
-                <button class="quantity-btn" onclick="changeQuantity(this, -1)">↓</button>
-                <span>1</span>
-                <button class="quantity-btn" onclick="changeQuantity(this, 1)">↑</button>
-            </td>
-            <td><button class="delete-btn" onclick="deleteRow(this)">X</button></td>
-            <td>$8</td>
-            <td>$8</td>
-        </tr>
+        <!-- The shopping cart contents are generated dynamically by JavaScript -->
         </tbody>
     </table>
 </div>
 
 <div style="text-align: center; margin-top: 20px;">
     <form action="payment.html" method="get">
-        <input type="submit" value="Proceed to Payment - $0" class="proceed-btn">
+        <input type="submit" id="proceed-button" value="Proceed to Payment - $0" class="proceed-btn">
     </form>
 </div>
 
 </body>
 </html>
-
-
-
