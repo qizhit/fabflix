@@ -50,9 +50,14 @@ public class CheckoutServlet extends HttpServlet {
 
         // Get the cart from the session and create a new cart if it is empty
         ArrayList<CartItem> shoppingCart = (ArrayList<CartItem>) session.getAttribute("shoppingCart");
+        Double totalPrice = (Double) session.getAttribute("totalPrice");
         if (shoppingCart == null) {
             shoppingCart = new ArrayList<>();
             session.setAttribute("shoppingCart", shoppingCart);
+        }
+        if (totalPrice == null) {
+            totalPrice = 0.00;
+            session.setAttribute("totalPrice", totalPrice);
         }
 
         // Get request parameters
@@ -69,15 +74,18 @@ public class CheckoutServlet extends HttpServlet {
             switch (action) {
                 case "add":
                     addItemToCart(shoppingCart, movieId, title, price, quantity);
+                    updateTotalPrice(totalPrice, price, "add", session, quantity);
                     System.out.println(shoppingCart);
                     break;
                 case "update":
                     // 注意这里的quantity是change value： +1/-1
                     updateItemQuantity(shoppingCart, movieId, quantity);
+                    updateTotalPrice(totalPrice, price, "update", session, quantity);
                     System.out.println(shoppingCart);
                     break;
                 case "remove":
                     removeItemFromCart(shoppingCart, movieId);
+                    updateTotalPrice(totalPrice, price, "remove", session, quantity);
                     break;
                 default:
                     response.setStatus(500); // Bad request
@@ -104,7 +112,7 @@ public class CheckoutServlet extends HttpServlet {
         response.getWriter().write(responseJson.toString());
     }
 
-    // 添加商品到购物车
+    // Add items to cart
     private void addItemToCart(ArrayList<CartItem> cart, String movieId, String title, double price, int quantity) {
         for (CartItem item : cart) {
             if (item.getMovieId().equals(movieId)) {
@@ -134,6 +142,16 @@ public class CheckoutServlet extends HttpServlet {
     // Remove items from shopping cart
     private void removeItemFromCart(ArrayList<CartItem> cart, String movieId) {
         cart.removeIf(item -> item.getMovieId().equals(movieId));
+    }
+
+    private void updateTotalPrice(double totalPrice, double price, String action, HttpSession session, int quantity) {
+        if (action.equals("add")) {
+            session.setAttribute("totalPrice", totalPrice + price);
+        } else if (action.equals("update")) {
+            session.setAttribute("totalPrice", totalPrice - price);
+        } else if (action.equals("remove")) {
+            session.setAttribute("totalPrice", totalPrice - price * quantity);
+        }
     }
 
 }

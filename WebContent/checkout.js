@@ -19,7 +19,7 @@ $(document).ready(function () {
     // Update cart table contents
     function updateCartTable(cartItems) {
         let cartBody = $("#cart-body");
-        cartBody.empty(); // 清空旧的内容
+        cartBody.empty(); // Clear out old content
 
         cartItems.forEach(item => {
             const total = (item.price * item.quantity).toFixed(2); // 计算每项的总价
@@ -44,9 +44,17 @@ $(document).ready(function () {
 
     // Updated total price display
     function updateTotalPrice(cartItems) {
+        // let totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        // $("#proceed-button").val(`Proceed to Payment - $${totalPrice.toFixed(2)}`);
         let totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
         $("#proceed-button").val(`Proceed to Payment - $${totalPrice.toFixed(2)}`);
+        // $("#proceed-button").data("total-price", totalPrice.toFixed(2));
+
     }
+
+    $(document).on('click', '#proceed-button', function () {
+        window.location.href = "payment.html";
+    });
 
     // Increase or decrease the quantity of goods
     $(document).on('click', '.quantity-btn', function () {

@@ -22,18 +22,18 @@
         <h1>Payment</h1>
         <div class="total-price" id="total-price">Total Price: $0.00</div>
 
-        <form id="payment-form" method="post" action="#">
+        <form id="payment-form" method="post">
             <label for="first-name">First Name</label>
             <input id="first-name" name="firstName" required type="text">
 
             <label for="last-name">Last Name</label>
             <input id="last-name" name="lastName" required type="text">
 
-            <label for="creditCardNumber">Credit Card Number</label>
-            <input type="text" id="creditCardNumber" name="creditCardNumber" placeholder="Credit Card Number" required>
+            <label for="credit-card-number">Credit Card Number</label>
+            <input type="text" id="credit-card-number" name="creditCardNumber" placeholder="Credit Card Number" required>
 
             <label for="exp-date">Expiration Date</label>
-            <input id="exp-date" name="expDate" required type="date">
+            <input id="exp-date" name="expirationDate" required type="date">
 
             <input type="submit" value="Place Order">
         </form>
@@ -41,6 +41,9 @@
         <div id="error-message" class="error-message"></div>
     </div>
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="payment.js"></script>
 
 </body>
 </html>

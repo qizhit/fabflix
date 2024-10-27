@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping Cart</title>
     <link rel="stylesheet" href="css/checkAndConfirm.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="checkout.js" defer></script> <!-- 引入checkout.js -->
 </head>
 <body>
 <header>
@@ -35,11 +33,17 @@
     </table>
 </div>
 
+<!--<div style="text-align: center; margin-top: 20px;">-->
+<!--    <form action="payment.html" method="get">-->
+<!--        <input type="submit" id="proceed-button" value="Proceed to Payment - $0" class="proceed-btn">-->
+<!--    </form>-->
+<!--</div>-->
 <div style="text-align: center; margin-top: 20px;">
-    <form action="payment.html" method="get">
-        <input type="submit" id="proceed-button" value="Proceed to Payment - $0" class="proceed-btn">
-    </form>
+    <button id="proceed-button" class="proceed-btn">Proceed to Payment</button>
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="checkout.js"></script>
 
 </body>
 </html>

@@ -31,7 +31,7 @@ public class CartItem {
         this.quantity = quantity;
     }
 
-    public double getTotalPrice() {
-        return price * quantity;
-    }
+//    public double getTotalPrice() {
+//        return price * quantity;
+//    }
 }

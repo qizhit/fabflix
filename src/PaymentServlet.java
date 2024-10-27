@@ -16,6 +16,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.*;
+import java.util.ArrayList;
 
 @WebServlet(name = "PaymentServlet", urlPatterns = "/api/payment")
 public class PaymentServlet extends HttpServlet {
@@ -38,63 +39,129 @@ public class PaymentServlet extends HttpServlet {
         String expirationDate = request.getParameter("expirationDate");
         HttpSession session = request.getSession();
 
-        boolean orderSuccess = false;
-        String message;
+        System.out.println("Received: " + firstName + ", " + lastName + ", " + creditCardNumber + ", " + expirationDate);
 
-        if (firstName == null || lastName == null || creditCardNumber == null || expirationDate == null) {
-            message = "Missing payment details. Please fill out all fields.";
-        } else {
-            try (Connection conn = dataSource.getConnection()) {
-                // Validate credit card
-                String cardQuery = "SELECT id FROM creditcards WHERE firstName = ? AND lastName = ? AND id = ? AND expiration = ?";
-                try (PreparedStatement cardStmt = conn.prepareStatement(cardQuery)) {
-                    cardStmt.setString(1, firstName);
-                    cardStmt.setString(2, lastName);
-                    cardStmt.setString(3, creditCardNumber);
-                    cardStmt.setString(4, expirationDate);
+        JsonObject responseJson = new JsonObject();
 
-                    try (ResultSet rs = cardStmt.executeQuery()) {
-                        if (!rs.next()) {
-                            message = "Invalid credit card details. Please try again.";
-                        } else {
-                            // Check if the shopping cart has items
-                            List<CartItem> cart = (List<CartItem>) session.getAttribute("shoppingCart");
-                            if (cart == null || cart.isEmpty()) {
-                                message = "Your shopping cart is empty.";
-                            } else {
-                                String saleInsert = "INSERT INTO sales (customerId, movieId, saleDate, quantity) VALUES (?, ?, ?, ?)";
-                                PreparedStatement saleStmt = conn.prepareStatement(saleInsert);
-                                int customerId = (Integer) session.getAttribute("customerId");
+        try (Connection conn = dataSource.getConnection()) {
+            // 验证信用卡信息
+            String cardQuery = "SELECT id FROM creditcards WHERE firstName = ? AND lastName = ? AND id = ? AND expiration = ?";
+            PreparedStatement cardStmt = conn.prepareStatement(cardQuery);
+            cardStmt.setString(1, firstName);
+            cardStmt.setString(2, lastName);
+            cardStmt.setString(3, creditCardNumber);
+            cardStmt.setString(4, expirationDate);
 
-                                for (CartItem item : cart) {
-                                    saleStmt.setInt(1, customerId);
-                                    saleStmt.setString(2, item.getMovieId());
-                                    saleStmt.setDate(3, new java.sql.Date(new Date().getTime()));
-                                    saleStmt.setInt(4, item.getQuantity());
-                                    saleStmt.executeUpdate();
-                                }
+            try (ResultSet rs = cardStmt.executeQuery()) {
+                if (!rs.next()) {
+                    responseJson.addProperty("success", false);
+                    responseJson.addProperty("message", "Invalid credit card details.");
+                } else {
+                    // 检查购物车是否为空
+                    ArrayList<CartItem> cart = (ArrayList<CartItem>) session.getAttribute("shoppingCart");
+                    if (cart == null || cart.isEmpty()) {
+                        responseJson.addProperty("success", false);
+                        responseJson.addProperty("message", "Your shopping cart is empty.");
+                    } else {
+                        // 插入销售记录
+                        String saleInsert = "INSERT INTO sales (customerId, movieId, saleDate, quantity) VALUES (?, ?, ?, ?)";
+                        PreparedStatement saleStmt = conn.prepareStatement(saleInsert);
+                        int customerId = (Integer) session.getAttribute("customerId");
 
-                                // Order successful
-                                orderSuccess = true;
-                                message = "Your order has been placed successfully!";
-                                session.removeAttribute("shoppingCart");  // Clear the cart
-                            }
+                        for (CartItem item : cart) {
+                            saleStmt.setInt(1, customerId);
+                            saleStmt.setString(2, item.getMovieId());
+                            saleStmt.setDate(3, new java.sql.Date(new Date().getTime()));
+                            saleStmt.setInt(4, item.getQuantity());
+                            saleStmt.executeUpdate();
                         }
+
+                        Double totalPrice = (Double) session.getAttribute("totalPrice");
+                        totalPrice = totalPrice != null ? totalPrice : 0.0;
+                        responseJson.addProperty("totalPrice", totalPrice);
+                        responseJson.addProperty("success", true);
+                        responseJson.addProperty("message", "Order placed successfully.");
+                        session.removeAttribute("shoppingCart"); // 清空购物车
                     }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                message = "An error occurred during payment processing. Please try again.";
             }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            responseJson.addProperty("success", false);
+            responseJson.addProperty("message", "An error occurred during payment processing.");
+            response.setStatus(500);
         }
 
-        // Store order status and message in the session and redirect
-        session.setAttribute("orderSuccess", orderSuccess);
-        session.setAttribute("confirmationMessage", message);
-        if (orderSuccess) {
-            response.sendRedirect("confirmation.html");
-        } else {
-            response.sendRedirect("payment.html");
-        }
+        response.setContentType("application/json");
+        response.getWriter().write(responseJson.toString());
     }
 }
+
+//    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+//        String firstName = request.getParameter("firstName");
+//        String lastName = request.getParameter("lastName");
+//        String creditCardNumber = request.getParameter("creditCardNumber");
+//        String expirationDate = request.getParameter("expirationDate");
+//        HttpSession session = request.getSession();
+//
+//        boolean orderSuccess = false;
+//        String message;
+//
+//        if (firstName == null || lastName == null || creditCardNumber == null || expirationDate == null) {
+//            message = "Missing payment details. Please fill out all fields.";
+//        } else {
+//            try (Connection conn = dataSource.getConnection()) {
+//                // Validate credit card
+//                String cardQuery = "SELECT id FROM creditcards WHERE firstName = ? AND lastName = ? AND id = ? AND expiration = ?";
+//                try (PreparedStatement cardStmt = conn.prepareStatement(cardQuery)) {
+//                    cardStmt.setString(1, firstName);
+//                    cardStmt.setString(2, lastName);
+//                    cardStmt.setString(3, creditCardNumber);
+//                    cardStmt.setString(4, expirationDate);
+//
+//                    try (ResultSet rs = cardStmt.executeQuery()) {
+//                        if (!rs.next()) {
+//                            message = "Invalid credit card details. Please try again.";
+//                        } else {
+//                            // Check if the shopping cart has items
+//                            List<CartItem> cart = (List<CartItem>) session.getAttribute("shoppingCart");
+//                            if (cart == null || cart.isEmpty()) {
+//                                message = "Your shopping cart is empty.";
+//                            } else {
+//                                String saleInsert = "INSERT INTO sales (customerId, movieId, saleDate, quantity) VALUES (?, ?, ?, ?)";
+//                                PreparedStatement saleStmt = conn.prepareStatement(saleInsert);
+//                                int customerId = (Integer) session.getAttribute("customerId");
+//
+//                                for (CartItem item : cart) {
+//                                    saleStmt.setInt(1, customerId);
+//                                    saleStmt.setString(2, item.getMovieId());
+//                                    saleStmt.setDate(3, new java.sql.Date(new Date().getTime()));
+//                                    saleStmt.setInt(4, item.getQuantity());
+//                                    saleStmt.executeUpdate();
+//                                }
+//
+//                                // Order successful
+//                                orderSuccess = true;
+//                                message = "Your order has been placed successfully!";
+//                                session.removeAttribute("shoppingCart");  // Clear the cart
+//                            }
+//                        }
+//                    }
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                message = "An error occurred during payment processing. Please try again.";
+//            }
+//        }
+//
+//        // Store order status and message in the session and redirect
+//        session.setAttribute("orderSuccess", orderSuccess);
+//        session.setAttribute("confirmationMessage", message);
+//        if (orderSuccess) {
+//            response.sendRedirect("confirmation.html");
+//        } else {
+//            response.sendRedirect("payment.html");
+//        }
+//    }
+//}
