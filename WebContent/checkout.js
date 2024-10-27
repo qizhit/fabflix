@@ -81,14 +81,19 @@ $(document).ready(function () {
         cart[0].reset();
     }
 
-    $.ajax("api/checkout", {
-        method: "GET",
-        success: handleSessionData,
-        error: function () {
-            console.log("Error occurred while loading session data");
-        }
-    });
+    function loadSessionData() {
+        $.ajax({
+            url: "api/checkout",
+            method: "GET",
+            success: handleSessionData,
+            error: function () {
+                console.error("Error occurred while loading session data");
+                $("#item_list").html("<p style='color:red;'>Failed to load session data. Please refresh the page.</p>");
+            }
+        });
+    }
 
 // Bind the submit action of the form to a event handler function
     cart.submit(handleCartInfo);
+    loadSessionData();
 });

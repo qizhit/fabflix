@@ -1,105 +1,84 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - Fablix</title>
+    <style>
+        /* Basic styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        /* Navbar styling */
+        .navbar {
+            background-color: #4a934a;
+            color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar div {
+            font-size: 14px;
+        }
 
-    <!-- Link to your custom CSS -->
-    <link rel="stylesheet" href="./css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+        /* Centered container styling */
+        .container-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 90vh;
+        }
 
-    <title>Movie List</title>
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #4a934a;
+            margin-bottom: 20px;
+        }
+        .total-price {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        input[type="text"], input[type="number"], input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #4a934a;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        input[type="submit"]:hover {
+            background-color: #3b763b;
+        }
+        .error-message {
+            color: red;
+            margin-top: 15px;
+        }
+    </style>
 </head>
 <body>
-<header>
-    <h1>Fabflix</h1>
-    <nav>
-        <a href="index.html">Home</a>
-        <!--        <a href="#">Movies</a>-->
-        <a href="#">Checkout</a>
-    </nav>
-</header>
 
-
-<!--<h1>Movies List Page</h1>-->
-<div class="container">
-    <h1 class="my-4">Movies List Page</h1>
-
-    <!-- Sort Options -->
-    <div class="form-group row">
-        <label for="sortSelect" class="col-sm-2 col-form-label">Sort By:</label>
-        <div class="col-sm-4">
-            <select id="sortSelect" class="form-control">
-                <option value="title-asc-asc">Title ↑, Rating ↑</option>
-                <option value="title-asc-desc">Title ↑, Rating ↓</option>
-                <option value="title-desc-asc">Title ↓, Rating ↑</option>
-                <option value="title-desc-desc">Title ↓, Rating ↓</option>
-                <option value="rating-asc-asc">Rating ↑, Title ↑</option>
-                <option value="rating-asc-desc">Rating ↑, Title ↓</option>
-                <option value="rating-desc-asc">Rating ↓, Title ↑</option>
-                <option value="rating-desc-desc">Rating ↓, Title ↓</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- Page Size Dropdown -->
-    <div class="form-group row">
-        <label for="pageSizeSelect" class="col-sm-2 col-form-label">Movies per page:</label>
-        <div class="col-sm-4">
-            <select id="pageSizeSelect" class="form-control">
-                <option value="10">10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- Pagination Controls -->
-    <div class="pagination-controls text-center">
-        <button id="prevPage" class="btn btn-primary">Previous</button>
-        <span id="pageInfo"></span>
-        <button id="nextPage" class="btn btn-primary">Next</button>
-    </div>
-
-<!-- Id "movie_table" is useful for jQuery to find the html element with id, class here is mapping to Bootstrap defined class CSS -->
-<table id=movie_table class="table table-striped">
-    <!-- Create a table header -->
-    <thead class="table-header-highlight">
-    <tr>
-        <!-- Titles of each column-->
-        <th>Title</th>
-        <th>Year</th>
-        <th>Director</th>
-        <th>Genres</th>
-        <th>Stars</th>
-        <th>Rating</th>
-    </tr>
-    </thead>
-    <!-- Table body is left empty here, will be populated with the data retrieved with movie-list.js -->
-    <!-- Again, id "movie_table_body" is useful for jQuery to find this html element -->
-    <tbody id=movie_table_body></tbody>
-</table>
-
-</div>
-
-<!-- Load jQuery and Bootstrap JS -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-
-<!-- Load our own JS file -->
-<!-- The path is relative to movie-list.html, since these two files are in the same directory -->
-<!-- Note the url does not contain a "/" in the beginning, which means the url is relative to current path
-     otherwise the url is relative to the root path-->
-<script src="movie-list.js"></script>
-</body>
-
-
-</html>
+<!-- N

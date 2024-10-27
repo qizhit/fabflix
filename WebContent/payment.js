@@ -1,7 +1,7 @@
 $(document).ready(function () {
     console.log("JavaScript loaded");
 
-    let cart = $("#cart");
+    let paymentForm = $("#paymentForm");
 
     /**
      * Handle the data returned by IndexServlet
@@ -19,68 +19,57 @@ $(document).ready(function () {
         $("#lastAccessTime").text("Last access time: " + resultDataJson["lastAccessTime"]);
 
         // show cart information
-        handleCartArray(resultDataJson["shoppingCart"]);
+        const totalPrice = resultDataJson["shoppingCart"].reduce((total, item) => total + item.price * item.quantity, 0);
+        $("#totalPrice").text("Total Price: $" + totalPrice.toFixed(2));
+
     }
 
     /**
      * Handle the items in item list
-     * @param resultArray jsonObject, needs to be parsed to html
+     * @param resultDataString jsonObject, needs to be parsed to html
      */
-    function handleCartArray(cartItems) {
-        console.log("Cart Items:", cartItems);
-        // change it to html list
-        let itemListElement = $("#item_list");
-        let cartContent = "<ul>";
+    function handlePaymentResponse(resultDataString) {
+        let resultDataJson = JSON.parse(resultDataString);
 
-        if (cartItems.length === 0) {
-            cartContent = "<p>Your cart is empty</p>";
+        console.log("handle payment response");
+        console.log(resultDataJson);
+
+        if (resultDataJson.success) {
+            // Redirect to confirmation page on successful payment
+            window.location.href = "confirmation.html";
         } else {
-            cartItems.forEach(item => {
-                cartContent += `<li>
-                                    ${item.title} - Quantity: ${item.quantity}, 
-                                    Price: $${item.price.toFixed(2)}, 
-                                    Total: $${(item.quantity * item.price).toFixed(2)}
-                                </li>`;
-            });
-            cartContent += "</ul>";
+            // Show error message if payment failed
+            $("#errorMessage").text(resultDataJson.errorMessage);
         }
-
-        // Refresh the item list on the front end
-        itemListElement.html(cartContent);
     }
-
     /**
      * Submit form content with POST method
-     * @param cartEvent
+     * @param Event
      */
-    function handleCartInfo(cartEvent) {
-        console.log("submit cart form");
-        /**
-         * When users click the submit button, the browser will not direct
-         * users to the url defined in HTML form. Instead, it will call this
-         * event handler when the event is triggered.
-         */
-        cartEvent.preventDefault();
+    function handleCartInfo(event) {
+        console.log("submit payment form");
 
-        $.ajax("api/checkout", {
+        event.preventDefault();
+
+        $.ajax("api/payment", {
             method: "POST",
             data: {
-                item: $("#item").val(),
-                action: "add"
+                firstName: $("#firstName").val(),
+                lastName: $("#lastName").val(),
+                creditCardNumber: $("#creditCardNumber").val(),
+                expirationDate: $("#expirationDate").val()
             },
-            success: function (resultDataString) {
-                let resultDataJson = JSON.parse(resultDataString);
-                handleCartArray(resultDataJson["shoppingCart"]);
-            },
+            success: handlePaymentResponse,
             error: function () {
-                console.log("Error occurred while submitting the cart data");
+                $("#errorMessage").text("An error occurred while processing your payment. Please try again.");
             }
         });
 
-        // clear input form
-        cart[0].reset();
+        // Clear input form after submission
+        paymentForm[0].reset();
     }
 
+    // Load session data to show total price
     $.ajax("api/checkout", {
         method: "GET",
         success: handleSessionData,
@@ -89,6 +78,6 @@ $(document).ready(function () {
         }
     });
 
-// Bind the submit action of the form to a event handler function
-    cart.submit(handleCartInfo);
+    // Bind the submit action of the form to the event handler function
+    paymentForm.submit(handlePaymentSubmission);
 });
