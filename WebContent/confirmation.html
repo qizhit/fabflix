@@ -3,32 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Confirmation</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <title>Confirmation</title>
+    <link rel="stylesheet" href="css/checkAndConfirm.css">
 </head>
 <body>
-<div class="confirmation-container">
-    <h1>Order Confirmation</h1>
-    <p id="confirmationMessage">Processing your order...</p>
-    <button onclick="window.location.href='index.html'">Return to Home</button>
+<header>
+    <h1>Fabflix</h1>
+    <nav>
+        <a href="index.html">Home</a>
+<!--        <a href="movies.html">Movies</a>-->
+        <a href="checkout.html">Checkout</a>
+    </nav>
+</header>
+
+<div class="cart-container">
+    <h1>Confirmation</h1>
+    <table id="confirmation-table">
+        <thead>
+        <tr>
+            <th>Sale ID</th>
+            <th>Title</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>13566</td>
+            <td>The Terminal</td>
+            <td>1</td>
+            <td>$12</td>
+            <td>$12</td>
+        </tr>
+        <tr>
+            <td>13567</td>
+            <td>Asylum</td>
+            <td>3</td>
+            <td>$6</td>
+            <td>$18</td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        fetch("/api/getConfirmation")
-            .then(response => response.json())
-            .then(data => {
-                const messageElement = document.getElementById("confirmationMessage");
-                messageElement.textContent = data.message;
+<div style="text-align: center; margin-top: 20px;">
+    <h2>Total Cost: <span id="total-cost">$30</span></h2>
+    <p class="thank-you-message">Thank you for your purchase!</p>
+</div>
 
-                if (!data.success) {
-                    messageElement.style.color = "red";
-                }
-            })
-            .catch(error => {
-                console.error("Error loading confirmation data:", error);
-            });
-    });
-</script>
 </body>
 </html>
