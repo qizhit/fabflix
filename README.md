@@ -1,13 +1,17 @@
-# Fablix Application - Project1: Movie list, Single Movie and Single Star Page
+# Fablix Application - Project2: Interactive Movie Shopping
 
 ## Project Overview
-In this project, we implemented the core functionalities of Fablix Application, which includes:
-- A **Movie List Page** that shows the top 20 rated movies in the database.
+In this project, we are building an interactive movie browsing and shopping experience for Fabflix. The main features include:
+- A **Login Page** that secure access to the application.
+- A **Main Page** with movie browsing by category, movie search functionality, and shopping cart access.
+- A **Movie List Page** that displays selected movies from the database.
 - A **Single Movie Page** that shows the detailed information about a selected movie.
 - A **Single Star Page** that shows the detailed information about a selected star.
-- Users can navigate between these pages via hyperlinks or back button.
+- A **Checkout Page** to manage items in the shopping cart.
+- A **Payment Page** for completing secure transactions.
+- Easy navigation between pages via hyperlinks and the browser's back button.
 
-This is the first part of this application, and additional features will be developed later.
+This phase includes most core functionalities, with additional features planned for future development.
 
 ## Project Structure
 This project is designed with a clear separation of frontend and backend functionality.
@@ -18,18 +22,34 @@ It was developed using following technologies:
 - Database connection: Tomcat handles servlet requests, and manage the connection between the servlets and database.
 
 ## Features Implemented
-1. Movie List Page
-   - Displays the top 20 rated movies, sorted by rating. Each movie contains title, year, director, first three genres, first three stars, and rating.
-   - Hyperlinks are provided for each movie and star, allowing users to navigate to the corresponding Single Movie or Single Star page for more details.
-2. Single Movie Page
-   - Displays the selected movie's title, year, director, all genres, all stars that acted, and rating.
-   - Each star's name is a hyperlink that navigates to the Single Star Page.
-   - A back button allows users to return to the Movie List Page
-3. Single Star Page
+1. Login Page
+   - Provides secure login for users with error handling for incorrect email or password.
+   - Prevents unauthenticated access to other pages by redirecting to the Login Page.
+   - On successful login, redirects users to the Main Page.
+2. Main Page
+   - Home page after login, with options for movie browsing and search by title, year, director, or star's name, allowing flexible search terms.
+3. Movie List Page
+   - Displays movie information: title, year, director, genres, stars, and rating.
+   - Hyperlinks allow navigation to corresponding Single Movie or Single Star pages.
+   - Sorting options by "title then rating" or "rating then title."
+   - Pagination with customizable movie count per page and navigation buttons.
+   - Allows adding movies to the shopping cart.
+4. Single Movie Page
+   - Shows details of the selected movie, including all genres, stars, and rating.
+   - Hyperlinks to related genres and stars, allowing easy navigation.
+   - Back button to return to the Movie List Page with preserved sorting and category filters.
+   - Navigation options to the shopping cart and Main Page.
+5. Single Star Page
    - Displays the selected star's name, year of birth (N/A if not available), all movies in which this s star performed.
    - Each movie title is a hyperlink that navigates to the Single Movie Page.
-   - A back button allows users to return to the Movie List Page
-
+   - A back button allows users to return to the Movie List Page with customized sorting or category.
+6. Checkout Page
+   - The Shopping Cart allows customers to add movies for purchase, including multiple copies of each.
+7. Payment Page
+   - customers enter credit card details, then submit the order.
+   - Records successful payments and displays a confirmation page; if payment fails, provides an error prompt.
+## Substring matching design
+--------------
 ## AWS Deployment
 This application is deployed on an AWS EC2 instance, which is configured with the necessary software to support the application, including:
 - Java 11
@@ -43,14 +63,15 @@ Deployment Steps:
 - SSH into the EC2 instance again and perform a fresh Git clone of this project.
 - Use the prepared SQL files to create and populate the MySQL database
 - Use Maven to package the project and deploy the WAR file
-- Once the deployment is complete, the application is accessible via the EC2 instance’s public IP 
+- Once the deployment is complete, the application is accessible via the EC2 instance’s public IP
 
 ## Demo Video
-A screen recording demo is available here: https://www.youtube.com/watch?v=8VkIdEvpiic
+A screen recording demo is available here:
 
 The demo shows the application running on an AWS instance and covers all the required functionalities, including navigating between pages and displaying movie and star details.
 
 ## Team Contributions
-We collaborated on setting up the environment (Tasks 1-5) and worked together on the Movie List Page (MovieListServlet, index.html, and movie-list.js). Our specific contributions were as follows:
-- Xuan Gu: Developed the Single Movie feature, wrote the README.md file, and created the moviedb database.
-- Qizhi Tian:  Developed the Single Star feature, created the style.css file, and set up the AWS instance.
+We collaborated on setting up the environment
+Our specific contributions were as follows:
+- Xuan Gu: wrote the README.md file, single-movie/star, Payment frame.
+- Qizhi Tian: wrote the login functionality, Movie list functionalities, 
