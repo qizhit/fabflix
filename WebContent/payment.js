@@ -4,29 +4,37 @@ $(document).ready(function () {
     let paymentForm = $("#paymentForm");
 
     /**
-     * Handle the data returned by IndexServlet
-     * @param resultDataString jsonObject, consists of session info
+     * Handle the data returned by the server for session info and cart
+     * @param resultDataString JSON object with session and cart info
      */
     function handleSessionData(resultDataString) {
-        let resultDataJson = JSON.parse(resultDataString);
+        try {
+            let resultDataJson = JSON.parse(resultDataString);
 
-        console.log("handle session response");
-        console.log(resultDataJson);
-        console.log(resultDataJson["sessionID"]);
 
-        // show the session information
-        $("#sessionID").text("Session ID: " + resultDataJson["sessionID"]);
-        $("#lastAccessTime").text("Last access time: " + resultDataJson["lastAccessTime"]);
+            console.log("handle session response");
+            console.log(resultDataJson);
 
-        // show cart information
-        const totalPrice = resultDataJson["shoppingCart"].reduce((total, item) => total + item.price * item.quantity, 0);
-        $("#totalPrice").text("Total Price: $" + totalPrice.toFixed(2));
+            // Display session information
+            $("#sessionID").text("Session ID: " + resultDataJson["sessionID"]);
+            $("#lastAccessTime").text("Last access time: " + resultDataJson["lastAccessTime"]);
 
+            // Calculate and display total price from shopping cart items
+            const shoppingCart = resultDataJson["shoppingCart"];
+            if (shoppingCart && shoppingCart.length > 0) {
+                const totalPrice = shoppingCart.reduce((total, item) => total + item.price * item.quantity, 0);
+                $("#totalPrice").text("Total Price: $" + totalPrice.toFixed(2));
+            } else {
+                $("#totalPrice").text("Total Price: $0.00");
+            }
+        } catch (e) {
+            console.error("Error parsing JSON response:", e);
+        }
     }
 
     /**
-     * Handle the items in item list
-     * @param resultDataString jsonObject, needs to be parsed to html
+     * Handle the response from the server after submitting payment
+     * @param resultDataString JSON object with payment success or failure
      */
     function handlePaymentResponse(resultDataString) {
         let resultDataJson = JSON.parse(resultDataString);
@@ -42,9 +50,10 @@ $(document).ready(function () {
             $("#errorMessage").text(resultDataJson.errorMessage);
         }
     }
+
     /**
-     * Submit form content with POST method
-     * @param Event
+     * Submit payment form with POST method
+     * @param event Form submit event
      */
     function handleCartInfo(event) {
         console.log("submit payment form");
@@ -72,12 +81,13 @@ $(document).ready(function () {
     // Load session data to show total price
     $.ajax("api/payment", {
         method: "GET",
+        dataType:"json",
         success: handleSessionData,
         error: function () {
             console.log("Error occurred while loading session data");
         }
     });
 
-    // Bind the submit action of the form to the event handler function
-    paymentForm.submit(handlePaymentSubmission);
+    // Bind the submit action of the form to the correct event handler function
+    paymentForm.submit(handleCartInfo);
 });

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="confirmation-container">
+    <h1>Order Confirmation</h1>
+    <p id="confirmationMessage">Processing your order...</p>
+    <button onclick="window.location.href='index.html'">Return to Home</button>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        fetch("/api/getConfirmation")
+            .then(response => response.json())
+            .then(data => {
+                const messageElement = document.getElementById("confirmationMessage");
+                messageElement.textContent = data.message;
+
+                if (!data.success) {
+                    messageElement.style.color = "red";
+                }
+            })
+            .catch(error => {
+                console.error("Error loading confirmation data:", error);
+            });
+    });
+</script>
+</body>
+</html>
