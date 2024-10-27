@@ -44,16 +44,16 @@ function handleResult(resultData) {
     // Concatenate the html tags with resultData jsonObject to create table rows
     let rowHTML = "";
     rowHTML += "<tr>";
-    rowHTML += "<td>" + resultData[0]["title"] + "</td>"; // Title
-    rowHTML += "<td>" + resultData[0]["year"] + "</td>";  // Year
-    rowHTML += "<td>" + resultData[0]["director"] + "</td>";  // Director
+    rowHTML += "<th>" + resultData[0]["title"] + "</th>"; // Title
+    rowHTML += "<th>" + resultData[0]["year"] + "</th>";  // Year
+    rowHTML += "<th>" + resultData[0]["director"] + "</th>";  // Director
 
     // Genres as hyperlinks, sorted alphabetically
     let genres = resultData[0]["genres"].split(", ");
     let genreLinks = genres.map(genre => {
         return `<a href='movie-list.html?browse_genre=${encodeURIComponent(genre)}'>${genre}</a>`;
     }).join(", ");
-    rowHTML += `<td>${genreLinks}</td>`;
+    rowHTML += `<th>${genreLinks}</th>`;
 
     // Stars as hyperlinks
     // Split the stars string and create individual hyperlinks
@@ -65,7 +65,7 @@ function handleResult(resultData) {
         return `<a href='single-star.html?id=${encodedStarId}'>${name}</a>`;
     }).join(", ");
     rowHTML += "<th>" + starLinks + "</th>";  // Stars
-    rowHTML += "<td>" + resultData[0]["rating"] + "</td>";  // Rating
+    rowHTML += "<th>" + resultData[0]["rating"] + "</th>";  // Rating
     rowHTML += "</tr>";
 
     // Append the row to the table

@@ -44,8 +44,8 @@ function handleResult(resultData) {
     // Concatenate the html tags with resultData jsonObject to create table rows
     let rowHTML = "";
     rowHTML += "<tr>";
-    rowHTML += "<td>" + resultData[0]["name"] + "</td>"; // Name
-    rowHTML += "<td>" + resultData[0]["birth_year"] + "</td>";  // Birth Year
+    rowHTML += "<th>" + resultData[0]["name"] + "</th>"; // Name
+    rowHTML += "<th>" + resultData[0]["birth_year"] + "</th>";  // Birth Year
     // Movies as hyperlinks
     const movies = resultData[0]["movies"].split(", ");
     const movie_ids = resultData[0]["movie_ids"].split(", ");

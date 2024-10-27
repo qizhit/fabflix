@@ -1,3 +1,11 @@
+/* General Styles */
+body {
+    background-color: #C8E6C9;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
 /* Header Styles */
 header {
     background-color: #333;
@@ -9,6 +17,7 @@ header {
 }
 
 header h1 {
+    color: white;
     margin: 0;
 }
 
@@ -25,23 +34,21 @@ header nav a:hover {
 
 /* The title color */
 h1 {
-    color: #4b0082;
+    color: #517a51;
     text-align: center;
 }
 
-/* Page background color */
-body {
-    background: linear-gradient(to right, #fdeed3, #efbeef);
-}
+/*!* Page background color *!*/
+/*body {*/
+/*    background: linear-gradient(to right, #fdeed3, #efbeef);*/
+/*}*/
 
 /* Add a dark border to the table */
 table {
-    border: 3px solid #d297fa;
+    border: 3px solid #7dab7d;
 }
 
-
-/*---------------------------*/
-/* Pagination Controls */
+/* Page prev/next Controls */
 .pagination-controls {
     margin-top: 20px;
     margin-bottom: 20px;
@@ -51,25 +58,20 @@ table {
     margin: 0 10px;
 }
 
-/* Table Styling */
-.table-hover {
-    margin-top: 20px;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+/* 表格头部样式 */
+.table-header-highlight {
+    background-color: #7dab7d; /* 深紫色背景 */
+    color: rgba(91, 19, 6, 0.6);
+    font-weight: bold;
+    font-size: 18px;
 }
 
-.table-hover thead {
-    background-color: #6200EA;
-    color: white;
-}
-
-.table-hover th, .table-hover td {
-    text-align: center;
-    vertical-align: middle;
+.table-header-highlight th {
     padding: 12px;
+    border-bottom: 5px solid #7dab7d; /* 边框加深颜色 */
 }
 
-.table-hover tr:hover {
-    background-color: #EDE7F6;
+/* 表格主体行悬停效果 */
+.table-striped tbody tr:hover {
+    background-color: rgba(237, 231, 246, 0.5); /* 浅紫色悬停效果 */
 }

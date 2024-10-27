@@ -25,28 +25,32 @@
     </nav>
 </header>
 
-<h1>Single Star Page</h1>
-
 <!-- H3 body is left empty here, will be populated with the data retrieved with single-star.js -->
 <!-- single-star.js will find this html element by it's id "star_info" -->
-<h3 id="star_info"></h3>
-<table id=star_table class="table table-striped">
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th>Birth Year</th>
-        <th>Movies</th>
-        <th>
-    </tr>
-    </thead>
-
-    <!-- Table body is left empty here, will be populated with the data retrieved with single-star.js -->
-    <!-- single-star.js will find this html element by it's id "star_table_body" -->
-    <tbody id=star_table_body></tbody>
-</table>
-
-<!--Back to Movie List Page-->
-<a href="movie-list.html" class="btn btn-primary" role="button">Back to Movie List Page</a>
+<div class="container my-4">
+    <h1 class="mb-4 text-center">Single Star Page</h1>
+    <section>
+        <h3 id="star_info" class="text-center"></h3>
+    </section>
+    <div class="table-responsive">
+        <table id=star_table class="table table-striped">
+            <thead class="table-header-highlight">
+            <tr>
+                <th>Name</th>
+                <th>Birth Year</th>
+                <th>Movies</th>
+            </tr>
+            </thead>
+            <!-- Table body is left empty here, will be populated with the data retrieved with single-star.js -->
+            <!-- single-star.js will find this html element by it's id "star_table_body" -->
+            <tbody id=star_table_body></tbody>
+        </table>
+    </div>
+    <!--Back to Movie List Page-->
+    <div class="text-center mt-4">
+        <a href="movie-list.html" class="btn btn-primary" role="button">Back to Movie List Page</a>
+    </div>
+</div>
 
 <!-- Load jQuery and Bootstrap JS -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
