@@ -183,7 +183,7 @@ public class MovieListServlet extends HttpServlet {
 
             // Pagination parameter binding
             movieStatement.setInt(paramIndex++, pageSize);
-            movieStatement.setInt(paramIndex, offset);
+            movieStatement.setInt(paramIndex++, offset);
 
             // execute
             ResultSet movieRs = movieStatement.executeQuery();
@@ -353,7 +353,7 @@ public class MovieListServlet extends HttpServlet {
             countStatement.setString(paramIndex++, browseGenre);
         }
         if (browseTitle != null && !browseTitle.isEmpty() && !browseTitle.equals("*")) {
-            countStatement.setString(paramIndex, browseTitle.toLowerCase() + "%");
+            countStatement.setString(paramIndex++, browseTitle.toLowerCase() + "%");
         }
         // Searching
         if (searchTitle != null && !searchTitle.isEmpty()) {
@@ -366,7 +366,7 @@ public class MovieListServlet extends HttpServlet {
             countStatement.setString(paramIndex++, "%" + searchDirector.toLowerCase() + "%");
         }
         if (searchStar != null && !searchStar.isEmpty()) {
-            countStatement.setString(paramIndex, "%" + searchStar.toLowerCase() + "%");
+            countStatement.setString(paramIndex++, "%" + searchStar.toLowerCase() + "%");
         }
 
         // execute and get the total pages
