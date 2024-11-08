@@ -100,7 +100,6 @@ The substring matching feature in the MovieListServlet is designed to provide fl
 ## Demo Video
 A screen recording demo is available here:
 
-https://youtu.be/A4ngkQ2XeKw
 
 The demo showcases the application running on an AWS instance, highlighting all key features, including page navigation, movie and star detail displays, and the shopping experience.
 
