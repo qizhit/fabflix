@@ -44,9 +44,10 @@ public class MainServlet extends HttpServlet {
         try (Connection conn = dataSource.getConnection()) {
 
             // Declare our statement
-            Statement statement = conn.createStatement();
-
+            //change this line to prepareStatement
+            //Statement statement = conn.createStatement();
             String query = "SELECT name FROM genres ORDER BY name;";
+            PreparedStatement statement = conn.prepareStatement(query);
             // Perform the query
             ResultSet genreRs = statement.executeQuery(query);
 
