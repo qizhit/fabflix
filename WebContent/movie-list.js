@@ -6,9 +6,9 @@
 let currentPage = 1;  // Initialize the current page number to 1
 let apiUrlInfo = "";
 
-function handleStarResult(resultData) {
+function handleMovieResult(resultData) {
     console.log("resultdata", resultData);
-    console.log("handleStarResult: populating movie table from resultData");
+    console.log("handleMovieResult: populating movie table from resultData");
     let MovieTableBodyElement = jQuery("#movie_table_body");
     MovieTableBodyElement.empty();  // Empty old data each time you populate new data
 
@@ -188,7 +188,7 @@ function reloadTable() {
         dataType: "json",
         method: "GET",
         url: apiUrl,
-        success: (resultData) => handleStarResult(resultData),
+        success: (resultData) => handleMovieResult(resultData),
     });
 }
 

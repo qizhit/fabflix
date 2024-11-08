@@ -37,10 +37,6 @@ public class PaymentServlet extends HttpServlet {
         String expirationDate = request.getParameter("expirationDate");
         HttpSession session = request.getSession();
 
-        System.out.println("ENTER PAYMENT DO POST");
-
-        System.out.println("Received: " + firstName + ", " + lastName + ", " + creditCardNumber + ", " + expirationDate);
-
         JsonObject responseJson = new JsonObject();
 
         try (Connection conn = dataSource.getConnection()) {
@@ -53,10 +49,7 @@ public class PaymentServlet extends HttpServlet {
             cardStmt.setString(3, lastName);
             cardStmt.setString(4, expirationDate);
 
-            System.out.println("i m here in first try");
-
             try (ResultSet rs = cardStmt.executeQuery()) {
-                System.out.println("i m here in second try");
                 if (!rs.next()) {
                     responseJson.addProperty("success", false);
                     responseJson.addProperty("message", "Invalid credit card details.");
@@ -68,7 +61,6 @@ public class PaymentServlet extends HttpServlet {
                         responseJson.addProperty("message", "Your shopping cart is empty.");
                     } else {
                         // Insert sales record
-                        System.out.println("i m here in before insert");
                         String saleInsert = "INSERT INTO sales (customerId, movieId, saleDate, quantity) VALUES (?, ?, ?, ?);";
                         PreparedStatement saleStmt = conn.prepareStatement(saleInsert);
 
@@ -77,16 +69,13 @@ public class PaymentServlet extends HttpServlet {
                             saleStmt.setInt(1, customerId);
                             saleStmt.setString(2, item.getMovieId());
                             saleStmt.setDate(3, new java.sql.Date(new Date().getTime()));
-                            System.out.println(new java.sql.Date(new Date().getTime()));
                             saleStmt.setInt(4, item.getQuantity());
                             saleStmt.executeUpdate();
                         }
-                        System.out.println("i m here in after insert");
 
                         responseJson.addProperty("success", true);
                         responseJson.addProperty("message", "Order placed successfully.");
 
-                        System.out.println("responseJson: ---" + responseJson);
                     }
                 }
             }

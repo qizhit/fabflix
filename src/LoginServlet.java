@@ -14,6 +14,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.jasypt.util.password.StrongPasswordEncryptor;
+
 
 @WebServlet(name = "LoginServlet", urlPatterns = "/api/login")
 public class LoginServlet extends HttpServlet {
@@ -69,8 +71,9 @@ public class LoginServlet extends HttpServlet {
                     request.getServletContext().log("Login failed");
                 } else {
                     // Step 2: Check if the password matches
-                    String userPassword = emailResultSet.getString("password");
-                    if (userPassword.equals(password)) {
+                    String encryptedPassword = emailResultSet.getString("password");
+                    boolean success = new StrongPasswordEncryptor().checkPassword(password, encryptedPassword);
+                    if (success) {
                         // Login success: store user in session
                         request.getSession().setAttribute("user", new User(username));
 

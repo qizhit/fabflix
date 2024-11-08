@@ -74,11 +74,9 @@ public class CheckoutServlet extends HttpServlet {
             switch (action) {
                 case "add":
                     addItemToCart(shoppingCart, movieId, title, price, quantity);
-                    System.out.println(shoppingCart);
                     break;
                 case "update":
                     updateItemQuantity(shoppingCart, movieId, quantity);
-                    System.out.println(shoppingCart);
                     break;
                 case "remove":
                     removeItemFromCart(shoppingCart, movieId);

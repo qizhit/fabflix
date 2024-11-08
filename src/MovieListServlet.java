@@ -211,8 +211,8 @@ public class MovieListServlet extends HttpServlet {
             movieStatement.close();
 
             // Format the list of movie ids into a string format in SQL, prepare for genres and stars query
-            String movieIdList = movieMap.keySet().stream()
-                    .map(id -> "'" + id + "'")
+            String movieIdListPlaceholders = movieMap.keySet().stream()
+                    .map(id -> "?")
                     .reduce((a, b) -> a + "," + b)
                     .orElse("");
 
@@ -223,12 +223,16 @@ public class MovieListServlet extends HttpServlet {
                     "    ROW_NUMBER() OVER (PARTITION BY gm.movieId ORDER BY g.name ASC) AS genre_rank \n" +
                     "    FROM genres_in_movies gm\n" +
                     "    JOIN genres g ON gm.genreId = g.id\n" +
-                    "    WHERE gm.movieId IN (" + movieIdList + ")\n" +
+                    "    WHERE gm.movieId IN (" + movieIdListPlaceholders + ")\n" +
                     "    ORDER BY g.name)\n" +
                     "SELECT movieId, GROUP_CONCAT(name ORDER BY name ASC SEPARATOR ', ') AS genres\n" +
                     "    FROM RankedGenres WHERE genre_rank <= 3\n" +
                     "    GROUP BY movieId;";
             PreparedStatement genreStatement = conn.prepareStatement(genreQuery);
+            int genreParamIndex = 1;
+            for (String movieId : movieMap.keySet()) {
+                genreStatement.setString(genreParamIndex++, movieId);
+            }
             ResultSet genreRs = genreStatement.executeQuery();
 
             // Fill the genres into a genre corresponding to film objects
@@ -248,7 +252,7 @@ public class MovieListServlet extends HttpServlet {
                     "    FROM stars_in_movies sim" +
                     "    JOIN stars s ON sim.starId = s.id" +
                     "    JOIN stars_in_movies sim2 ON s.id = sim2.starId" +
-                    "    WHERE sim.movieId IN (" + movieIdList + ")" +
+                    "    WHERE sim.movieId IN (" + movieIdListPlaceholders + ")" +
                     "    GROUP BY sim.movieId, s.id, s.name)" +
                     "SELECT movieId," +
                     "    GROUP_CONCAT(name ORDER BY movie_count DESC, name ASC SEPARATOR ', ') AS stars_name,\n" +
@@ -257,6 +261,10 @@ public class MovieListServlet extends HttpServlet {
                     "    WHERE star_rank <= 3\n" +
                     "    GROUP BY movieId;";
             PreparedStatement starStatement = conn.prepareStatement(starQuery);
+            int starParamIndex = 1;
+            for (String movieId : movieMap.keySet()) {
+                starStatement.setString(starParamIndex++, movieId);
+            }
             ResultSet starRs = starStatement.executeQuery();
 
             // Fill stars and star_ids into the corresponding movie object

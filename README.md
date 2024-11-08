@@ -90,17 +90,15 @@ The substring matching feature in the MovieListServlet is designed to provide fl
 
 ## Prepared Statements
 - LoginServlet: emailQuery
-- ConfirmationServlet: querySalesSQL
 - MainServlet: query
 - MovieListServlet: queryBuilder, genreQuery, starQuery, countQuery
-- PaymentServlet: cardQuery, saleInsert
 - SingleMovieServlet: query
 - SingleStarServlet: query
-
+- PaymentServlet: cardQuery, saleInsert
+- ConfirmationServlet: querySalesSQL
 
 ## Demo Video
 A screen recording demo is available here:
-
 
 The demo showcases the application running on an AWS instance, highlighting all key features, including page navigation, movie and star detail displays, and the shopping experience.
 
