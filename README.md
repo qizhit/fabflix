@@ -87,6 +87,7 @@ The substring matching feature in the MovieListServlet is designed to provide fl
   The line:
   `countStatement.setString(paramIndex++, "%" + searchTitle.toLowerCase() + "%");`
   adds % to both sides of the search text, which means it will match the given text anywhere in the field. For example, if searchTitle is "star", it will match "Star Wars", "The Starry Night", or "A Star is Born".
+
 ## Prepared Statements
 - LoginServlet: emailQuery
 - ConfirmationServlet: querySalesSQL
