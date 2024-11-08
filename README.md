@@ -91,7 +91,7 @@ The substring matching feature in the MovieListServlet is designed to provide fl
 - LoginServlet: emailQuery
 - ConfirmationServlet: querySalesSQL
 - MainServlet: query
-- MovieListServlet: !!!revise again for string builder
+- MovieListServlet: queryBuilder, genreQuery, starQuery, countQuery
 - PaymentServlet: cardQuery, saleInsert
 - SingleMovieServlet: query
 - SingleStarServlet: query
