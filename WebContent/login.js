@@ -37,11 +37,13 @@ function submitLoginForm(formSubmitEvent) {
      */
     formSubmitEvent.preventDefault();
 
+    let recaptchaResponse = grecaptcha.getResponse();
+
     $.ajax(
         "api/login", {
             method: "POST",
             // Serialize the login form to the data sent by POST request
-            data: login_form.serialize(),
+            data: login_form.serialize() + "&g-recaptcha-response=" + recaptchaResponse,
             success: handleLoginResult
         }
     );
