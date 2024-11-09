@@ -17,7 +17,7 @@ import java.sql.SQLException;
 import org.jasypt.util.password.StrongPasswordEncryptor;
 
 
-@WebServlet(name = "DashboardLoginServlet", urlPatterns = "/api/_dashboard-login")
+@WebServlet(name = "DashboardLoginServlet", urlPatterns = "/api/_dashboard_login")
 public class DashboardLoginServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;

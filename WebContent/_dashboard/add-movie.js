@@ -12,7 +12,7 @@ function addMovie() {
     console.log("Sending POST request to /api/add_movie with data:", formData.toString());
 
     // Send AJAX request to the servlet
-    fetch("../api/_dashboard_add_movie", {
+    fetch("../api/_dashboard_add-movie", {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"

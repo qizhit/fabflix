@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.sql.*;
 
 
-@WebServlet(name = "AddStarServlet", urlPatterns = "/api/_dashboard_add_star")
+@WebServlet(name = "AddStarServlet", urlPatterns = "/api/_dashboard_add-star")
 public class AddStarServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 

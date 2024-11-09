@@ -14,7 +14,7 @@ function handleLoginResult(resultDataString) {
 
     // If login succeeds, it will redirect the user to movie-list.html
     if (resultDataJson["status"] === "success") {
-        window.location.replace("_dashboard_main.html");    //-----------------change to _dashboard-index.html
+        window.location.replace("main.html");
     } else {
         // If login fails, the web page will display
         // error messages on <div> with id "login_error_message"
@@ -47,7 +47,7 @@ function submitLoginForm(formSubmitEvent) {
     }
 
     $.ajax(
-        "../api/_dashboard-login", {
+        "../api/_dashboard_login", {
             method: "POST",
             // Serialize the login form to the data sent by POST request
             data: login_form.serialize() + "&g-recaptcha-response=" + recaptchaResponse,

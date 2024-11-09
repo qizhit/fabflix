@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.sql.*;
 
 
-@WebServlet(name = "AddMovieServlet", urlPatterns = "/api/_dashboard_add_movie")
+@WebServlet(name = "AddMovieServlet", urlPatterns = "/api/_dashboard_add-movie")
 public class AddMovieServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 

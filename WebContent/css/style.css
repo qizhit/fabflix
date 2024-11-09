@@ -38,11 +38,6 @@ h1 {
     text-align: center;
 }
 
-/*!* Page background color *!*/
-/*body {*/
-/*    background: linear-gradient(to right, #fdeed3, #efbeef);*/
-/*}*/
-
 /* Add a dark border to the table */
 table {
     border: 3px solid #7dab7d;
@@ -60,7 +55,7 @@ table {
 
 /* Table header style */
 .table-header-highlight {
-    background-color: #7dab7d; /* 深紫色背景 */
+    background-color: #7dab7d;
     color: rgba(91, 19, 6, 0.6);
     font-weight: bold;
     font-size: 18px;
@@ -68,10 +63,10 @@ table {
 
 .table-header-highlight th {
     padding: 12px;
-    border-bottom: 5px solid #7dab7d; /* 边框加深颜色 */
+    border-bottom: 5px solid #7dab7d;
 }
 
 /* Table body row hover effect */
 .table-striped tbody tr:hover {
-    background-color: rgba(237, 231, 246, 0.5); /* 浅紫色悬停效果 */
+    background-color: rgba(237, 231, 246, 0.5);
 }
