@@ -42,7 +42,7 @@ public class PaymentServlet extends HttpServlet {
         try (Connection conn = dataSource.getConnection()) {
             // Verify credit card information
             String cardQuery = "SELECT cc.id AS cardNumber, c.id AS customerId FROM creditcards AS cc, customers AS c " +
-                    "WHERE cc.id = ? AND cc.firstName = ? AND cc.lastName = ? AND cc.expiration = ? AND cc.id = c.ccId;";
+                    "WHERE cc.id = ? AND cc.firstName = ? AND cc.lastName = ? AND cc.expiration = ? AND cc.id = c.ccId";
             PreparedStatement cardStmt = conn.prepareStatement(cardQuery);
             cardStmt.setString(1, creditCardNumber);
             cardStmt.setString(2, firstName);
@@ -61,7 +61,7 @@ public class PaymentServlet extends HttpServlet {
                         responseJson.addProperty("message", "Your shopping cart is empty.");
                     } else {
                         // Insert sales record
-                        String saleInsert = "INSERT INTO sales (customerId, movieId, saleDate, quantity) VALUES (?, ?, ?, ?);";
+                        String saleInsert = "INSERT INTO sales (customerId, movieId, saleDate, quantity) VALUES (?, ?, ?, ?)";
                         PreparedStatement saleStmt = conn.prepareStatement(saleInsert);
 
                         int customerId = Integer.parseInt(rs.getString("customerId"));

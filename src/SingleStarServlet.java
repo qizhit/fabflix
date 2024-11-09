@@ -60,7 +60,7 @@ public class SingleStarServlet extends HttpServlet {
                     "LEFT JOIN stars_in_movies sim ON s.id = sim.starId " +
                     "LEFT JOIN movies m ON sim.movieId = m.id " +
                     "WHERE s.id = ? " +
-                    "GROUP BY s.id;";
+                    "GROUP BY s.id";
 
             // Declare our statement
             PreparedStatement statement = conn.prepareStatement(query);

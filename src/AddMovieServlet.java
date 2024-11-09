@@ -1,20 +1,17 @@
-import com.google.gson.JsonObject;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Date;
 
-@WebServlet(name = "AddMovieServlet", urlPatterns = "/api/add_movie")
+
+@WebServlet(name = "AddMovieServlet", urlPatterns = "/api/_dashboard_add_movie")
 public class AddMovieServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 
@@ -30,16 +27,14 @@ public class AddMovieServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json");
-        String movieTitle = request.getParameter("movie_title");
-        String movieYearStr = request.getParameter("movie_year");
-        String movieDirector = request.getParameter("movie_director");
-        String starName = request.getParameter("star_name");
-        String genreName = request.getParameter("genre_name");
+        String movieTitle = request.getParameter("movieTitle");
+        String movieYearStr = request.getParameter("movieYear");
+        String movieDirector = request.getParameter("movieDirector");
+        String starName = request.getParameter("starName");
+        String genreName = request.getParameter("genreName");
 
-
-        if (movieTitle == null || movieYearStr == null || movieDirector == null || starName == null || genreName == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("{\"error\": \"All parameters are required.\"}");
+        if (movieTitle.isEmpty() || movieYearStr.isEmpty() || movieDirector.isEmpty() || starName.isEmpty() || genreName.isEmpty()) {
+            response.getWriter().write("{\"success\": false, \"message\": \"All fields are required.\"}");
             return;
         }
 
@@ -47,12 +42,27 @@ public class AddMovieServlet extends HttpServlet {
         try {
             movieYear = Integer.parseInt(movieYearStr);
         } catch (NumberFormatException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.getWriter().write("{\"error\": \"Invalid year format.\"}");
+            response.getWriter().write("{\"success\": false, \"message\": \"Invalid year format.\"}");
             return;
         }
 
         try (Connection conn = dataSource.getConnection()) {
+
+            String checkQuery = "SELECT id FROM movies WHERE title = ? AND year = ? AND director = ?";
+            PreparedStatement checkStmt = conn.prepareStatement(checkQuery);
+            checkStmt.setString(1, movieTitle);
+            checkStmt.setInt(2, movieYear);
+            checkStmt.setString(3, movieDirector);
+
+            ResultSet rs = checkStmt.executeQuery();
+
+            if (rs.next()) {
+                // Movie with the same title, year, and director exists
+                response.getWriter().write("{\"success\": false, " +
+                        "\"message\": \"A movie with the same title, year, and director already exists.\"}");
+                return;
+            }
+
             // Prepare to call the stored procedure
             CallableStatement stmt = conn.prepareCall("{CALL add_movie(?, ?, ?, ?, ?)}");
             stmt.setString(1, movieTitle);
@@ -64,12 +74,11 @@ public class AddMovieServlet extends HttpServlet {
             // Execute the stored procedure
             stmt.execute();
 
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().write("{\"success\": \"Movie added successfully.\"}");
+            response.getWriter().write("{\"success\": true, \"message\": \"Movie added successfully.\"}");
         } catch (SQLException e) {
             e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("{\"error\": \"An error occurred while adding the movie.\"}");
+            response.setStatus(500);
+            response.getWriter().write("{\"success\": false, \"message\": \"An error occurred while adding the movie.\"}");
         }
     }
 }

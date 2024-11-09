@@ -1,20 +1,17 @@
-import com.google.gson.JsonObject;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Date;
 
-@WebServlet(name = "AddStarServlet", urlPatterns = "/api/add_star")
+
+@WebServlet(name = "AddStarServlet", urlPatterns = "/api/_dashboard_add_star")
 public class AddStarServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 

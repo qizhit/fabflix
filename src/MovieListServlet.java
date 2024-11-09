@@ -227,7 +227,7 @@ public class MovieListServlet extends HttpServlet {
                     "    ORDER BY g.name)\n" +
                     "SELECT movieId, GROUP_CONCAT(name ORDER BY name ASC SEPARATOR ', ') AS genres\n" +
                     "    FROM RankedGenres WHERE genre_rank <= 3\n" +
-                    "    GROUP BY movieId;";
+                    "    GROUP BY movieId";
             PreparedStatement genreStatement = conn.prepareStatement(genreQuery);
             int genreParamIndex = 1;
             for (String movieId : movieMap.keySet()) {
@@ -259,7 +259,7 @@ public class MovieListServlet extends HttpServlet {
                     "    GROUP_CONCAT(id ORDER BY movie_count DESC, name ASC SEPARATOR ', ') AS star_ids\n" +
                     "    FROM RankedStars\n" +
                     "    WHERE star_rank <= 3\n" +
-                    "    GROUP BY movieId;";
+                    "    GROUP BY movieId";
             PreparedStatement starStatement = conn.prepareStatement(starQuery);
             int starParamIndex = 1;
             for (String movieId : movieMap.keySet()) {

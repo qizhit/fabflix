@@ -65,7 +65,7 @@ public class SingleMovieServlet extends HttpServlet {
                     "LEFT JOIN stars AS s ON sim.starId = s.id " +
                     "LEFT JOIN (SELECT starId, COUNT(*) AS movie_count FROM stars_in_movies GROUP BY starId) AS star_counts ON s.id = star_counts.starId " +
                     "WHERE m.id = ? " +
-                    "GROUP BY m.id;";
+                    "GROUP BY m.id";
 
             // Declare our statement
             PreparedStatement statement = conn.prepareStatement(query);

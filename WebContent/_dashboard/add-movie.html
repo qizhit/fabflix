@@ -4,38 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add a Movie</title>
-    <link rel="stylesheet" href="../css/checkAndConfirm.css">
-    <style>
-        /* Inline style for larger input boxes */
-        .form-group input[type="text"],
-        .form-group input[type="number"] {
-            width: 80%;      /* Make the input field take up 80% of the available width */
-            padding: 10px;   /* Add padding for a larger input box */
-            font-size: 1.2em; /* Increase font size */
-            box-sizing: border-box; /* Ensure padding doesn’t affect the width */
-            margin-top: 8px; /* Space between label and input */
-        }
-
-        /* Center and style the form container */
-        .form-container {
-            text-align: center;
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* Style the response message */
-        #response-message {
-            text-align: center;
-            margin-top: 20px;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" href="../css/simple-style.css">
 </head>
 <body>
 <header>
@@ -57,7 +26,7 @@
         </div>
         <div class="form-group">
             <label for="movieYear">Movie Year (required):</label><br>
-            <input type="number" id="movieYear" name="movieYear" required>
+            <input type="text" id="movieYear" name="movieYear" required>
         </div>
         <div class="form-group">
             <label for="movieDirector">Director (required):</label><br>
