@@ -18,17 +18,20 @@ public class LoginFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        System.out.println("LoginFilter: " + httpRequest.getRequestURI());
+        String url = httpRequest.getRequestURI();
+        System.out.println("LoginFilter: " + url);
 
         // Check if this URL is allowed to access without logging in
-        if (this.isUrlAllowedWithoutLogin(httpRequest.getRequestURI())) {
+        if (this.isUrlAllowedWithoutLogin(url)) {
             // Keep default action: pass along the filter chain
             chain.doFilter(request, response);
             return;
         }
 
-        // Redirect to login page if the "user" attribute doesn't exist in session
-        if (httpRequest.getSession().getAttribute("user") == null) {
+        // Redirect to login page if the "user"/"employee" attribute doesn't exist in session
+        if (httpRequest.getSession().getAttribute("employee") == null && (url.contains("/_dashboard/"))) {
+            httpResponse.sendRedirect("_login.html");
+        } else if (httpRequest.getSession().getAttribute("user") == null && !(url.contains("/_dashboard/"))) {
             httpResponse.sendRedirect("login.html");
         } else {
             chain.doFilter(request, response);
@@ -44,9 +47,14 @@ public class LoginFilter implements Filter {
     }
 
     public void init(FilterConfig fConfig) {
+        // User login
         allowedURIs.add("login.html");
         allowedURIs.add("login.js");
         allowedURIs.add("api/login");
+        // Employee login
+        allowedURIs.add("_login.html");
+        allowedURIs.add("_login.js");
+        allowedURIs.add("api/_dashboard-login");
     }
 
     public void destroy() {
