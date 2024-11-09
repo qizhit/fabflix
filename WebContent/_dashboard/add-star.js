@@ -21,7 +21,7 @@ function addStar() {
     console.log("Sending POST request to /api/add_star with data:", formData.toString());
 
     // Send AJAX request to the servlet
-    fetch("/api/add_star", {
+    fetch("../api/add_star", {
 
         method: "POST",
         headers: {
@@ -33,7 +33,7 @@ function addStar() {
             console.log("Response status:", response.status);
             // Check if the response is JSON; if not, handle it as an error
             if (!response.ok) {
-                throw new Error("Network response was not ok.");
+                throw new Error("Network response was NOT ok.");
             }
             return response.json();
         })

@@ -29,7 +29,7 @@ function addMovie() {
     console.log("Sending POST request to /api/add_movie with data:", formData.toString());
 
     // Send AJAX request to the servlet
-    fetch("/api/add_movie", {
+    fetch("../api/add_movie", {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
@@ -40,7 +40,7 @@ function addMovie() {
             console.log("Response status:", response.status);
             // Check if the response is JSON; if not, handle it as an error
             if (!response.ok) {
-                throw new Error("Network response was not ok.");
+                throw new Error("Network response was NOT ok.");
             }
             return response.json();
         })

@@ -64,7 +64,7 @@ function handleMovieResult(resultData) {
  */
 function getQueryParameter() {
     // Define the API URL here
-    const apiUrl = "http://localhost:8080/cs122b_project_war/api/_dashboard_main";  // Update this URL to your actual API endpoint
+    const apiUrl = "../api/_dashboard_main";  // Update this URL to your actual API endpoint
     return apiUrl;
 }
 
