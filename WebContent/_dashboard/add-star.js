@@ -21,7 +21,7 @@ function addStar() {
     console.log("Sending POST request to /api/add_star with data:", formData.toString());
 
     // Send AJAX request to the servlet
-    fetch("/cs122b_project_war/api/add_star", {
+    fetch("/api/add_star", {
 
         method: "POST",
         headers: {

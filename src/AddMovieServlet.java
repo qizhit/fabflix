@@ -10,13 +10,11 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 
-@WebServlet(name = "PaymentServlet", urlPatterns = "/api/payment")
+@WebServlet(name = "AddMovieServlet", urlPatterns = "/api/add_movie")
 public class AddMovieServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 
@@ -31,63 +29,48 @@ public class AddMovieServlet extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String firstName = request.getParameter("firstName");
-        String lastName = request.getParameter("lastName");
-        String creditCardNumber = request.getParameter("creditCardNumber");
-        String expirationDate = request.getParameter("expirationDate");
-        HttpSession session = request.getSession();
+        response.setContentType("application/json");
+        String movieTitle = request.getParameter("movie_title");
+        String movieYearStr = request.getParameter("movie_year");
+        String movieDirector = request.getParameter("movie_director");
+        String starName = request.getParameter("star_name");
+        String genreName = request.getParameter("genre_name");
 
-        JsonObject responseJson = new JsonObject();
 
-        try (Connection conn = dataSource.getConnection()) {
-            // Verify credit card information
-            String cardQuery = "SELECT cc.id AS cardNumber, c.id AS customerId FROM creditcards AS cc, customers AS c " +
-                    "WHERE cc.id = ? AND cc.firstName = ? AND cc.lastName = ? AND cc.expiration = ? AND cc.id = c.ccId;";
-            PreparedStatement cardStmt = conn.prepareStatement(cardQuery);
-            cardStmt.setString(1, creditCardNumber);
-            cardStmt.setString(2, firstName);
-            cardStmt.setString(3, lastName);
-            cardStmt.setString(4, expirationDate);
-
-            try (ResultSet rs = cardStmt.executeQuery()) {
-                if (!rs.next()) {
-                    responseJson.addProperty("success", false);
-                    responseJson.addProperty("message", "Invalid credit card details.");
-                } else {
-                    // Check whether the cart is empty
-                    ArrayList<CartItem> cart = (ArrayList<CartItem>) session.getAttribute("shoppingCart");
-                    if (cart == null || cart.isEmpty()) {
-                        responseJson.addProperty("success", false);
-                        responseJson.addProperty("message", "Your shopping cart is empty.");
-                    } else {
-                        // Insert sales record
-                        String saleInsert = "INSERT INTO sales (customerId, movieId, saleDate, quantity) VALUES (?, ?, ?, ?);";
-                        PreparedStatement saleStmt = conn.prepareStatement(saleInsert);
-
-                        int customerId = Integer.parseInt(rs.getString("customerId"));
-                        for (CartItem item : cart) {
-                            saleStmt.setInt(1, customerId);
-                            saleStmt.setString(2, item.getMovieId());
-                            saleStmt.setDate(3, new java.sql.Date(new Date().getTime()));
-                            saleStmt.setInt(4, item.getQuantity());
-                            saleStmt.executeUpdate();
-                        }
-
-                        responseJson.addProperty("success", true);
-                        responseJson.addProperty("message", "Order placed successfully.");
-
-                    }
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            responseJson.addProperty("success", false);
-            responseJson.addProperty("message", "An error occurred during payment processing.");
-            response.setStatus(500);
+        if (movieTitle == null || movieYearStr == null || movieDirector == null || starName == null || genreName == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\": \"All parameters are required.\"}");
+            return;
         }
 
-        response.setContentType("application/json");
-        response.getWriter().write(responseJson.toString());
+        int movieYear;
+        try {
+            movieYear = Integer.parseInt(movieYearStr);
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\": \"Invalid year format.\"}");
+            return;
+        }
+
+        try (Connection conn = dataSource.getConnection()) {
+            // Prepare to call the stored procedure
+            CallableStatement stmt = conn.prepareCall("{CALL add_movie(?, ?, ?, ?, ?)}");
+            stmt.setString(1, movieTitle);
+            stmt.setInt(2, movieYear);
+            stmt.setString(3, movieDirector);
+            stmt.setString(4, starName);
+            stmt.setString(5, genreName);
+
+            // Execute the stored procedure
+            stmt.execute();
+
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.getWriter().write("{\"success\": \"Movie added successfully.\"}");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"error\": \"An error occurred while adding the movie.\"}");
+        }
     }
 }
+
