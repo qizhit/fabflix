@@ -29,10 +29,11 @@ public class LoginFilter implements Filter {
         }
 
         // Redirect to login page if the "user"/"employee" attribute doesn't exist in session
-        if (httpRequest.getSession().getAttribute("employee") == null && (url.contains("/_dashboard/"))) {
-            httpResponse.sendRedirect("login.html");  // ./_dashboard/login.html
-        } else if (httpRequest.getSession().getAttribute("user") == null && !(url.contains("/_dashboard/"))) {
-            httpResponse.sendRedirect("login.html");  // ./login.html
+        System.out.println("contextpath" + httpRequest.getContextPath());
+        if (httpRequest.getSession().getAttribute("employee") == null && (url.contains("/_dashboard"))) {
+            httpResponse.sendRedirect(httpRequest.getContextPath() + "/_dashboard/login.html");  // /_dashboard/login.html
+        } else if (httpRequest.getSession().getAttribute("user") == null && !(url.contains("/_dashboard"))) {
+            httpResponse.sendRedirect(httpRequest.getContextPath() + "/login.html");  // ./login.html
         } else {
             chain.doFilter(request, response);
         }
@@ -47,10 +48,12 @@ public class LoginFilter implements Filter {
     }
 
     public void init(FilterConfig fConfig) {
-        allowedURIs.add("login.html");
-        allowedURIs.add("login.js");
+        allowedURIs.add("/login.html");
+        allowedURIs.add("/login.js");
         allowedURIs.add("api/login");  // user login
-        allowedURIs.add("api/_dashboard-login");  //employee login
+        allowedURIs.add("api/_dashboard-login");  // employee login
+        allowedURIs.add("main.css");  // user main page css
+        allowedURIs.add("style.css");  // employee main page css
     }
 
     public void destroy() {
