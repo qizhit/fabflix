@@ -38,7 +38,6 @@ public class AddStarServlet extends HttpServlet {
 
         Integer birthYear = null;
         if (starName == null || starName.trim().isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("{\"success\": false, \"message\": \"Star name is required.\"}");
             return;
         }
@@ -47,8 +46,7 @@ public class AddStarServlet extends HttpServlet {
             try {
                 birthYear = Integer.parseInt(birthYearStr.trim());
             } catch (NumberFormatException e) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().write("{\"error\": \"Invalid birth year format.\"}");
+                response.getWriter().write("{\"success\": false, \"message\": \"Invalid birth year format.\"}");
                 return;
             }
         }
@@ -70,7 +68,7 @@ public class AddStarServlet extends HttpServlet {
             response.getWriter().write("{\"success\": true, \"message\": \"Star added successfully.\"}");
         } catch (SQLException e) {
             e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setStatus(500);
             response.getWriter().write("{\"success\": false, \"message\": \"An error occurred while adding the star.\"}");
         }
     }

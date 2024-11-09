@@ -103,7 +103,7 @@ button {
 
 /* add-star, add-movie in _dashboard */
 /* Inline style for larger input boxes */
-.form-group input[type="text"], .form-group input[type="number"] {
+.form-group input[type="text"] {
     width: 80%;      /* Make the input field take up 80% of the available width */
     padding: 10px;   /* Add padding for a larger input box */
     font-size: 1.2em; /* Increase font size */

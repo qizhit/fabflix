@@ -5,18 +5,10 @@ function addStar() {
     console.log("Star Name:", starName);
     console.log("Birth Year:", birthYear);
 
-    // Validate required field
-    if (!starName) {
-        displayMessage("Star name is required.", "error");
-        return;
-    }
-
     // Prepare form data to be sent to the servlet
     const formData = new URLSearchParams();
     formData.append("starName", starName);
-    if (birthYear) {
-        formData.append("birthYear", birthYear);
-    }
+    formData.append("birthYear", birthYear);
 
     console.log("Sending POST request to /api/add_star with data:", formData.toString());
 
@@ -29,22 +21,12 @@ function addStar() {
         },
         body: formData.toString()
     })
-        .then(response => {
-            console.log("Response status:", response.status);
-            // Check if the response is JSON; if not, handle it as an error
-            if (!response.ok) {
-                throw new Error("Network response was NOT ok.");
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
             console.log("Response data:", data);
-            // Display success or error message based on the server response
+            displayMessage(data.message, data.success ? "success" : "error");
             if (data.success) {
-                displayMessage(data.message, "success");
-                document.getElementById("add-star-form").reset(); // Clear the form on success
-            } else {
-                displayMessage(data.message, "error");
+                document.getElementById("add-star-form").reset();
             }
         })
         .catch(error => {
