@@ -25,8 +25,11 @@ function getParameterByName(target) {
  */
 
 function handleResult(resultData) {
-
     console.log("handleResult: populating movie info from resultData");
+
+    let stars = resultData[0]["stars"] || "N/A";
+    let starIds = resultData[0]["star_ids"] || "N/A";
+    let rating = resultData[0]["rating"] || "N/A";
 
     // populate the movie info h3
     // find the empty h3 body by id "movie_info"
@@ -54,18 +57,18 @@ function handleResult(resultData) {
         return `<a href='movie-list.html?browse_genre=${encodeURIComponent(genre)}'>${genre}</a>`;
     }).join(", ");
     rowHTML += `<th>${genreLinks}</th>`;
-
-    // Stars as hyperlinks
-    // Split the stars string and create individual hyperlinks
-    const stars = resultData[0]["stars"].split(", ");
-    const star_ids = resultData[0]["star_ids"].split(", ");
-    // Create individual hyperlinks for each star name
-    let starLinks = stars.map((name, index) => {
-        const encodedStarId = encodeURIComponent(star_ids[index]); // Encode star ID
-        return `<a href='single-star.html?id=${encodedStarId}'>${name}</a>`;
-    }).join(", ");
+    // Stars as hyperlinks: split the stars string and create individual hyperlinks
+    let starLinks = "N/A";
+    if (stars !== "N/A" && starIds !== "N/A") {
+        const starNames = stars.split(", ");
+        const starIdArray = starIds.split(", ");
+        starLinks = starNames.map((name, index) => {
+            const encodedStarId = encodeURIComponent(starIdArray[index]);
+            return `<a href='single-star.html?id=${encodedStarId}'>${name}</a>`;
+        }).join(", ");
+    }
     rowHTML += "<th>" + starLinks + "</th>";  // Stars
-    rowHTML += "<th>" + resultData[0]["rating"] + "</th>";  // Rating
+    rowHTML += "<th>" + rating + "</th>";  // Rating
     // Add to Cart
     rowHTML += `<th class="text-center align-middle">
                 <button class="btn btn-success add-to-cart" 

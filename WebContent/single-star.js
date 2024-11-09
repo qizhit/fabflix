@@ -25,8 +25,11 @@ function getParameterByName(target) {
  */
 
 function handleResult(resultData) {
-
     console.log("handleResult: populating star info from resultData");
+
+    let birthYear = resultData[0]["birth_year"] || "N/A";
+    let movies = resultData[0]["movies"] || "N/A";
+    let movieIds = resultData[0]["movie_ids"] || "N/A";
 
     // populate the movie info h3
     // find the empty h3 body by id "star_info"
@@ -45,17 +48,18 @@ function handleResult(resultData) {
     let rowHTML = "";
     rowHTML += "<tr>";
     rowHTML += "<th>" + resultData[0]["name"] + "</th>"; // Name
-    rowHTML += "<th>" + resultData[0]["birth_year"] + "</th>";  // Birth Year
+    rowHTML += "<th>" + birthYear + "</th>";  // Birth Year
     // Movies as hyperlinks
-    const movies = resultData[0]["movies"].split(", ");
-    const movie_ids = resultData[0]["movie_ids"].split(", ");
-    // Create individual hyperlinks for each movie title
-    let movieLinks = movies.map((title, index) => {
-        const encodedMovieId = encodeURIComponent(movie_ids[index]); // Encode star ID
-        return `<a href='single-movie.html?id=${encodedMovieId}'>${title}</a>`;
-    }).join(", ");
+    let movieLinks = "N/A";
+    if (movies !== "N/A" && movieIds !== "N/A") {
+        const movieTitles = movies.split(", ");
+        const movieIdArray = movieIds.split(", ");
+        movieLinks = movieTitles.map((title, index) => {
+            const encodedMovieId = encodeURIComponent(movieIdArray[index]);
+            return `<a href='single-movie.html?id=${encodedMovieId}'>${title}</a>`;
+        }).join(", ");
+    }
     rowHTML += "<th>" + movieLinks + "</th>";  // Movies
-
     rowHTML += "</tr>";
 
     // Append the row to the table
