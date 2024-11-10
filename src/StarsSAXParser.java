@@ -16,9 +16,12 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
     private Integer birthYear;
     private HashMap<String, Integer> existingStars;
     private List<String[]> newStars;
+
+    //Write file use
     private List<String[]> inconsistent = new ArrayList<>();
-    private Integer failed = 0;
-    private Integer empty = 0;
+    private List<String[]> faildueEmpty= new ArrayList<>();
+    private List<String[]> faildueDupicated = new ArrayList<>();
+
     public long exe_time = 0;
 
     public StarsSAXParser(HashMap<String, Integer> existingStars) {
@@ -32,11 +35,9 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
             SAXParser sp = spf.newSAXParser();
             FileInputStream fileInputStream = new FileInputStream(xmlFile);
             InputStreamReader reader = new InputStreamReader(fileInputStream, "ISO-8859-1");
-            //System.out.println("Starting to parse XML file: " + xmlFile);
             long startTime = System.currentTimeMillis();
             sp.parse(new InputSource(reader), this);
             long endTime = System.currentTimeMillis();
-            //System.out.println("Finished parsing actors XML with ISO-8859-1 encoding");
             exe_time = endTime - startTime;
         } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
@@ -60,14 +61,10 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
             //System.out.println("End of <actor> element. Star Name: " + starName + ", Birth Year: " + (birthYear != null ? birthYear : "null"));
 
             if (starName == null || starName.isEmpty()){
-                empty += 1;
-                System.out.println("empty actor, total empty num: " + empty);
-            } else if(existingStars.containsKey(starName)) {
-                failed += 1;
-                System.out.println("Failed, star existed, total existed num: " + failed);
-
+                faildueEmpty.add(new String[]{"Empty <stagename> ", starName});
+            } else if(existingStars.containsKey(starName)&& Objects.equals(existingStars.get(starName), birthYear)) {
+                faildueDupicated.add(new String[]{"Duplicate <stagename> " + starName + " with birth year: " + birthYear});
             } else {
-                System.out.println("Adding new star to list: " + starName + ", " + (birthYear != null ? birthYear : "N/A"));
                 newStars.add(new String[]{starName, birthYear != null ? birthYear.toString() : ""});
                 existingStars.put(starName, birthYear);
             }
@@ -75,7 +72,7 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
         } else if (qName.equalsIgnoreCase("stagename")) {
             starName = tempVal.toString();
             if (starName.matches(".*\\d.*")) { // Check for non-string content
-                inconsistent.add(new String[]{"<stagename>" + starName});
+                inconsistent.add(new String[]{"Inconsistent: <stagename> " + starName});
                 starName = null;
             }
         } else if (qName.equalsIgnoreCase("dob")) {
@@ -87,7 +84,7 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
             } else if (birthYearStr.matches("\\d+")) {  // Check if birthYear is all digits
                 birthYear = Integer.parseInt(birthYearStr);  // Parse as integer
             } else {
-                inconsistent.add(new String[]{"<dob>",birthYearStr});
+                inconsistent.add(new String[]{"Inconsistent: <dob> " + birthYearStr});
                 birthYear = null;  // Set to null if invalid
             }
         }
@@ -99,21 +96,51 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
 
     }
 
-    public void printresult(){
-        System.out.println("Number of Star from parser: " + newStars.size());
-        System.out.println("Number of Empty name: " + empty);
-        System.out.println("Inconsistent Entries: " + inconsistent.size());
+    public void writeAndDisplayResult(){
+        System.out.println("Writing and Displaying Stars Results...");
+        System.out.println("Star inconsistent Entries: " + inconsistent.size());
+        writeInconsistentEntries();
+        System.out.println("Star Empty Entries: " + faildueEmpty.size());
+        writeEmptyEntries();
+        System.out.println("Star Duplicated Entries: " + faildueDupicated.size());
+        writeDuplicateEntries();
+
     }
 
     public void writeInconsistentEntries() {
-        File outFile = new File("Inconsistent.txt");
-        System.out.println("Inconsistent Entries: " + inconsistent.size());
+        File outFile = new File("StarInconsistentEntries.txt");
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outFile))) {
             writer.write("Inconsistent Entries:\n");
             for (String[] entry : inconsistent) {
                 writer.write("Inconsistent Entry: " + Arrays.toString(entry) + "\n");
             }
             System.out.println("Inconsistent entries written to " + outFile.getAbsolutePath());
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
+        }
+    }
+
+    public void writeEmptyEntries() {
+        File outFile = new File("StarEmptyEntries.txt");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outFile))) {
+            writer.write("Star Empty Entries:\n");
+            for (String[] entry : faildueEmpty) {
+                writer.write("Empty Entry: " + Arrays.toString(entry) + "\n");
+            }
+            System.out.println("Star Empty entries written to " + outFile.getAbsolutePath());
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
+        }
+    }
+
+    public void writeDuplicateEntries() {
+        File outFile = new File("StarDuplicateEntries.txt");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outFile))) {
+            writer.write("Star Duplicate Entries:\n");
+            for (String[] entry : faildueDupicated) {
+                writer.write("Duplicate Entry: " + Arrays.toString(entry) + "\n");
+            }
+            System.out.println("Star Duplicate entries written to " + outFile.getAbsolutePath());
         } catch (IOException e) {
             System.err.println("Error writing to file: " + e.getMessage());
         }
@@ -132,8 +159,7 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
 //        for (String[] star : parsedStars) {
 //            System.out.println(Arrays.toString(star));
 //        }
-//        parser.printInconsistentEntries();
-//        parser.printresult();
+//        parser.writeAndDisplayResult();
 //        System.out.println("Parsing time: " + (parser.exe_time) + " ms");
 //
 //    }

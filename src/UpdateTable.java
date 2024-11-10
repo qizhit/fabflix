@@ -107,8 +107,7 @@ public class UpdateTable{
         StarsSAXParser starsParser = new StarsSAXParser(existingStars);
         starsParser.parseDocument("parse/actors63.xml");  // Adjust the path as needed
         List<String[]> parsedStars = starsParser.getStarsList();
-        starsParser.writeInconsistentEntries(); //write the inconsistent
-        starsParser.printresult();
+        starsParser.writeAndDisplayResult(); //write the inconsistent
 
         // Prepare the SQL statement for inserting new stars
         String insertStarSQL = "INSERT INTO stars (id, name, birthYear) VALUES (?, ?, ?)";
