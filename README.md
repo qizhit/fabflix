@@ -1,15 +1,10 @@
-# Fablix Application - Project2: Interactive Movie Shopping
+# Fablix Application - Project3: Fabflix Advanced Features
 
 ## Project Overview
-In this project, we are building an interactive movie browsing and shopping experience for Fabflix. The main features include:
-- A **Login Page** that secure access to the application.
-- A **Main Page** with movie browsing by category, movie search functionality, and shopping cart access.
-- A **Movie List Page** that displays selected movies from the database.
-- A **Single Movie Page** that shows the detailed information about a selected movie.
-- A **Single Star Page** that shows the detailed information about a selected star.
-- A **Checkout Page** to manage items in the shopping cart.
-- A **Payment Page** for completing secure transactions.
-- Easy navigation between pages via hyperlinks and the browser's back button.
+This project extends Fabflix with enhanced security and employee functionalities, Key additions include:
+- A **Security Enhancements**, a integration of reCAPTCHA, HTTPS, and encrypted passwords for user protection.
+- A **Employee dashboard** that provides metadata, allows for star and movie additions, and utilizes stored procedures for efficient database management.
+- A **XML parsing** that automatic loads additional movie, star, and genre data into the Fabflix database.
 
 This phase includes most core functionalities, with additional features planned for future development.
 
@@ -22,34 +17,25 @@ It was developed using following technologies:
 - Database connection: Tomcat handles servlet requests, and manage the connection between the servlets and database.
 
 ## Features Implemented
-1. Login Page
-   - Allows secure user login, with error handling for incorrect email or password.
-   - Prevents access to other pages without authentication, redirecting to the Login Page if necessary.
-   - On successful login, redirects users to the Main Page.
-2. Main Page
-   - The home page after login, providing options to browse movies and search by title, year, director, or star’s name with flexible search terms.
-3. Movie List Page
-   - Displays movie information: title, year, director, genres, stars, and rating.
-   - Hyperlinks allow navigation to corresponding Single Movie or Single Star pages.
-   - Sorting options by "title then rating" or "rating then title."
-   - Pagination with customizable movie count per page and navigation buttons.
-   - Allows adding movies to the shopping cart.
-4. Single Movie Page
-   - Shows details of the selected movie, including all genres, stars, and rating.
-   - Hyperlinks to related genres and stars, allowing easy navigation.
-   - Back button to return to the Movie List Page with preserved sorting and category filters.
-   - Navigation options to the shopping cart and Main Page.
-5. Single Star Page
-   - Displays the selected star's name, year of birth (N/A if not available), all movies in which this s star performed.
-   - Each movie title is a hyperlink that navigates to the Single Movie Page.
-   - A back button allows users to return to the Movie List Page with customized sorting or category.
-6. Checkout Page
-   - The Shopping Cart allows customers to add movies for purchase, including multiple copies of each.
-7. Payment Page
-   - Customers enter credit card details, then submit the order.
-   - Records successful payments and displays a confirmation page; if payment fails, provides an error prompt.
-8. Confirmation Page
-   - Show order details including sale ID, movies purchased and the quantities, and total price after successfully placing a order.
+1. reCAPTCHA Integration
+- Prevents bots from accessing the login by adding reCAPTCHA validation.
+- Displays appropriate error messages if reCAPTCHA fails.
+2. HTTPS Implementation
+- Enforces HTTPS for secure data transmission and redirects HTTP traffic to HTTPS.
+- Configured with Tomcat's SSL on port 8443.
+3. Prepared Statements
+- Utilizes PreparedStatement to prevent SQL injection.
+- Prepared statements are used across various servlets for secure database queries (detailed list below).
+4. Password Encryption
+- Stores encrypted passwords in the database and verifies login by comparing the hashed user input with the stored hash.
+5. Employee Dashboard
+- Provides secure access for employees to an admin dashboard.
+- Displays database metadata and allows employees to add new movies and stars with success/error messages for operations.
+- Employee can go to customer page to check the insertion.
+6. XML Parsing and Data Import
+- Reads large XML files, automatically formats, and imports new movies, stars, and genres into the database.
+- Parses mains243.xml, casts124.xml, actors63.xml.
+- Logs inconsistent data without interrupting the process (see Inconsistencies Report)
 
 ## AWS Deployment
 This application is deployed on an AWS EC2 instance, which is configured with the necessary software to support the application, including:
@@ -89,6 +75,7 @@ The substring matching feature in the MovieListServlet is designed to provide fl
   adds % to both sides of the search text, which means it will match the given text anywhere in the field. For example, if searchTitle is "star", it will match "Star Wars", "The Starry Night", or "A Star is Born".
 
 ## Prepared Statements
+Prepared statements are used in the following files to secure database operations:
 - LoginServlet: emailQuery
 - MainServlet: query
 - MovieListServlet: queryBuilder, genreQuery, starQuery, countQuery
@@ -96,14 +83,33 @@ The substring matching feature in the MovieListServlet is designed to provide fl
 - SingleStarServlet: query
 - PaymentServlet: cardQuery, saleInsert
 - ConfirmationServlet: querySalesSQL
+- UpdateTable: statement, insertStarSQL
+
+## Optimization of XML Parsing
+To enhance XML parsing efficiency, the following strategies were implemented:
+1. StringBuilder: Used for efficient string manipulation.
+2. HashMap Caching: Stores existing star and genre entries to avoid redundant lookups and inserts.
+3. Selective Processing: Processes only relevant elements.
+- For example: `if (qName.equalsIgnoreCase("actor"))`, `else if (qName.equalsIgnoreCase("stagename"))`
+4. Batch()?: Groups insert operations to reduce database transaction frequency.
+These optimizations resulted in a notable decrease in XML parsing time compared to the naive approach.
+5. Single Database Connection: Maintains a single, secure database connection throughout parsing, enhancing both security and efficiency.
+- Execute parse at UpdateTable.
+
+## Inconsistencies Report
+During XML parsing, some data inconsistencies were encountered, such as:
+- Invalid data types (non-integer values for numeric fields).
+Running time Record:
+- mains243.xml
+- casts124.xml
+- actors63.xml
+Inconsistent entries are logged in the file ........, which can be found in the project directory. The program continues processing after logging these issues.
 
 ## Demo Video
-A screen recording demo is available here:
-
-The demo showcases the application running on an AWS instance, highlighting all key features, including page navigation, movie and star detail displays, and the shopping experience.
+A demo video showcasing the setup and features can be found here....
 
 ## Team Contributions
 We collaborated on setting up the environment and demo recording.
 Our specific contributions were as follows:
-- Xuan Gu: wrote the README.md file,  implemented the single-movie and single-star functionalities, Checkout/Payment/Confirmation frame and components.
+- Xuan Gu: wrote the README.md file, 
 - Qizhi Tian: Developed the Login, Movie List, AddtoCart, Checkout, and Payment functionalities; designed the sorting, searching, and pagination features; and worked on page styling.
