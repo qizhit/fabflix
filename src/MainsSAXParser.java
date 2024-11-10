@@ -1,4 +1,5 @@
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
@@ -16,13 +17,13 @@ public class MainsSAXParser extends DefaultHandler {
     private String tempVal;
     private MainsItem tempMovie;
     private String currentDirector;
+    private List<String> inconsistent = new ArrayList<>();
 
     public MainsSAXParser() {
         myMovies = new ArrayList<>();
     }
-    private List<String> inconsistent = new ArrayList<>();
 
-    public void runExample() {
+    public void run() {
         parseDocument();
         printData();
     }
@@ -32,7 +33,7 @@ public class MainsSAXParser extends DefaultHandler {
         try {
             SAXParser sp = spf.newSAXParser();
             FileInputStream fis = new FileInputStream("parse/mains243.xml");
-            InputStreamReader isr = new InputStreamReader(fis, "ISO-8859-1");
+            InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.ISO_8859_1);
             sp.parse(new InputSource(isr), this);
         } catch (SAXException | ParserConfigurationException | IOException e) {
             e.printStackTrace();
@@ -40,18 +41,23 @@ public class MainsSAXParser extends DefaultHandler {
     }
 
     private void printData() {
-        for (MainsItem movie : myMovies) {
-            System.out.println(movie);
-        }
+//        for (MainsItem movie : myMovies) {
+//            System.out.println(movie);
+//        }
         System.out.println("Number of Main Items: " + myMovies.size());
     }
 
+    public List<MainsItem> getMyMovies() {
+        return myMovies;
+    }
 
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         tempVal = "";
         if (qName.equalsIgnoreCase("film")) {
             tempMovie = new MainsItem();
-            tempMovie.setDirector(currentDirector);
+            if (!currentDirector.isEmpty()) {
+                tempMovie.setDirector(currentDirector);
+            }
         } else if (qName.equalsIgnoreCase("director")) {
             currentDirector = "";
         }
@@ -66,32 +72,28 @@ public class MainsSAXParser extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
         try {
             if (qName.equalsIgnoreCase("film")) {
-                if (tempMovie.getFilmTitle() != null && tempMovie.getDirector() != null && tempMovie.getYear() != null) {
-                    if (tempMovie.getGenres().isEmpty()) {
+                if (tempMovie.getFilmTitle() != null && tempMovie.getDirector() != null
+                        && tempMovie.getYear() != null && !tempMovie.getGenres().isEmpty()) {
+                    try {
+                        Integer.parseInt(tempMovie.getYear());
+                        myMovies.add(tempMovie);
+                    } catch (NumberFormatException e) {
+//                            System.out.println("Ignoring invalid year value: " + tempVal);
                         inconsistent.add(tempMovie.toString());
-                        System.out.println("Skipping MainsItem due to empty genres list.");
-                    } else {
-                        try {
-                            int year = Integer.parseInt(tempMovie.getYear());
-                            myMovies.add(tempMovie);
-                        } catch (NumberFormatException e) {
-                            System.out.println("Ignoring invalid year value: " + tempVal);
-                            inconsistent.add(tempMovie.toString());
-                        }
                     }
                 } else {
                     inconsistent.add(tempMovie.toString());
-                    System.out.println("Skipping MainsItem due to missing film title, director, or year." + tempMovie);
+//                    System.out.println("Skipping MainsItem due to missing film title, director, or year." + tempMovie);
                 }
-            } else if (qName.equalsIgnoreCase("fid")) {
+            } else if (qName.equalsIgnoreCase("fid") && !tempVal.isEmpty()) {
                 tempMovie.setFilmId(tempVal);
-            } else if (qName.equalsIgnoreCase("t")) {
+            } else if (qName.equalsIgnoreCase("t") && !tempVal.isEmpty()) {
                 tempMovie.setFilmTitle(tempVal);
-            } else if (qName.equalsIgnoreCase("year")) {
+            } else if (qName.equalsIgnoreCase("year") && !tempVal.isEmpty()) {
                 tempMovie.setYear(tempVal.trim());
             } else if (qName.equalsIgnoreCase("dirname")) {
                 currentDirector = tempVal;
-            } else if (qName.equalsIgnoreCase("cat")) {
+            } else if (qName.equalsIgnoreCase("cat") && !tempVal.isEmpty()) {
                 tempMovie.addGenre(tempVal);
             }
         } catch (Exception e) {
@@ -116,7 +118,7 @@ public class MainsSAXParser extends DefaultHandler {
 
     public static void main(String[] args) {
         MainsSAXParser parser = new MainsSAXParser();
-        parser.runExample();
+        parser.run();
         parser.printInconsistentEntries();
     }
 }

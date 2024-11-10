@@ -79,13 +79,12 @@ public class MainsItem {
 
     public void addGenre(String genre) {
         String normalizedGenreCode = genre.toLowerCase();
-        String newgenre = CATEGORY_MAP.getOrDefault(normalizedGenreCode, genre);
-        String genreresult = newgenre.substring(0, 1).toUpperCase() + newgenre.substring(1);
-        this.genres.add(genreresult);
+        String newGenre = CATEGORY_MAP.getOrDefault(normalizedGenreCode, genre);
+        String genreResult = newGenre.substring(0, 1).toUpperCase() + newGenre.substring(1);
+        this.genres.add(genreResult);
     }
 
 
-    @Override
     public String toString() {
         return "MainsItem - " +
                 "Film ID: " + filmId + ", " +

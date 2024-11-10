@@ -1,4 +1,4 @@
-Inconsistent Entries: 3345
+Inconsistent Entries: 3352
 MainsItem - Film ID: H2, Film Title: Number Thirteen, Year: 1922, Director: Hitchcock, Genres: [].
 MainsItem - Film ID: H4, Film Title: The Passionate Adventure, Year: 1924, Director: Hitchcock, Genres: [].
 MainsItem - Film ID: H5, Film Title: The Blackguard, Year: 1925, Director: Hitchcock, Genres: [].
@@ -1431,6 +1431,7 @@ MainsItem - Film ID: FZ18, Film Title: A Man for All Seasons, Year: 1966, Direct
 MainsItem - Film ID: FZ21, Film Title: Five Days One Summer, Year: 1982, Director: Zinneman, Genres: [].
 MainsItem - Film ID: GLa10, Film Title: Martin Roumagnac, Year: 1946, Director: Lacombe, Genres: [].
 MainsItem - Film ID: GoA10, Film Title: We, The Living, Year: 1942, Director: Alessandrini, Genres: [].
+MainsItem - Film ID: JD7, Film Title: null, Year: 1947, Director: Dassin, Genres: [Violence].
 MainsItem - Film ID: JD30, Film Title: Circle of Two, Year: 1980, Director: Dassin, Genres: [].
 MainsItem - Film ID: JeY5, Film Title: Killer Bat, Year: 1942, Director: Yarborough, Genres: [].
 MainsItem - Film ID: JeY35, Film Title: The Seven Faces of Dr.Lao, Year: 1995, Director: Yarborough, Genres: [].
@@ -1678,7 +1679,7 @@ MainsItem - Film ID: SM8, Film Title: Sammy Going South, Year: 1962, Director: M
 MainsItem - Film ID: StD1, Film Title: On the Town, Year: 1949, Director: Donen, Genres: [].
 MainsItem - Film ID: StD58, Film Title: Arabesque, Year: 1966, Director: Donen, Genres: [].
 MainsItem - Film ID: StD80, Film Title: Blame it on Rio, Year: 1984, Director: Donen, Genres: [].
-MainsItem - Film ID: WlJ10, Film Title: , Year: 1949, Director: W.Jackson, Genres: [].
+MainsItem - Film ID: WlJ10, Film Title: null, Year: 1949, Director: W.Jackson, Genres: [].
 MainsItem - Film ID: xSx10, Film Title: Begegnung mit Werther, Year: 1949, Director: Stroux, Genres: [].
 MainsItem - Film ID: ZJu10, Film Title: Crows and Sparrows, Year: 1949, Director: Junil, Genres: [].
 MainsItem - Film ID: FF48, Film Title: Voices of the Moon, Year: 1990, Director: Fellini, Genres: [].
@@ -1941,7 +1942,7 @@ MainsItem - Film ID: FiC3, Film Title: Big Hand for a Little Lady, Year: 1966, D
 MainsItem - Film ID: FiC4, Film Title: How to Save A Marriage, Year: 1967, Director: F.Cook, Genres: [].
 MainsItem - Film ID: FiC5, Film Title: Prudence and the Pill, Year: 1968, Director: F.Cook, Genres: [].
 MainsItem - Film ID: FiC13, Film Title: This Is The West That Was, Year: 1974, Director: F.Cook, Genres: [].
-MainsItem - Film ID: GeP45, Film Title: , Year: 1999, Director: Pollock, Genres: [].
+MainsItem - Film ID: GeP45, Film Title: null, Year: 1999, Director: Pollock, Genres: [].
 MainsItem - Film ID: GOw10, Film Title: Kiss Before Dying, Year: 1956, Director: G.Oswald, Genres: [].
 MainsItem - Film ID: GOw15, Film Title: Screaming Mimi, Year: 1958, Director: G.Oswald, Genres: [].
 MainsItem - Film ID: GOw20, Film Title: Agent for H.A.R.M., Year: 1966, Director: G.Oswald, Genres: [].
@@ -2195,8 +2196,8 @@ MainsItem - Film ID: GxR03, Film Title: Comrade X, Year: 1940, Director: G.Reinh
 MainsItem - Film ID: GxR05, Film Title: Command Decision, Year: 1948, Director: G.Reinhardt, Genres: [].
 MainsItem - Film ID: GxR06, Film Title: The Great Sinner, Year: 1949, Director: G.Reinhardt, Genres: [].
 MainsItem - Film ID: GxR07, Film Title: The Red Badge of Courage, Year: 1951, Director: G.Reinhardt, Genres: [].
-MainsItem - Film ID: GxR10, Film Title: , Year: 1954, Director: G.Reinhardt, Genres: [].
-MainsItem - Film ID: GxR10, Film Title: , Year: 1954, Director: G.Reinhardt, Genres: [].
+MainsItem - Film ID: GxR10, Film Title: null, Year: 1954, Director: G.Reinhardt, Genres: [].
+MainsItem - Film ID: GxR10, Film Title: null, Year: 1954, Director: G.Reinhardt, Genres: [].
 MainsItem - Film ID: HiT10, Film Title: Pitfall, Year: 1961, Director: Teshigahara, Genres: [].
 MainsItem - Film ID: HiT17, Film Title: Kwaidan, Year: 1965, Director: Teshigahara, Genres: [].
 MainsItem - Film ID: HiT18, Film Title: Silence, Year: 1965, Director: Teshigahara, Genres: [].
@@ -2980,6 +2981,7 @@ MainsItem - Film ID: ZKK10, Film Title: Cry and Cry Again, Year: 1987, Director:
 MainsItem - Film ID: Z8720, Film Title: Project X, Year: 1987, Director: UnYear87, Genres: [].
 MainsItem - Film ID: ABi10, Film Title: Burning Secret, Year: 1988, Director: Birkin, Genres: [].
 MainsItem - Film ID: AxA10, Film Title: Pour Sacha, Year: 1988, Director: Arcady, Genres: [].
+MainsItem - Film ID: BSi3, Film Title: null, Year: 1988, Director: Silberling, Genres: [Thriller].
 MainsItem - Film ID: ClD5, Film Title: Nenette and Boni, Year: 1997, Director: Denis, Genres: [].
 MainsItem - Film ID: DH1, Film Title: Mr.~North, Year: 1988, Director: D.Huston, Genres: [].
 MainsItem - Film ID: DdV1, Film Title: Throw Momma from the Train, Year: 1988, Director: D.deVito, Genres: [].
@@ -3212,7 +3214,7 @@ MainsItem - Film ID: Ebu5, Film Title: The Brothers McMullen, Year: 1995, Direct
 MainsItem - Film ID: EBu10, Film Title: Long Time, Nothing New, Year: 1997, Director: E.Burns, Genres: [].
 MainsItem - Film ID: FWh10, Film Title: Hope Floats, Year: 1998, Director: Whitaker, Genres: [].
 MainsItem - Film ID: Hka3, Film Title: Maborosi, Year: 1995, Director: Koreada, Genres: [].
-MainsItem - Film ID: KDo1x, Film Title: , Year: 199x, Director: Dowling, Genres: [].
+MainsItem - Film ID: KDo1x, Film Title: null, Year: 199x, Director: Dowling, Genres: [].
 MainsItem - Film ID: KSm3, Film Title: Chasing Amy, Year: 1997, Director: K.Smith, Genres: [].
 MainsItem - Film ID: LBv10, Film Title: NKT, Year: 1997, Director: Berovici, Genres: [].
 MainsItem - Film ID: MBy1, Film Title: Bad Boys, Year: 1995, Director: Bay, Genres: [].
@@ -3327,6 +3329,8 @@ MainsItem - Film ID: JzS10, Film Title: A Week in the Life of a Man, Year: 1999,
 MainsItem - Film ID: KAt10, Film Title: Lola and Billy the Kid, Year: 1999, Director: Ataman, Genres: [].
 MainsItem - Film ID: KMa10, Film Title: Mickey Blue Eyes, Year: 1999, Director: Makin, Genres: [].
 MainsItem - Film ID: KvB10, Film Title: A Dog of Flanders, Year: 1999, Director: Brodie, Genres: [].
+MainsItem - Film ID: LMy1, Film Title: Show Me Love, Year: 1999, Director: null, Genres: [Drama].
+MainsItem - Film ID: LMy3, Film Title: Together, Year: 2001, Director: null, Genres: [Drama, Comedy].
 MainsItem - Film ID: MlL1, Film Title: The Best Man, Year: 1999, Director: M.Lee, Genres: [].
 MainsItem - Film ID: PSv10, Film Title: Metroland, Year: 1999, Director: P.Saville, Genres: [].
 MainsItem - Film ID: SZi10, Film Title: Broken Vessels, Year: 1999, Director: Ziehl, Genres: [].
@@ -3344,3 +3348,6 @@ MainsItem - Film ID: J2B70, Film Title: La Poison, Year: 2000, Director: J.Becke
 MainsItem - Film ID: LDo10, Film Title: Knockout, Year: 2000, Director: Doumani, Genres: [].
 MainsItem - Film ID: RSc10, Film Title: Crime + Punsihment in Suburbia, Year: 2000, Director: Schmidt, Genres: [].
 MainsItem - Film ID: SGe10, Film Title: Le retour de l'Idiot, Year: 2000, Director: Gedeon, Genres: [].
+MainsItem - Film ID: TFd10, Film Title: In the Bedroom, Year: 2001, Director: null, Genres: [Drama].
+MainsItem - Film ID: JSx0, Film Title: Never Never, Year: 2002, Director: null, Genres: [Drama].
+MainsItem - Film ID: MFo10, Film Title: Monster's Ball, Year: 2002, Director: null, Genres: [Uncategorized].

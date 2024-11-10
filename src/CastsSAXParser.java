@@ -1,4 +1,4 @@
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
@@ -7,8 +7,6 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import org.xml.sax.InputSource;
 
 // Parse casts124.xml, in order to link stars to movies (stars_in_movies).
@@ -18,12 +16,13 @@ public class CastsSAXParser extends DefaultHandler {
     private String tempVal;
     private CastsItem tempCast;
     private String currentDirector; // Variable to store current director
+    private List<String> inconsistent = new ArrayList<>();
 
     public CastsSAXParser() {
         myCasts = new ArrayList<>();
     }
 
-    public void runExample() {
+    public void run() {
         parseDocument();
         printData();
     }
@@ -41,14 +40,17 @@ public class CastsSAXParser extends DefaultHandler {
     }
 
     private void printData() {
-        for (CastsItem cast : myCasts) {
-            System.out.println(cast);
-        }
+//        for (CastsItem cast : myCasts) {
+//            System.out.println(cast);
+//        }
         System.out.println("Number of Cast Items: " + myCasts.size());
     }
 
+    public List<CastsItem> getMyCasts() {
+        return myCasts;
+    }
+
     // Event Handlers
-    @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         tempVal = ""; // Reset tempVal at the start of each element
         if (qName.equalsIgnoreCase("filmc")) {
@@ -58,12 +60,10 @@ public class CastsSAXParser extends DefaultHandler {
         }
     }
 
-    @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         tempVal += new String(ch, start, length);
     }
 
-    @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equalsIgnoreCase("is")) {
             currentDirector = tempVal; // Update currentDirector when <is> tag ends
@@ -71,7 +71,7 @@ public class CastsSAXParser extends DefaultHandler {
             // End of <filmc>, add tempCast to myCasts if it meets the conditions
             if (tempCast.getStarStageNames().isEmpty() || tempCast.getFilmTitle() == null || tempCast.getFilmTitle().isEmpty()) {
                 // Do not add to myCasts if Star Stage Names list is empty or film title is missing
-                System.out.println("Skipping CastsItem due to missing film title or empty star stage names list.");
+                inconsistent.add(tempCast.toString());
             } else {
                 myCasts.add(tempCast); // Add the completed CastsItem to the list
             }
@@ -84,13 +84,29 @@ public class CastsSAXParser extends DefaultHandler {
             if (!tempVal.equalsIgnoreCase("sa") && !tempVal.equalsIgnoreCase("s a") && !tempVal.trim().isEmpty()) {
                 tempCast.addStarStageName(tempVal); // Add star stage name to the list
             } else {
-                System.out.println("Ignoring Star Stage Name: " + tempVal);
+                inconsistent.add("Film ID: " + tempCast.getFilmId() + ", Star Stage Name: " + tempVal);
             }
         }
     }
 
+    public void printInconsistentEntries() {
+        File outFile = new File("CastsInconsistent.txt");
+
+        System.out.println("Inconsistent Entries: " + inconsistent.size());
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outFile))) {
+            writer.write("Inconsistent Entries: " + inconsistent.size() + "\n");
+            for (String entry : inconsistent) {
+                writer.write(entry + "\n");
+            }
+            System.out.println("Inconsistent entries written to " + outFile.getAbsolutePath());
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
+        }
+    }
+
     public static void main(String[] args) {
-        CastsSAXParser cp = new CastsSAXParser();
-        cp.runExample();
+        CastsSAXParser parse = new CastsSAXParser();
+        parse.run();
+        parse.printInconsistentEntries();
     }
 }
