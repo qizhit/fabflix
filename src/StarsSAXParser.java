@@ -86,7 +86,7 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
                 System.out.println("Processed <dob>: " + birthYear);
             } else {
                 System.out.println("Invalid birth year detected: " + birthYearStr);
-                inconsistent.add(new String[]{"Invalid BirthYear", birthYearStr});
+                inconsistent.add(new String[]{"<dob>",birthYearStr});
                 birthYear = null;  // Set to null if invalid
             }
         }
