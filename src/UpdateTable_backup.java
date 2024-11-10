@@ -7,18 +7,18 @@ import java.util.HashMap;
 public class UpdateTable_backup{
 
     public static void main(String[] args) throws Exception {
-        // Establish database connection
-        Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-        Connection dbConnection = DriverManager.getConnection("jdbc:mysql:///moviedb?autoReconnect=true&useSSL=false",
-                "mytestuser", "My6$Password");
-
-        // Call the add_star method to parse and insert stars
-        System.out.println("Database connection established.");
-        add_star(dbConnection);
-
-        // Close the database connection
-        dbConnection.close();
-        System.out.println("Database connection closed.");
+//        // Establish database connection
+//        Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+//        Connection dbConnection = DriverManager.getConnection("jdbc:mysql:///moviedb?autoReconnect=true&useSSL=false",
+//                "mytestuser", "My6$Password");
+//
+//        // Call the add_star method to parse and insert stars
+//        System.out.println("Database connection established.");
+//        add_star(dbConnection);
+//
+//        // Close the database connection
+//        dbConnection.close();
+//        System.out.println("Database connection closed.");
     }
 
     public static void add_star(Connection dbConnection) throws Exception {
@@ -91,69 +91,69 @@ public class UpdateTable_backup{
     }
 
 
-    public static void add_movie(Connection dbConnection) throws Exception {
-        //existing movie
-        PreparedStatement movieStatement = dbConnection.prepareStatement("SELECT title, year, director FROM movies;");
-        HashSet<String> existingMovies = new HashSet<>();
-        ResultSet movieResultSet = movieStatement.executeQuery();
-        while (movieResultSet.next()) {
-            String title = movieResultSet.getString("title");
-            int year = movieResultSet.getInt("year");
-            String director = movieResultSet.getString("director");
-            existingMovies.add(title + year + director);
-        }
-        movieStatement.close();
-
-        //prevent duplication of genre
-        PreparedStatement genreStatement = dbConnection.prepareStatement("SELECT id, name FROM genres;");
-        HashMap<String, Integer> existingGenres = new HashMap<>();
-        ResultSet genreResultSet = genreStatement.executeQuery();
-        while (genreResultSet.next()) {
-            String name = genreResultSet.getString("name");
-            int id = genreResultSet.getInt("id");
-            existingGenres.put(name.toLowerCase(), id); // Store lowercase for case-insensitive match
-        }
-        genreStatement.close();
-
-        // Load existing star-movie relationships into a HashSet to avoid duplicates
-        PreparedStatement starInMovieStatement = dbConnection.prepareStatement("SELECT starId, movieId FROM stars_in_movies;");
-        HashSet<String> existingStarInMovies = new HashSet<>();
-        try (ResultSet starInMovieResultSet = starInMovieStatement.executeQuery()) {
-            while (starInMovieResultSet.next()) {
-                String starId = starInMovieResultSet.getString("starId");
-                String movieId = starInMovieResultSet.getString("movieId");
-                existingStarInMovies.add(starId + "-" + movieId); // Concatenate starId and movieId as a unique key
-            }
-        }
-        starInMovieStatement.close();
-
-
-        MainsSAXParser mainsParser = new MainsSAXParser();
-        mainsParser.parseDocument();
-        List<MovieItem> parsedMovies = mainsParser.getMoviesList(); // Assume MovieItem includes genres list
-        mainsParser.printInconsistentEntries(); // Log inconsistent entries
-
-        System.out.println("Running time: ");
-
-
-        //Assuming all correct
-        String insertMovieSQL = "INSERT INTO movies (id, title, year, director, price) VALUES (?, ?, ?, ?, ?)";
-        String insertGenreSQL = "INSERT INTO genres (name) VALUES (?)";
-        String insertGenreInMovieSQL = "INSERT INTO genres_in_movies (genreId, movieId) VALUES (?, ?)";
-
-        PreparedStatement insertMovieStatement = dbConnection.prepareStatement(insertMovieSQL);
-        PreparedStatement insertGenreStatement = dbConnection.prepareStatement(insertGenreSQL, Statement.RETURN_GENERATED_KEYS);
-        PreparedStatement insertGenreInMovieStatement = dbConnection.prepareStatement(insertGenreInMovieSQL);
-        double randomPrice = Math.round((5.00 + (Math.random() * (30.00 - 5.00))) * 100.0) / 100.0;
-
-        insertMovieStatement.setString(1, movieId);
-        insertMovieStatement.setString(2, title);
-        insertMovieStatement.setInt(3, year);
-        insertMovieStatement.setString(4, director);
-        insertMovieStatement.setDouble(5, randomPrice);
-        insertMovieStatement.executeUpdate();
-
-    }
+//    public static void add_movie(Connection dbConnection) throws Exception {
+//        //existing movie
+//        PreparedStatement movieStatement = dbConnection.prepareStatement("SELECT title, year, director FROM movies;");
+//        HashSet<String> existingMovies = new HashSet<>();
+//        ResultSet movieResultSet = movieStatement.executeQuery();
+//        while (movieResultSet.next()) {
+//            String title = movieResultSet.getString("title");
+//            int year = movieResultSet.getInt("year");
+//            String director = movieResultSet.getString("director");
+//            existingMovies.add(title + year + director);
+//        }
+//        movieStatement.close();
+//
+//        //prevent duplication of genre
+//        PreparedStatement genreStatement = dbConnection.prepareStatement("SELECT id, name FROM genres;");
+//        HashMap<String, Integer> existingGenres = new HashMap<>();
+//        ResultSet genreResultSet = genreStatement.executeQuery();
+//        while (genreResultSet.next()) {
+//            String name = genreResultSet.getString("name");
+//            int id = genreResultSet.getInt("id");
+//            existingGenres.put(name.toLowerCase(), id); // Store lowercase for case-insensitive match
+//        }
+//        genreStatement.close();
+//
+//        // Load existing star-movie relationships into a HashSet to avoid duplicates
+//        PreparedStatement starInMovieStatement = dbConnection.prepareStatement("SELECT starId, movieId FROM stars_in_movies;");
+//        HashSet<String> existingStarInMovies = new HashSet<>();
+//        try (ResultSet starInMovieResultSet = starInMovieStatement.executeQuery()) {
+//            while (starInMovieResultSet.next()) {
+//                String starId = starInMovieResultSet.getString("starId");
+//                String movieId = starInMovieResultSet.getString("movieId");
+//                existingStarInMovies.add(starId + "-" + movieId); // Concatenate starId and movieId as a unique key
+//            }
+//        }
+//        starInMovieStatement.close();
+//
+//
+//        MainsSAXParser mainsParser = new MainsSAXParser();
+//        mainsParser.parseDocument();
+//        List<MovieItem> parsedMovies = mainsParser.getMoviesList(); // Assume MovieItem includes genres list
+//        mainsParser.printInconsistentEntries(); // Log inconsistent entries
+//
+//        System.out.println("Running time: ");
+//
+//
+//        //Assuming all correct
+//        String insertMovieSQL = "INSERT INTO movies (id, title, year, director, price) VALUES (?, ?, ?, ?, ?)";
+//        String insertGenreSQL = "INSERT INTO genres (name) VALUES (?)";
+//        String insertGenreInMovieSQL = "INSERT INTO genres_in_movies (genreId, movieId) VALUES (?, ?)";
+//
+//        PreparedStatement insertMovieStatement = dbConnection.prepareStatement(insertMovieSQL);
+//        PreparedStatement insertGenreStatement = dbConnection.prepareStatement(insertGenreSQL, Statement.RETURN_GENERATED_KEYS);
+//        PreparedStatement insertGenreInMovieStatement = dbConnection.prepareStatement(insertGenreInMovieSQL);
+//        double randomPrice = Math.round((5.00 + (Math.random() * (30.00 - 5.00))) * 100.0) / 100.0;
+//
+//        insertMovieStatement.setString(1, movieId);
+//        insertMovieStatement.setString(2, title);
+//        insertMovieStatement.setInt(3, year);
+//        insertMovieStatement.setString(4, director);
+//        insertMovieStatement.setDouble(5, randomPrice);
+//        insertMovieStatement.executeUpdate();
+//
+//    }
 
     // Utility method to generate a new unique movie ID
     private static String generateNewMovieId(Connection dbConnection) throws SQLException, SQLException {

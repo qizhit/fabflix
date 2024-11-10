@@ -25,6 +25,7 @@ public class CastsSAXParser extends DefaultHandler {
     public void run() {
         parseDocument();
         printData();
+        storeInconsistentEntries();
     }
 
     private void parseDocument() {
@@ -89,7 +90,7 @@ public class CastsSAXParser extends DefaultHandler {
         }
     }
 
-    public void printInconsistentEntries() {
+    public void storeInconsistentEntries() {
         File outFile = new File("CastsInconsistent.txt");
 
         System.out.println("Inconsistent Entries: " + inconsistent.size());
@@ -107,6 +108,5 @@ public class CastsSAXParser extends DefaultHandler {
     public static void main(String[] args) {
         CastsSAXParser parse = new CastsSAXParser();
         parse.run();
-        parse.printInconsistentEntries();
     }
 }

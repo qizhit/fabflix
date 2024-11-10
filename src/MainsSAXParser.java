@@ -26,6 +26,7 @@ public class MainsSAXParser extends DefaultHandler {
     public void run() {
         parseDocument();
         printData();
+        storeInconsistentEntries();
     }
 
     private void parseDocument() {
@@ -101,7 +102,7 @@ public class MainsSAXParser extends DefaultHandler {
         }
     }
 
-    public void printInconsistentEntries() {
+    public void storeInconsistentEntries() {
         File outFile = new File("MovieInconsistent.txt");
 
         System.out.println("Inconsistent Entries: " + inconsistent.size());
@@ -119,6 +120,5 @@ public class MainsSAXParser extends DefaultHandler {
     public static void main(String[] args) {
         MainsSAXParser parser = new MainsSAXParser();
         parser.run();
-        parser.printInconsistentEntries();
     }
 }
