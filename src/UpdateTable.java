@@ -42,7 +42,7 @@ public class UpdateTable{
 
         // Parse the XML and get the list of new stars
         StarsSAXParser starsParser = new StarsSAXParser(existingStars);
-        starsParser.parseDocument("/Users/x/Desktop/122B/2024-fall-cs-122b-cs122b-project1-ys/parse/actors63.xml");  // Adjust the path as needed
+        starsParser.parseDocument("parse/actors63.xml");  // Adjust the path as needed
         List<String[]> parsedStars = starsParser.getStarsList();
 
         // Prepare the SQL statement for inserting new stars
