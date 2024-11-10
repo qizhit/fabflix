@@ -62,7 +62,7 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
 
             if (starName == null || starName.isEmpty()){
                 faildueEmpty.add(new String[]{"Empty <stagename> ", starName});
-            } else if(existingStars.containsKey(starName)&& Objects.equals(existingStars.get(starName), birthYear)) {
+            } else if(existingStars.containsKey(starName)) {
                 faildueDupicated.add(new String[]{"Duplicate <stagename> " + starName + " with birth year: " + birthYear});
             } else {
                 newStars.add(new String[]{starName, birthYear != null ? birthYear.toString() : ""});
