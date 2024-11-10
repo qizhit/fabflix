@@ -1,9 +1,8 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainItem {
+public class MainsItem {
     private String filmId;        // <fid>
     private String filmTitle;     // <t>
     private int year;             // <year>
@@ -38,7 +37,7 @@ public class MainItem {
 
     }
 
-    public MainItem() {
+    public MainsItem() {
         genres = new ArrayList<>();
     }
 
@@ -88,7 +87,7 @@ public class MainItem {
 
     @Override
     public String toString() {
-        return "MainItem Details - " +
+        return "MainsItem Details - " +
                 "Film ID: " + filmId + ", " +
                 "Film Title: " + filmTitle + ", " +
                 "Year: " + year + ", " +

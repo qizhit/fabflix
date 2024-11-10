@@ -11,14 +11,14 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import org.xml.sax.InputSource;
 
-public class CastsParser extends DefaultHandler {
+public class CastsSAXParser extends DefaultHandler {
 
     private List<CastsItem> myCasts;
     private String tempVal;
     private CastsItem tempCast;
     private String currentDirector; // Variable to store current director
 
-    public CastsParser() {
+    public CastsSAXParser() {
         myCasts = new ArrayList<>();
     }
 
@@ -40,10 +40,10 @@ public class CastsParser extends DefaultHandler {
     }
 
     private void printData() {
-        System.out.println("Number of Cast Items: " + myCasts.size());
         for (CastsItem cast : myCasts) {
             System.out.println(cast);
         }
+        System.out.println("Number of Cast Items: " + myCasts.size());
     }
 
     // Event Handlers
@@ -80,7 +80,7 @@ public class CastsParser extends DefaultHandler {
             tempCast.setFilmTitle(tempVal); // Set film title (assumes all <t> in <filmc> are the same)
         } else if (qName.equalsIgnoreCase("a")) {
             // Only add Star Stage Name if it is not "sa" or empty
-            if (!tempVal.equalsIgnoreCase("sa") && !tempVal.trim().isEmpty()) {
+            if (!tempVal.equalsIgnoreCase("sa") && !tempVal.equalsIgnoreCase("s a") && !tempVal.trim().isEmpty()) {
                 tempCast.addStarStageName(tempVal); // Add star stage name to the list
             } else {
                 System.out.println("Ignoring Star Stage Name: " + tempVal);
@@ -89,7 +89,7 @@ public class CastsParser extends DefaultHandler {
     }
 
     public static void main(String[] args) {
-        CastsParser cp = new CastsParser();
+        CastsSAXParser cp = new CastsSAXParser();
         cp.runExample();
     }
 }

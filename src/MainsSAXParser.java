@@ -10,14 +10,14 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.InputSource;
 
-public class MainParser extends DefaultHandler {
+public class MainsSAXParser extends DefaultHandler {
 
-    private List<MainItem> myMovies;
+    private List<MainsItem> myMovies;
     private String tempVal;
-    private MainItem tempMovie;
+    private MainsItem tempMovie;
     private String currentDirector;
 
-    public MainParser() {
+    public MainsSAXParser() {
         myMovies = new ArrayList<>();
     }
     private List<String[]> inconsistent = new ArrayList<>();
@@ -40,17 +40,17 @@ public class MainParser extends DefaultHandler {
     }
 
     private void printData() {
-        System.out.println("Number of Main Items: " + myMovies.size());
-        for (MainItem movie : myMovies) {
+        for (MainsItem movie : myMovies) {
             System.out.println(movie);
         }
+        System.out.println("Number of Main Items: " + myMovies.size());
     }
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         tempVal = "";
         if (qName.equalsIgnoreCase("film")) {
-            tempMovie = new MainItem();
+            tempMovie = new MainsItem();
             tempMovie.setDirector(currentDirector);
         } else if (qName.equalsIgnoreCase("director")) {
             currentDirector = "";
@@ -70,10 +70,10 @@ public class MainParser extends DefaultHandler {
                     if (!tempMovie.getGenres().isEmpty()) {
                         myMovies.add(tempMovie);
                     } else {
-                        System.out.println("Skipping MainItem due to empty genres list.");
+                        System.out.println("Skipping MainsItem due to empty genres list.");
                     }
                 } else {
-                    System.out.println("Skipping MainItem due to missing film title, director, or year.");
+                    System.out.println("Skipping MainsItem due to missing film title, director, or year.");
                 }
             } else if (qName.equalsIgnoreCase("fid")) {
                 tempMovie.setFilmId(tempVal);
@@ -113,7 +113,7 @@ public class MainParser extends DefaultHandler {
     }
 
     public static void main(String[] args) {
-        MainParser parser = new MainParser();
+        MainsSAXParser parser = new MainsSAXParser();
         parser.runExample();
         parser.printInconsistentEntries();
     }

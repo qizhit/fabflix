@@ -99,7 +99,7 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
     }
 
     public void printInconsistentEntries() {
-        File outFile = new File("Inconsistent.csv");
+        File outFile = new File("Inconsistent.txt");
 
         System.out.println("Inconsistent Entries:");
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outFile))) {
