@@ -31,10 +31,11 @@ public class AddMovieServlet extends HttpServlet {
         String movieYearStr = request.getParameter("movieYear");
         String movieDirector = request.getParameter("movieDirector");
         String starName = request.getParameter("starName");
+        String starBirthYearStr = request.getParameter("starBirthYear");  // Optional field for star birth year
         String genreName = request.getParameter("genreName");
 
         if (movieTitle.isEmpty() || movieYearStr.isEmpty() || movieDirector.isEmpty() || starName.isEmpty() || genreName.isEmpty()) {
-            response.getWriter().write("{\"success\": false, \"message\": \"All fields are required.\"}");
+            response.getWriter().write("{\"success\": false, \"message\": \"All fields except birth year of actor are required.\"}");
             return;
         }
 
@@ -44,6 +45,16 @@ public class AddMovieServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             response.getWriter().write("{\"success\": false, \"message\": \"Invalid year format.\"}");
             return;
+        }
+
+        Integer starBirthYear = null;
+        if (starBirthYearStr != null && !starBirthYearStr.isEmpty()) {
+            try {
+                starBirthYear = Integer.parseInt(starBirthYearStr);
+            } catch (NumberFormatException e) {
+                response.getWriter().write("{\"success\": false, \"message\": \"Invalid star birth year format.\"}");
+                return;
+            }
         }
 
         try (Connection conn = dataSource.getConnection()) {
@@ -64,17 +75,22 @@ public class AddMovieServlet extends HttpServlet {
             }
 
             // Prepare to call the stored procedure
-            CallableStatement stmt = conn.prepareCall("{CALL add_movie(?, ?, ?, ?, ?)}");
+            CallableStatement stmt = conn.prepareCall("{CALL add_movie(?, ?, ?, ?, ?,?)}");
             stmt.setString(1, movieTitle);
             stmt.setInt(2, movieYear);
             stmt.setString(3, movieDirector);
             stmt.setString(4, starName);
-            stmt.setString(5, genreName);
+            if (starBirthYear != null) {
+                stmt.setInt(5, starBirthYear);  // Set star birth year if provided
+            } else {
+                stmt.setNull(5, java.sql.Types.INTEGER);  // Set to NULL if birth year is not provided
+            }
+            stmt.setString(6, genreName);
 
             // Execute the stored procedure
             stmt.execute();
 
-            response.getWriter().write("{\"success\": true, \"message\": \"Movie added successfully.\"}");
+            response.getWriter().write("{\"success\": true, \"message\": \"Movie added successfully, corresponding star and genre updated.\"}");
         } catch (SQLException e) {
             e.printStackTrace();
             response.setStatus(500);

@@ -1,11 +1,14 @@
 // Function to handle the addition of a new movie
 function addMovie() {
-    const fields = ["movieTitle", "movieYear", "movieDirector", "starName", "genreName"];
+    const fields = ["movieTitle", "movieYear", "movieDirector", "starName","starBirthYear", "genreName"];
     const formData = new URLSearchParams();
 
     fields.forEach(field => {
         const value = document.getElementById(field).value.trim();
-        formData.append(field, value);
+        if (value || field !== "starBirthYear") { // Only include starBirthYear if it has a value
+            formData.append(field, value);
+        }
+        //formData.append(field, value);
     });
 
     console.log("fields:", fields);

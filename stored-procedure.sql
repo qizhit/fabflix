@@ -5,6 +5,7 @@ CREATE PROCEDURE add_movie(
     IN movie_year INT,
     IN movie_director VARCHAR(100),
     IN star_name VARCHAR(100),
+    IN star_birth_year INT,
     IN genre_name VARCHAR(32)
 )
 BEGIN
@@ -40,8 +41,8 @@ SELECT COALESCE(MAX(CAST(SUBSTRING(id, 3) AS UNSIGNED)), 0) + 1 INTO last_star_i
 SET star_id = CONCAT('nm', LPAD(last_star_id, 7, '0'));
 
         -- Insert the new star
-INSERT INTO stars (id, name)
-VALUES (star_id, star_name);
+INSERT INTO stars (id, name, birthYear)
+VALUES (star_id, star_name, star_birth_year);
 END IF;
 
     -- Step 4: Check if the genre exists; if not, insert it and get the new genre ID

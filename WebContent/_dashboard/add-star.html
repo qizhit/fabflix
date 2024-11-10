@@ -11,22 +11,23 @@
     <h1>Fabflix</h1>
     <nav>
         <a href="../index.html">Customer Home</a>
+        <a href="main.html">Metadata Page</a>
         <a href="add-star.html">Add Star</a>
         <a href="add-movie.html">Add Movie</a>
     </nav>
 </header>
 
-<div class="cart-container">
+<div class="form-container" style="max-width: 400px;">
     <h1>Add a New Star</h1>
 
     <form id="add-star-form" style="text-align: center; margin-top: 20px;">
         <div class="form-group">
             <label for="starName">Star Name (required):</label><br>
-            <input type="text" id="starName" name="starName" required>
+            <input type="text" id="starName" name="starName" required style="width: 100%; height: 40px;">
         </div>
         <div class="form-group" style="margin-top: 10px;">
             <label for="birthYear">Birth Year (optional):</label><br>
-            <input type="text" id="birthYear" name="birthYear">
+            <input type="text" id="birthYear" name="birthYear" style="width: 100%; height: 40px;">
         </div>
         <div style="margin-top: 20px;">
             <button type="button" id="add-star-button" class="proceed-btn">Add Star</button>
