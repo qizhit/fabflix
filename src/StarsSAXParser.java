@@ -24,7 +24,6 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
     public StarsSAXParser(HashMap<String, Integer> existingStars) {
         this.existingStars = existingStars;
         this.newStars = new ArrayList<>();
-        System.out.println("StarsSAXParser initialized with existing stars loaded.");
     }
 
     public void parseDocument(String xmlFile) {
@@ -33,11 +32,11 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
             SAXParser sp = spf.newSAXParser();
             FileInputStream fileInputStream = new FileInputStream(xmlFile);
             InputStreamReader reader = new InputStreamReader(fileInputStream, "ISO-8859-1");
-            System.out.println("Starting to parse XML file: " + xmlFile);
+            //System.out.println("Starting to parse XML file: " + xmlFile);
             long startTime = System.currentTimeMillis();
             sp.parse(new InputSource(reader), this);
             long endTime = System.currentTimeMillis();
-            System.out.println("Finished parsing actors XML with ISO-8859-1 encoding");
+            //System.out.println("Finished parsing actors XML with ISO-8859-1 encoding");
             exe_time = endTime - startTime;
         } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
@@ -100,10 +99,15 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
 
     }
 
-    public void printInconsistentEntries() {
-        File outFile = new File("Inconsistent.txt");
+    public void printresult(){
+        System.out.println("Number of Star from parser: " + newStars.size());
+        System.out.println("Number of Empty name: " + empty);
+        System.out.println("Inconsistent Entries: " + inconsistent.size());
+    }
 
-        System.out.println("Inconsistent Entries:");
+    public void writeInconsistentEntries() {
+        File outFile = new File("Inconsistent.txt");
+        System.out.println("Inconsistent Entries: " + inconsistent.size());
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outFile))) {
             writer.write("Inconsistent Entries:\n");
             for (String[] entry : inconsistent) {
@@ -114,6 +118,7 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
             System.err.println("Error writing to file: " + e.getMessage());
         }
     }
+
 
 
 //    public static void main(String[] args) {
@@ -128,6 +133,7 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
 //            System.out.println(Arrays.toString(star));
 //        }
 //        parser.printInconsistentEntries();
+//        parser.printresult();
 //        System.out.println("Parsing time: " + (parser.exe_time) + " ms");
 //
 //    }

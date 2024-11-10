@@ -15,20 +15,22 @@ public class UpdateTable{
 
     private static int currentMaxMovieIdNumericPart = -1; // The numeric part of the current maximum MovieID
     private static final String MovieID_PREFIX = "tt";
-    private static int currentMaxStarIdNumericPart = -1; // The numeric part of the current maximum MovieID
+    private static int currentMaxStarIdNumericPart = -1; // The numeric part of the current maximum StarID
     private static final String StarID_PREFIX = "nm";
     private static HashMap<String, HashSet<String>> insertedStarsInMovies = new HashMap<>();
     private static HashMap<String, HashSet<Integer>> insertedGenresInMovies = new HashMap<>();
 
     public static void main(String[] args) throws Exception {
         // Establish database connection
-        String dbUrl = "jdbc:mysql://localhost:3306/moviedb";
+        String dbUrl = "jdbc:mysql://localhost:3306/newdb";
         String dbUser = "mytestuser";
         String dbPassword = "My6$Password";
         try (Connection dbConnection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
             // Call the add_star method to parse and insert stars
             System.out.println("Database connection established.");
-//            add_star(dbConnection);
+
+            //Call add_star
+            add_star(dbConnection);
 
             // Call add_movie
             get_movie();
@@ -37,6 +39,7 @@ public class UpdateTable{
             // Close the database connection
             dbConnection.close();
             System.out.println("Database connection closed.");
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -44,9 +47,7 @@ public class UpdateTable{
         System.out.println("Insert New Movies: " + new_movies);
         System.out.println("Insert New Stars: " + new_stars);
         System.out.println("Insert New Genres: " + new_genres);
-//        Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
-//        Connection dbConnection = DriverManager.getConnection("jdbc:mysql:///moviedb?autoReconnect=true&useSSL=false",
-//                "mytestuser", "My6$Password");
+
     }
 
     private static void initializeMaxId(Connection dbConnection) throws SQLException {
@@ -74,16 +75,6 @@ public class UpdateTable{
 
     // Helper method to generate a new unique star ID
     private static String generateNewStarId(Connection dbConnection) throws SQLException {
-//        String newId = "nm0000001";
-//        String query = "SELECT COALESCE(MAX(CAST(SUBSTRING(id, 3) AS UNSIGNED)), 0) AS last_numeric_part FROM stars";
-//        try (PreparedStatement stmt = dbConnection.prepareStatement(query);
-//             ResultSet rs = stmt.executeQuery()) {
-//            if (rs.next()) {
-//                int lastNumericPart = rs.getInt("last_numeric_part");
-//                newId = String.format("nm%07d", lastNumericPart + 1);
-//            }
-//        }
-//        return newId;
         currentMaxStarIdNumericPart++; // Increasing value part
         return StarID_PREFIX + String.format("%07d", currentMaxStarIdNumericPart);
     }
@@ -112,16 +103,21 @@ public class UpdateTable{
         statement.close();
 
         // Parse the XML and get the list of new stars
+        dbConnection.setAutoCommit(false);
         StarsSAXParser starsParser = new StarsSAXParser(existingStars);
         starsParser.parseDocument("parse/actors63.xml");  // Adjust the path as needed
         List<String[]> parsedStars = starsParser.getStarsList();
-        starsParser.printInconsistentEntries(); //write the inconsistent
+        starsParser.writeInconsistentEntries(); //write the inconsistent
+        starsParser.printresult();
 
         // Prepare the SQL statement for inserting new stars
         String insertStarSQL = "INSERT INTO stars (id, name, birthYear) VALUES (?, ?, ?)";
         PreparedStatement insertStatement = dbConnection.prepareStatement(insertStarSQL);
-
+        initializeMaxId(dbConnection);
         // Insert each new star
+        int batchSize = 1000;  // Set batch size limit, e.g., 1000 records per batch
+        int count = 0;
+
         for (String[] star : parsedStars) {
             String starName = star[0];
             String birthYearStr = star[1];
@@ -138,16 +134,22 @@ public class UpdateTable{
                 insertStatement.setNull(3, java.sql.Types.INTEGER);
             }
 
-            // Execute the insertion
-            insertStatement.executeUpdate();
-            System.out.println("Inserted star: " + starName + " with ID: " + newStarId);
+            insertStatement.addBatch();
+            count++;
+
+            if (count % batchSize == 0) {
+                insertStatement.executeBatch();
+                System.out.println("Executed batch of size: " + batchSize);
+            }
         }
 
-        // Close the prepared statement
-
+        dbConnection.commit();
+        insertStatement.executeBatch();
+        System.out.println("Executed final batch with remaining records.");
+        dbConnection.setAutoCommit(true);
         insertStatement.close();
-    }
 
+    }
 
     private static void get_movie (){
         // Create an instance of MainsSAXParser and parse the XML to populate myMovies
