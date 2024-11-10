@@ -22,7 +22,7 @@ public class UpdateTable{
 
     public static void main(String[] args) throws Exception {
         // Establish database connection
-        String dbUrl = "jdbc:mysql://localhost:3306/newdb";
+        String dbUrl = "jdbc:mysql://localhost:3306/moviedb";
         String dbUser = "mytestuser";
         String dbPassword = "My6$Password";
         try (Connection dbConnection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
@@ -34,7 +34,7 @@ public class UpdateTable{
 
             // Call add_movie
             get_movie();
-            insertMoviesToDatabase(dbConnection);
+            add_movie(dbConnection);
 
             // Close the database connection
             dbConnection.close();
@@ -104,10 +104,11 @@ public class UpdateTable{
 
         // Parse the XML and get the list of new stars
         dbConnection.setAutoCommit(false);
-        StarsSAXParser starsParser = new StarsSAXParser(existingStars);
+        StarsSAXParser starsParser = new StarsSAXParser(existingStars);  // pass existingStars in parse
         starsParser.parseDocument("parse/actors63.xml");  // Adjust the path as needed
-        List<String[]> parsedStars = starsParser.getStarsList();
+        List<String[]> parsedStars = starsParser.getStarsList();  // get unique stars
         starsParser.writeAndDisplayResult(); //write the inconsistent
+        new_stars += parsedStars.size();
 
         // Prepare the SQL statement for inserting new stars
         String insertStarSQL = "INSERT INTO stars (id, name, birthYear) VALUES (?, ?, ?)";
@@ -184,15 +185,9 @@ public class UpdateTable{
                 moviesArray.add(movieDetail);
             }
         }
-
-//        // Output the result
-//        System.out.println("Movies Array: ");
-//        for (MovieDetail movie : moviesArray) {
-//            System.out.println(movie);
-//        }
     }
 
-    private static void insertMoviesToDatabase(Connection dbConnection) throws SQLException {
+    private static void add_movie(Connection dbConnection) throws SQLException {
         dbConnection.setAutoCommit(false);  // Enable transaction for batch processing
 
         // Prepare batch inserts
@@ -209,10 +204,6 @@ public class UpdateTable{
                 String movieId = findMovieId(dbConnection, movie);
 
                 if (movieId == null) {  // Movie does not exist, so insert everything
-
-                    System.out.println("INSERTING " + movie.toString());
-
-
                     new_movies++;
                     movieId = generateNewMovieId(dbConnection);
                     // generate a random price for movies table

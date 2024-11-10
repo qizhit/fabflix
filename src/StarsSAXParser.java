@@ -146,22 +146,4 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
         }
     }
 
-
-
-//    public static void main(String[] args) {
-//        HashMap<String, Integer> existingStars = new HashMap<>();
-//        StarsSAXParser parser = new StarsSAXParser(existingStars);
-//        parser.parseDocument("parse/actors63.xml");
-//        List<String[]> parsedStars = parser.getStarsList();
-//
-//
-//        System.out.println("Parsed Stars for Insertion:");
-//        for (String[] star : parsedStars) {
-//            System.out.println(Arrays.toString(star));
-//        }
-//        parser.writeAndDisplayResult();
-//        System.out.println("Parsing time: " + (parser.exe_time) + " ms");
-//
-//    }
-
 }

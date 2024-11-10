@@ -1,4 +1,4 @@
-Inconsistent Entries: 3352
+Inconsistent Entries: 3347
 MainsItem - Film ID: H2, Film Title: Number Thirteen, Year: 1922, Director: Hitchcock, Genres: [].
 MainsItem - Film ID: H4, Film Title: The Passionate Adventure, Year: 1924, Director: Hitchcock, Genres: [].
 MainsItem - Film ID: H5, Film Title: The Blackguard, Year: 1925, Director: Hitchcock, Genres: [].
@@ -3329,8 +3329,6 @@ MainsItem - Film ID: JzS10, Film Title: A Week in the Life of a Man, Year: 1999,
 MainsItem - Film ID: KAt10, Film Title: Lola and Billy the Kid, Year: 1999, Director: Ataman, Genres: [].
 MainsItem - Film ID: KMa10, Film Title: Mickey Blue Eyes, Year: 1999, Director: Makin, Genres: [].
 MainsItem - Film ID: KvB10, Film Title: A Dog of Flanders, Year: 1999, Director: Brodie, Genres: [].
-MainsItem - Film ID: LMy1, Film Title: Show Me Love, Year: 1999, Director: null, Genres: [Drama].
-MainsItem - Film ID: LMy3, Film Title: Together, Year: 2001, Director: null, Genres: [Drama, Comedy].
 MainsItem - Film ID: MlL1, Film Title: The Best Man, Year: 1999, Director: M.Lee, Genres: [].
 MainsItem - Film ID: PSv10, Film Title: Metroland, Year: 1999, Director: P.Saville, Genres: [].
 MainsItem - Film ID: SZi10, Film Title: Broken Vessels, Year: 1999, Director: Ziehl, Genres: [].
@@ -3348,6 +3346,3 @@ MainsItem - Film ID: J2B70, Film Title: La Poison, Year: 2000, Director: J.Becke
 MainsItem - Film ID: LDo10, Film Title: Knockout, Year: 2000, Director: Doumani, Genres: [].
 MainsItem - Film ID: RSc10, Film Title: Crime + Punsihment in Suburbia, Year: 2000, Director: Schmidt, Genres: [].
 MainsItem - Film ID: SGe10, Film Title: Le retour de l'Idiot, Year: 2000, Director: Gedeon, Genres: [].
-MainsItem - Film ID: TFd10, Film Title: In the Bedroom, Year: 2001, Director: null, Genres: [Drama].
-MainsItem - Film ID: JSx0, Film Title: Never Never, Year: 2002, Director: null, Genres: [Drama].
-MainsItem - Film ID: MFo10, Film Title: Monster's Ball, Year: 2002, Director: null, Genres: [Uncategorized].

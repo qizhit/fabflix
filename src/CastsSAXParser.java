@@ -41,9 +41,6 @@ public class CastsSAXParser extends DefaultHandler {
     }
 
     private void printData() {
-//        for (CastsItem cast : myCasts) {
-//            System.out.println(cast);
-//        }
         System.out.println("Number of Cast Items: " + myCasts.size());
     }
 

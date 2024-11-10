@@ -42,9 +42,6 @@ public class MainsSAXParser extends DefaultHandler {
     }
 
     private void printData() {
-//        for (MainsItem movie : myMovies) {
-//            System.out.println(movie);
-//        }
         System.out.println("Number of Main Items: " + myMovies.size());
     }
 
@@ -79,12 +76,10 @@ public class MainsSAXParser extends DefaultHandler {
                         Integer.parseInt(tempMovie.getYear());
                         myMovies.add(tempMovie);
                     } catch (NumberFormatException e) {
-//                            System.out.println("Ignoring invalid year value: " + tempVal);
                         inconsistent.add(tempMovie.toString());
                     }
                 } else {
                     inconsistent.add(tempMovie.toString());
-//                    System.out.println("Skipping MainsItem due to missing film title, director, or year." + tempMovie);
                 }
             } else if (qName.equalsIgnoreCase("fid") && !tempVal.isEmpty()) {
                 tempMovie.setFilmId(tempVal);
@@ -93,7 +88,9 @@ public class MainsSAXParser extends DefaultHandler {
             } else if (qName.equalsIgnoreCase("year") && !tempVal.isEmpty()) {
                 tempMovie.setYear(tempVal.trim());
             } else if (qName.equalsIgnoreCase("dirname")) {
-                currentDirector = tempVal;
+                currentDirector = tempVal;  // Set director from <dirname> if available
+            } else if (qName.equalsIgnoreCase("dirn") && currentDirector.isEmpty()) {
+                currentDirector = tempVal;  // Use <dirn> if <dirname> is missing
             } else if (qName.equalsIgnoreCase("cat") && !tempVal.isEmpty()) {
                 tempMovie.addGenre(tempVal);
             }
