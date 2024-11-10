@@ -92,11 +92,15 @@ To enhance XML parsing efficiency, the following strategies were implemented:
 3. Selective Processing: Processes only relevant elements.
 - For example: `if (qName.equalsIgnoreCase("actor"))`, `else if (qName.equalsIgnoreCase("stagename"))`
 4. Batch(): Groups insert operations of parsed data from xml to reduce database transaction frequency.
-- refer UpdateTable.java
+- refer UpdateTable.java, insert stars from parsed stars.
 5. Single Database Connection: Maintains a single, secure database connection throughout parsing, enhancing both security and efficiency.
 - Execute parse at UpdateTable.
 These optimizations resulted in a notable decrease in XML parsing time compared to the naive approach.
 
+## Parsing Structures:
+- mains243.xml - MainSAXParser
+- casts124.xml - CastsSAXParser
+- actors63.xml - StarsSAXParser: Utilizes a HashMap with the structure HashMap<name, birthYear>. The primary key for checking duplicates is name; if an entry with the same name already exists, it will not be inserted.
 
 ## Inconsistencies Report
 During XML parsing, some data inconsistencies were encountered, such as:
