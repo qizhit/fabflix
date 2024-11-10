@@ -31,7 +31,7 @@ public class MainParser extends DefaultHandler {
         SAXParserFactory spf = SAXParserFactory.newInstance();
         try {
             SAXParser sp = spf.newSAXParser();
-            FileInputStream fis = new FileInputStream("parse/main_test_set.xml");
+            FileInputStream fis = new FileInputStream("parse/mains243.xml");
             InputStreamReader isr = new InputStreamReader(fis, "ISO-8859-1");
             sp.parse(new InputSource(isr), this);
         } catch (SAXException | ParserConfigurationException | IOException e) {
@@ -81,11 +81,11 @@ public class MainParser extends DefaultHandler {
                 tempMovie.setFilmTitle(tempVal);
             } else if (qName.equalsIgnoreCase("year")) {
                 try {
-                    int year = Integer.parseInt(tempVal);
+                    int year = Integer.parseInt(tempVal.trim());
                     tempMovie.setYear(year);
                 } catch (NumberFormatException e) {
                     System.out.println("Ignoring invalid year value: " + tempVal);
-                    inconsistent.add(new String[]{"Invalid Year", tempVal});
+                    inconsistent.add(new String[]{"<year>", tempVal});
                 }
             } else if (qName.equalsIgnoreCase("dirname")) {
                 currentDirector = tempVal;
@@ -98,7 +98,7 @@ public class MainParser extends DefaultHandler {
     }
 
     public void printInconsistentEntries() {
-        File outFile = new File("Inconsistent.csv");
+        File outFile = new File("Inconsistent.txt");
 
         System.out.println("Inconsistent Entries:");
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outFile))) {
@@ -115,5 +115,6 @@ public class MainParser extends DefaultHandler {
     public static void main(String[] args) {
         MainParser parser = new MainParser();
         parser.runExample();
+        parser.printInconsistentEntries();
     }
 }
