@@ -50,7 +50,7 @@ public class CastsItem {
     }
 
     public String toString() {
-        return "CastsItem Details - " +
+        return "CastsItem - " +
                 "Film ID: " + filmId + ", " +
                 "Film Title: " + filmTitle + ", " +
                 "Star Stage Names: " + starStageNames + ", " +

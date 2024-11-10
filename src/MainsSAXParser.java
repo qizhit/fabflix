@@ -21,7 +21,7 @@ public class MainsSAXParser extends DefaultHandler {
     public MainsSAXParser() {
         myMovies = new ArrayList<>();
     }
-    private List<String[]> inconsistent = new ArrayList<>();
+    private List<String> inconsistent = new ArrayList<>();
 
     public void runExample() {
         parseDocument();
@@ -47,7 +47,7 @@ public class MainsSAXParser extends DefaultHandler {
         System.out.println("Number of Main Items: " + myMovies.size());
     }
 
-    @Override
+
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         tempVal = "";
         if (qName.equalsIgnoreCase("film")) {
@@ -58,36 +58,38 @@ public class MainsSAXParser extends DefaultHandler {
         }
     }
 
-    @Override
+
     public void characters(char[] ch, int start, int length) throws SAXException {
         tempVal += new String(ch, start, length);
     }
 
-    @Override
+
     public void endElement(String uri, String localName, String qName) throws SAXException {
         try {
             if (qName.equalsIgnoreCase("film")) {
-                if (tempMovie.getFilmTitle() != null && tempMovie.getDirector() != null && tempMovie.getYear() > 0) {
-                    if (!tempMovie.getGenres().isEmpty()) {
-                        myMovies.add(tempMovie);
-                    } else {
+                if (tempMovie.getFilmTitle() != null && tempMovie.getDirector() != null && tempMovie.getYear() != null) {
+                    if (tempMovie.getGenres().isEmpty()) {
+                        inconsistent.add(tempMovie.toString());
                         System.out.println("Skipping MainsItem due to empty genres list.");
+                    } else {
+                        try {
+                            int year = Integer.parseInt(tempMovie.getYear());
+                            myMovies.add(tempMovie);
+                        } catch (NumberFormatException e) {
+                            System.out.println("Ignoring invalid year value: " + tempVal);
+                            inconsistent.add(tempMovie.toString());
+                        }
                     }
                 } else {
-                    System.out.println("Skipping MainsItem due to missing film title, director, or year.");
+                    inconsistent.add(tempMovie.toString());
+                    System.out.println("Skipping MainsItem due to missing film title, director, or year." + tempMovie);
                 }
             } else if (qName.equalsIgnoreCase("fid")) {
                 tempMovie.setFilmId(tempVal);
             } else if (qName.equalsIgnoreCase("t")) {
                 tempMovie.setFilmTitle(tempVal);
             } else if (qName.equalsIgnoreCase("year")) {
-                try {
-                    int year = Integer.parseInt(tempVal.trim());
-                    tempMovie.setYear(year);
-                } catch (NumberFormatException e) {
-                    System.out.println("Ignoring invalid year value: " + tempVal);
-                    inconsistent.add(new String[]{"<year>", tempVal});
-                }
+                tempMovie.setYear(tempVal.trim());
             } else if (qName.equalsIgnoreCase("dirname")) {
                 currentDirector = tempVal;
             } else if (qName.equalsIgnoreCase("cat")) {
@@ -99,13 +101,13 @@ public class MainsSAXParser extends DefaultHandler {
     }
 
     public void printInconsistentEntries() {
-        File outFile = new File("Inconsistent.txt");
+        File outFile = new File("MovieInconsistent.txt");
 
-        System.out.println("Inconsistent Entries:");
+        System.out.println("Inconsistent Entries: " + inconsistent.size());
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(outFile))) {
-            writer.write("Inconsistent Entries:\n");
-            for (String[] entry : inconsistent) {
-                writer.write("Inconsistent Entry: " + Arrays.toString(entry) + "\n");
+            writer.write("Inconsistent Entries: " + inconsistent.size() + "\n");
+            for (String entry : inconsistent) {
+                writer.write(entry + "\n");
             }
             System.out.println("Inconsistent entries written to " + outFile.getAbsolutePath());
         } catch (IOException e) {

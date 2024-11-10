@@ -5,7 +5,7 @@ import java.util.Map;
 public class MainsItem {
     private String filmId;        // <fid>
     private String filmTitle;     // <t>
-    private int year;             // <year>
+    private String year;             // <year>
     private String director;      // <dirname>
     private ArrayList<String> genres; // <cats> containing <cat>
     private static final Map<String, String> CATEGORY_MAP = new HashMap<>();
@@ -57,11 +57,11 @@ public class MainsItem {
         this.filmTitle = filmTitle;
     }
 
-    public int getYear() {
+    public String getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(String year) {
         this.year = year;
     }
 
@@ -87,7 +87,7 @@ public class MainsItem {
 
     @Override
     public String toString() {
-        return "MainsItem Details - " +
+        return "MainsItem - " +
                 "Film ID: " + filmId + ", " +
                 "Film Title: " + filmTitle + ", " +
                 "Year: " + year + ", " +
