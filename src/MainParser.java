@@ -1,5 +1,6 @@
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -7,8 +8,6 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import org.xml.sax.InputSource;
 
 public class MainParser extends DefaultHandler {
@@ -21,6 +20,7 @@ public class MainParser extends DefaultHandler {
     public MainParser() {
         myMovies = new ArrayList<>();
     }
+    private List<String[]> inconsistent = new ArrayList<>();
 
     public void runExample() {
         parseDocument();
@@ -85,6 +85,7 @@ public class MainParser extends DefaultHandler {
                     tempMovie.setYear(year);
                 } catch (NumberFormatException e) {
                     System.out.println("Ignoring invalid year value: " + tempVal);
+                    inconsistent.add(new String[]{"Invalid Year", tempVal});
                 }
             } else if (qName.equalsIgnoreCase("dirname")) {
                 currentDirector = tempVal;
@@ -93,6 +94,21 @@ public class MainParser extends DefaultHandler {
             }
         } catch (Exception e) {
             System.out.println("Error processing element " + qName + ": " + e.getMessage());
+        }
+    }
+
+    public void printInconsistentEntries() {
+        File outFile = new File("Inconsistent.csv");
+
+        System.out.println("Inconsistent Entries:");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outFile))) {
+            writer.write("Inconsistent Entries:\n");
+            for (String[] entry : inconsistent) {
+                writer.write("Inconsistent Entry: " + Arrays.toString(entry) + "\n");
+            }
+            System.out.println("Inconsistent entries written to " + outFile.getAbsolutePath());
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
         }
     }
 

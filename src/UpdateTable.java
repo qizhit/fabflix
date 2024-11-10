@@ -44,6 +44,7 @@ public class UpdateTable{
         StarsSAXParser starsParser = new StarsSAXParser(existingStars);
         starsParser.parseDocument("parse/actors63.xml");  // Adjust the path as needed
         List<String[]> parsedStars = starsParser.getStarsList();
+        starsParser.printInconsistentEntries(); //write the inconsistent
 
         // Prepare the SQL statement for inserting new stars
         String insertStarSQL = "INSERT INTO stars (id, name, birthYear) VALUES (?, ?, ?)";
@@ -72,6 +73,7 @@ public class UpdateTable{
         }
 
         // Close the prepared statement
+
         insertStatement.close();
     }
 

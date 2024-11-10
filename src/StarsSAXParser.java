@@ -1,6 +1,4 @@
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 
 import org.xml.sax.Attributes;
@@ -60,9 +58,11 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
             if (starName == null || starName.isEmpty()){
                 failed += 1;
                 System.out.println("Failed, empty actor");
+                System.out.println(failed);
             } else if(existingStars.containsKey(starName)) {
                 failed += 1;
                 System.out.println("Failed, star existed");
+                System.out.println(failed);
 
             } else {
                 System.out.println("Adding new star to list: " + starName + ", " + (birthYear != null ? birthYear : "N/A"));
@@ -99,11 +99,20 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
     }
 
     public void printInconsistentEntries() {
+        File outFile = new File("Inconsistent.csv");
+
         System.out.println("Inconsistent Entries:");
-        for (String[] entry : inconsistent) {
-            System.out.println("Inconsistent Entry: " + Arrays.toString(entry));
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outFile))) {
+            writer.write("Inconsistent Entries:\n");
+            for (String[] entry : inconsistent) {
+                writer.write("Inconsistent Entry: " + Arrays.toString(entry) + "\n");
+            }
+            System.out.println("Inconsistent entries written to " + outFile.getAbsolutePath());
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
         }
     }
+
 
 //    public static void main(String[] args) {
 //        HashMap<String, Integer> existingStars = new HashMap<>();
