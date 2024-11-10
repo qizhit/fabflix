@@ -18,6 +18,8 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
     private List<String[]> newStars;
     private List<String[]> inconsistent = new ArrayList<>();
     private Integer failed = 0;
+    private Integer empty = 0;
+    public long exe_time = 0;
 
     public StarsSAXParser(HashMap<String, Integer> existingStars) {
         this.existingStars = existingStars;
@@ -32,9 +34,11 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
             FileInputStream fileInputStream = new FileInputStream(xmlFile);
             InputStreamReader reader = new InputStreamReader(fileInputStream, "ISO-8859-1");
             System.out.println("Starting to parse XML file: " + xmlFile);
-
+            long startTime = System.currentTimeMillis();
             sp.parse(new InputSource(reader), this);
+            long endTime = System.currentTimeMillis();
             System.out.println("Finished parsing actors XML with ISO-8859-1 encoding");
+            exe_time = endTime - startTime;
         } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
         }
@@ -45,7 +49,6 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
         if (qName.equalsIgnoreCase("actor")) {
             starName = null;
             birthYear = null;
-            System.out.println("Processing new <actor> element.");
         }
     }
 
@@ -55,26 +58,25 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
 
     public void endElement(String uri, String localName, String qName) {
         if (qName.equalsIgnoreCase("actor")) {
-            System.out.println("End of <actor> element. Star Name: " + starName + ", Birth Year: " + (birthYear != null ? birthYear : "null"));
+            //System.out.println("End of <actor> element. Star Name: " + starName + ", Birth Year: " + (birthYear != null ? birthYear : "null"));
 
             if (starName == null || starName.isEmpty()){
-                failed += 1;
-                System.out.println("Failed, empty actor");
-                System.out.println(failed);
+                empty += 1;
+                System.out.println("empty actor, total empty num: " + empty);
             } else if(existingStars.containsKey(starName)) {
                 failed += 1;
-                System.out.println("Failed, star existed");
-                System.out.println(failed);
+                System.out.println("Failed, star existed, total existed num: " + failed);
 
             } else {
                 System.out.println("Adding new star to list: " + starName + ", " + (birthYear != null ? birthYear : "N/A"));
                 newStars.add(new String[]{starName, birthYear != null ? birthYear.toString() : ""});
                 existingStars.put(starName, birthYear);
             }
+
         } else if (qName.equalsIgnoreCase("stagename")) {
             starName = tempVal.toString();
             if (starName.matches(".*\\d.*")) { // Check for non-string content
-                inconsistent.add(new String[]{"Invalid Name", starName});
+                inconsistent.add(new String[]{"<stagename>" + starName});
                 starName = null;
             }
         } else if (qName.equalsIgnoreCase("dob")) {
@@ -85,9 +87,7 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
                 birthYear = null;
             } else if (birthYearStr.matches("\\d+")) {  // Check if birthYear is all digits
                 birthYear = Integer.parseInt(birthYearStr);  // Parse as integer
-                System.out.println("Processed <dob>: " + birthYear);
             } else {
-                System.out.println("Invalid birth year detected: " + birthYearStr);
                 inconsistent.add(new String[]{"<dob>",birthYearStr});
                 birthYear = null;  // Set to null if invalid
             }
@@ -119,15 +119,16 @@ public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVa
 //    public static void main(String[] args) {
 //        HashMap<String, Integer> existingStars = new HashMap<>();
 //        StarsSAXParser parser = new StarsSAXParser(existingStars);
-//        parser.parseDocument("/Users/x/Desktop/122B/2024-fall-cs-122b-cs122b-project1-ys/parse/actors63.xml");
+//        parser.parseDocument("parse/actors63.xml");
 //        List<String[]> parsedStars = parser.getStarsList();
+//
 //
 //        System.out.println("Parsed Stars for Insertion:");
 //        for (String[] star : parsedStars) {
 //            System.out.println(Arrays.toString(star));
 //        }
 //        parser.printInconsistentEntries();
-//
+//        System.out.println("Parsing time: " + (parser.exe_time) + " ms");
 //
 //    }
 
