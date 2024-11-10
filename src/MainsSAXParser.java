@@ -10,6 +10,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.InputSource;
 
+// Parse mains243.xml, in order to add movies, link to genres (movies, genres_in_movies).
 public class MainsSAXParser extends DefaultHandler {
 
     private List<MainsItem> myMovies;

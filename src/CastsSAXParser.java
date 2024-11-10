@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import org.xml.sax.InputSource;
 
+// Parse casts124.xml, in order to link stars to movies (stars_in_movies).
 public class CastsSAXParser extends DefaultHandler {
 
     private List<CastsItem> myCasts;

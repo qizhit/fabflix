@@ -9,6 +9,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+
+// Parse actors63.xml, in order to add stars (stars).
 public class StarsSAXParser extends DefaultHandler {private StringBuilder tempVal;
     private String starName;
     private Integer birthYear;
