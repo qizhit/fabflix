@@ -84,6 +84,8 @@ Prepared statements are used in the following files to secure database operation
 - PaymentServlet: cardQuery, saleInsert
 - ConfirmationServlet: querySalesSQL
 - UpdateTable: statement, insertStarSQL
+- AddMovieServlet:getMovieId, getStarId, getGenreId
+- AddStarServlet: getStarIdSQL
 
 ## Optimization of XML Parsing
 To enhance XML parsing efficiency, the following strategies were implemented:
@@ -92,7 +94,7 @@ To enhance XML parsing efficiency, the following strategies were implemented:
 3. Selective Processing: Processes only relevant elements.
 - For example: `if (qName.equalsIgnoreCase("actor"))`, `else if (qName.equalsIgnoreCase("stagename"))`
 4. Batch(): Groups insert operations of parsed data from xml to reduce database transaction frequency.
-- refer UpdateTable.java, insert stars from parsed stars.
+- refer UpdateTable.java, eg. insert stars from parsed stars.
 5. Single Database Connection: Maintains a single, secure database connection throughout parsing, enhancing both security and efficiency.
 - Execute parse at UpdateTable.
 These optimizations resulted in a notable decrease in XML parsing time compared to the naive approach.
@@ -115,7 +117,7 @@ Inconsistent entries are logged in the file ........, which can be found in the 
 A demo video showcasing the setup and features can be found here....
 
 ## Team Contributions
-We collaborated on setting up the environment and demo recording.
+We collaborated on setting up the environment, database (eg. Encryption Password, domain set) and demo recording.
 Our specific contributions were as follows:
-- Xuan Gu: wrote the README.md file, 
-- Qizhi Tian: Developed the Login, Movie List, AddtoCart, Checkout, and Payment functionalities; designed the sorting, searching, and pagination features; and worked on page styling.
+- Xuan Gu: wrote the README.md file, developed dashboard functionalities, and implemented the StarParser.
+- Qizhi Tian: integrated reCAPTCHA, enabled HTTPS, developed employee dashboard login, and implemented both the CastParser and MovieParser.
