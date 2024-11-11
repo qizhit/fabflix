@@ -25,9 +25,11 @@ function addMovie() {
         .then(response => response.json())
         .then(data => {
             console.log("Response data:", data);
-            displayMessage(data.message, data.success ? "success" : "error");
             if (data.success) {
+                displayMessage(`Movie added successfully! Movie ID: ${data.movieId}, Star ID: ${data.starId}, Genre ID: ${data.genreId}`, "success");
                 document.getElementById("add-movie-form").reset();
+            } else {
+                displayMessage(data.message, "error");
             }
         })
         .catch(error => {

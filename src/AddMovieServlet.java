@@ -90,12 +90,64 @@ public class AddMovieServlet extends HttpServlet {
             // Execute the stored procedure
             stmt.execute();
 
-            response.getWriter().write("{\"success\": true, \"message\": \"Movie added successfully, corresponding star and genre updated.\"}");
-        } catch (SQLException e) {
+            // Retrieve the inserted IDs for movie, star, and genre
+            String movieId = getMovieId(conn, movieTitle, movieYear, movieDirector);
+            String starId = getStarId(conn, starName, starBirthYear);
+            String genreId = getGenreId(conn, genreName);
+
+            response.getWriter().write(String.format(
+                    "{\"success\": true, \"message\": \"Movie, star, and genre added successfully.\", \"movieId\": \"%s\", \"starId\": \"%s\", \"genreId\": \"%s\"}",
+                    movieId, starId, genreId
+            ));
+
+            } catch (SQLException e) {
             e.printStackTrace();
             response.setStatus(500);
             response.getWriter().write("{\"success\": false, \"message\": \"An error occurred while adding the movie.\"}");
         }
     }
+    private String getMovieId(Connection conn, String title, int year, String director) throws SQLException {
+        String query = "SELECT id FROM movies WHERE title = ? AND year = ? AND director = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, title);
+            stmt.setInt(2, year);
+            stmt.setString(3, director);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("id");
+            }
+        }
+        return null;
+    }
+
+    private String getStarId(Connection conn, String starName, Integer birthYear) throws SQLException {
+        String query = "SELECT id FROM stars WHERE name = ? AND (birthYear = ? OR birthYear IS NULL)";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, starName);
+            if (birthYear != null) {
+                stmt.setInt(2, birthYear);
+            } else {
+                stmt.setNull(2, java.sql.Types.INTEGER);
+            }
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("id");
+            }
+        }
+        return null;
+    }
+
+    private String getGenreId(Connection conn, String genreName) throws SQLException {
+        String query = "SELECT id FROM genres WHERE name = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, genreName);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("id");
+            }
+        }
+        return null;
+    }
+
 }
 

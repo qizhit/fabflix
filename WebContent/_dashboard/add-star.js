@@ -10,11 +10,10 @@ function addStar() {
     formData.append("starName", starName);
     formData.append("birthYear", birthYear);
 
-    console.log("Sending POST request to /api/add_star with data:", formData.toString());
+    console.log("Sending POST request to /api/_dashboard_add-star with data:", formData.toString());
 
     // Send AJAX request to the servlet
     fetch("../api/_dashboard_add-star", {
-
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
@@ -24,9 +23,15 @@ function addStar() {
         .then(response => response.json())
         .then(data => {
             console.log("Response data:", data);
-            displayMessage(data.message, data.success ? "success" : "error");
             if (data.success) {
+                let message = "Star added successfully.";
+                if (data.starId) {
+                    message += ` Star ID: ${data.starId}`;
+                }
+                displayMessage(message, "success");
                 document.getElementById("add-star-form").reset();
+            } else {
+                displayMessage(data.message || "An error occurred.", "error");
             }
         })
         .catch(error => {

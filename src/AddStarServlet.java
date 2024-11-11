@@ -61,11 +61,33 @@ public class AddStarServlet extends HttpServlet {
             } else {
                 stmt.setNull(2, java.sql.Types.INTEGER);  // Set birth year to NULL
             }
+            //Get id
 
             // Execute the stored procedure
             stmt.executeUpdate();
 
-            response.getWriter().write("{\"success\": true, \"message\": \"Star added successfully.\"}");
+            String getStarIdSQL = "SELECT id FROM stars WHERE name = ? AND (birthYear = ? OR birthYear IS NULL) LIMIT 1";
+            try (PreparedStatement stmt1 = conn.prepareStatement(getStarIdSQL)) {
+                stmt1.setString(1, starName);
+                if (birthYear != null) {
+                    stmt1.setInt(2, birthYear);
+                } else {
+                    stmt1.setNull(2, java.sql.Types.INTEGER);
+                }
+
+                try (ResultSet rs = stmt1.executeQuery()) {
+                    if (rs.next()) {
+                        String starId = rs.getString("id");
+                        System.out.println(starId);
+                        response.getWriter().write("{\"success\": true, \"starId\": \"" + starId + "\"}");
+                    } else {
+                        response.getWriter().write("{\"success\": false, \"message\": \"Star not found.\"}");
+                    }
+                }
+            }
+
+
+
         } catch (SQLException e) {
             e.printStackTrace();
             response.setStatus(500);
