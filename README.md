@@ -87,10 +87,12 @@ Prepared statements are used in the following files to secure database operation
 - AddMovieServlet:getMovieId, getStarId, getGenreId
 - AddStarServlet: getStarIdSQL
 
+## Stored Procedure - [stored-procedure.sql](stored-procedure.sql)
+
 ## Optimization of XML Parsing
 To enhance XML parsing efficiency, the following strategies were implemented:
 1. StringBuilder: Used for efficient string manipulation.
-2. HashMap Caching: Stores existing star and genre entries to avoid redundant lookups and inserts.
+2. HashMap Caching: Stores existing star and genre entries to avoid redundant selections and inserts.
 3. Selective Processing: Processes only relevant elements.
 - For example: `if (qName.equalsIgnoreCase("actor"))`, `else if (qName.equalsIgnoreCase("stagename"))`
 4. Batch(): Groups insert operations of parsed data from xml to reduce database transaction frequency.
@@ -100,9 +102,10 @@ To enhance XML parsing efficiency, the following strategies were implemented:
 These optimizations resulted in a notable decrease in XML parsing time compared to the naive approach.
 
 ## Parsing Structures:
-- mains243.xml - MainSAXParser
-- casts124.xml - CastsSAXParser
+- mains243.xml - MainSAXParser: Stores attributes in MainsItem class instances and put them into a Arraylist. Ignores inconsistent data (no stars, no genres, the type of year, etc.).
+- casts124.xml - CastsSAXParser: Stores attributes in CastsItem class instances and put them into a Arraylist. Ignores inconsistent data (no starName, starName is 'sa' or 's a', etc.).
 - actors63.xml - StarsSAXParser: Utilizes a HashMap with the structure HashMap<name, birthYear>. The primary key for checking duplicates is name; if an entry with the same name already exists, it will not be inserted.
+- Inserting - UpdateTable: Inserts new data and ignore duplications (same entries in tables: movies, stars, genres, stars_in_movies, genres_in_movies).
 
 ## Inconsistencies Report
 During XML parsing, some data inconsistencies were encountered, such as:
@@ -111,10 +114,16 @@ Running time Record:
 - mains243.xml
 - casts124.xml
 - actors63.xml
-Inconsistent entries are logged in the file ........, which can be found in the project directory. The program continues processing after logging these issues.
+Inconsistent entries are logged in the file:
+- [CastsInconsistent.txt](CastsInconsistent.txt)
+- [MovieInconsistent.txt](MovieInconsistent.txt)
+- [StarDuplicateEntries.txt](StarDuplicateEntries.txt)
+- [StarInconsistentEntries.txt](StarInconsistentEntries.txt)
+, which can be found in the project directory. The program continues processing after logging these issues.
 
 ## Demo Video
-A demo video showcasing the setup and features can be found here....
+A demo video showcasing the setup and features can be found here:
+https://www.youtube.com/watch?v=zFvi9Kceqec
 
 ## Team Contributions
 We collaborated on setting up the environment, database (eg. Encryption Password, domain set) and demo recording.
