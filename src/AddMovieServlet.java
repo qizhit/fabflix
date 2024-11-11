@@ -121,13 +121,16 @@ public class AddMovieServlet extends HttpServlet {
     }
 
     private String getStarId(Connection conn, String starName, Integer birthYear) throws SQLException {
-        String query = "SELECT id FROM stars WHERE name = ? AND (birthYear = ? OR birthYear IS NULL)";
+        String query;
+        if (birthYear != null) {
+            query = "SELECT id FROM stars WHERE name = ? AND birthYear = ?";
+        } else {
+            query = "SELECT id FROM stars WHERE name = ?";
+        }
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, starName);
             if (birthYear != null) {
                 stmt.setInt(2, birthYear);
-            } else {
-                stmt.setNull(2, java.sql.Types.INTEGER);
             }
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
