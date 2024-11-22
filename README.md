@@ -74,6 +74,18 @@ The substring matching feature in the MovieListServlet is designed to provide fl
   `countStatement.setString(paramIndex++, "%" + searchTitle.toLowerCase() + "%");`
   adds % to both sides of the search text, which means it will match the given text anywhere in the field. For example, if searchTitle is "star", it will match "Star Wars", "The Starry Night", or "A Star is Born".
 
+## Connection Pooling
+  - #### Include the filename/path of all code/configuration files in GitHub of using JDBC Connection Pooling.
+
+  - #### Explain how Connection Pooling is utilized in the Fabflix code.
+
+  - #### Explain how Connection Pooling works with two backend SQL.
+
+## Master/Slave
+  - #### Include the filename/path of all code/configuration files in GitHub of routing queries to Master/Slave SQL.
+
+  - #### How read/write requests were routed to Master/Slave SQL?
+
 ## Prepared Statements
 Prepared statements are used in the following files to secure database operations:
 - LoginServlet: emailQuery
