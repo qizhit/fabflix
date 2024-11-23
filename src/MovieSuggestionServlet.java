@@ -70,7 +70,7 @@ public class MovieSuggestionServlet extends HttpServlet {
             StringBuilder fullTextQuery = new StringBuilder();
             for (int i = 0; i < keywords.length; i++) {
                 if (i > 0) fullTextQuery.append(" ");
-                fullTextQuery.append(keywords[i]).append("*"); // Treat each token as a prefix using "*"
+                fullTextQuery.append("+").append(keywords[i]).append("*"); // Add "+" for AND logic and "*" for prefix search
             }
 
             // MySQL FULLTEXT query

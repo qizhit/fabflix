@@ -135,9 +135,17 @@ public class MovieListServlet extends HttpServlet {
                 }
             }
 
-            // Search function: Filter by film title, year, director, star
+            // No browsing, Advanced Search function: Filter by film title, year, director, star
+            StringBuilder fullTextQuery = new StringBuilder();
             if (searchTitle != null && !searchTitle.isEmpty()) {
-                queryBuilder.append("AND LOWER(m.title) LIKE ? ");
+                String[] keywords = searchTitle.trim().split("\\s+");
+                // Construct a query string for FULLTEXT search
+                for (int i = 0; i < keywords.length; i++) {
+                    if (i > 0) fullTextQuery.append(" ");
+                    fullTextQuery.append("+").append(keywords[i]).append("*"); // Add "+" for AND logic and "*" for prefix search
+                }
+                // MySQL FULLTEXT query
+                queryBuilder.append("AND MATCH(title) AGAINST (? IN BOOLEAN MODE) ");
             }
             if (searchYear != null && !searchYear.isEmpty()) {
                 queryBuilder.append("AND m.year = ? ");
@@ -164,12 +172,13 @@ public class MovieListServlet extends HttpServlet {
                 movieStatement.setString(paramIndex++, browseGenre);
             }
             if (browseTitle != null && !browseTitle.isEmpty() && !browseTitle.equals("*")) {
+                // match movies that the first character is browseTitle
                 movieStatement.setString(paramIndex++, browseTitle.toLowerCase() + "%");
             }
 
-            // Searching parameter binding
+            // Advanced Searching parameter binding
             if (searchTitle != null && !searchTitle.isEmpty()) {
-                movieStatement.setString(paramIndex++, "%" + searchTitle.toLowerCase() + "%");
+                movieStatement.setString(paramIndex++, fullTextQuery.toString());
             }
             if (searchYear != null && !searchYear.isEmpty()) {
                 movieStatement.setInt(paramIndex++, Integer.parseInt(searchYear));
@@ -340,8 +349,16 @@ public class MovieListServlet extends HttpServlet {
             }
         }
         // Searching:
+        StringBuilder fullTextQuery = new StringBuilder();
         if (searchTitle != null && !searchTitle.isEmpty()) {
-            countQuery.append("AND LOWER(m.title) LIKE ? ");
+            String[] keywords = searchTitle.trim().split("\\s+");
+            // Construct a query string for FULLTEXT search
+            for (int i = 0; i < keywords.length; i++) {
+                if (i > 0) fullTextQuery.append(" ");
+                fullTextQuery.append("+").append(keywords[i]).append("*"); // Add "+" for AND logic and "*" for prefix search
+            }
+            // MySQL FULLTEXT query
+            countQuery.append("AND MATCH(title) AGAINST (? IN BOOLEAN MODE) ");
         }
         if (searchYear != null && !searchYear.isEmpty()) {
             countQuery.append("AND m.year = ? ");
@@ -365,7 +382,7 @@ public class MovieListServlet extends HttpServlet {
         }
         // Searching
         if (searchTitle != null && !searchTitle.isEmpty()) {
-            countStatement.setString(paramIndex++, "%" + searchTitle.toLowerCase() + "%");
+            countStatement.setString(paramIndex++, fullTextQuery.toString());
         }
         if (searchYear != null && !searchYear.isEmpty()) {
             countStatement.setInt(paramIndex++, Integer.parseInt(searchYear));

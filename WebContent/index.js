@@ -24,8 +24,6 @@ function handleMainResult(resultData) {
         let titleLink = `<a href="movie-list.html?browse_title=${encodeURIComponent(title)}">${title}</a> `;
         titleListElement.append(titleLink); // Add a title hyperlink dynamically
     });
-
-    window.location.replace("movie-list.html");
 }
 
 /*
@@ -37,7 +35,6 @@ function handleMainResult(resultData) {
  */
 function handleLookup(query, doneCallback) {
     console.log("autocomplete initiated")
-    console.log("sending AJAX request to backend Java Servlet")
 
     // Check if query results exist in the cache
     let cachedResult = cache.find(item => item.query === query);
@@ -49,11 +46,11 @@ function handleLookup(query, doneCallback) {
     }
 
     // If not cached, send AJAX request to the backend
-    console.log("Sending AJAX request for query:", query);
+    console.log("sending AJAX request to backend Java Servlet for query: ", query)
     jQuery.ajax({
         "method": "GET",
         // escape the query string to avoid errors caused by special characters
-        "url": "movie-suggestion?query=" + escape(query),
+        "url": "api/movie-suggestion?query=" + escape(query),
         "success": function(data) {
             // pass the data, query, and doneCallback function into the success handler
             handleLookupAjaxSuccess(data, query, doneCallback)
@@ -81,7 +78,7 @@ function handleLookupAjaxSuccess(data, query, doneCallback) {
     console.log(jsonData)
 
     // Cache the result
-    cache.push({ query: query, suggestions: suggestions });
+    cache.push({ query: query, suggestions: jsonData });
 
     // call the callback function provided by the autocomplete library
     // add "{suggestions: jsonData}" to satisfy the library response format according to
@@ -126,7 +123,8 @@ $('#autocomplete').autocomplete({
     // set delay time
     deferRequestBy: 300,
     // minimum characters = 3
-    minChars:3
+    minChars:3,
+    orientation: top
 });
 
 
@@ -136,18 +134,14 @@ $('#autocomplete').autocomplete({
 function handleNormalSearch (query) {
     // search by genres or first character
     console.log("Performing normal search for query: " + query);
-    jQuery.ajax({
-        dataType: "json", // Setting return data type
-        method: "GET", // Setting request method
-        url: "api/genres-titles",
-        success: (resultData) => handleMainResult(resultData)
-    });
-}
+    // Gets the value entered by the user
+    const title = document.querySelector('input[name="title"]').value.trim();
+    const year = document.querySelector('input[name="year"]').value.trim();
+    const director = document.querySelector('input[name="director"]').value.trim();
+    const star = document.querySelector('input[name="star"]').value.trim();
 
-function handleNormalAdvancedSearch (query) {
-    // advanced search
-    console.log("Performing normal search for query: " + query);
-    window.location.replace("movie-list.html");
+    const url = `movie-list.html?title=${encodeURIComponent(title)}&year=${encodeURIComponent(year)}&director=${encodeURIComponent(director)}&star=${encodeURIComponent(star)}`;
+    window.location.replace(url);
 }
 
 // bind pressing enter key to a handler function
@@ -161,7 +155,18 @@ $('#autocomplete').keypress(function(event) {
 
 // Bind the Search button click event to handleNormalSearch
 jQuery("#search-form").submit(function(event) {
-    event.preventDefault(); // Prevent default form submission
+    event.preventDefault();
     console.log("Search button clicked");
-    handleNormalAdvancedSearch($('#autocomplete').val());
+    handleNormalSearch($('#autocomplete').val());
+});
+
+
+/**
+ * Once this .js is loaded, following scripts will be executed by the browser
+ */
+jQuery.ajax({
+    dataType: "json", // Setting return data type
+    method: "GET", // Setting request method
+    url: "api/genres-titles",
+    success: (resultData) => handleMainResult(resultData)
 });
