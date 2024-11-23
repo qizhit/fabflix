@@ -13,5 +13,5 @@
 
               username="mytestuser"
               password="My6$Password"
-              url="jdbc:mysql://localhost:3306/moviedbmoviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"/>
+              url="jdbc:mysql://localhost:3306/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"/>
 </Context>
