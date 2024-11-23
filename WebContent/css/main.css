@@ -57,7 +57,7 @@ header nav a:hover {
 
 /* Form Styles */
 input[type="text"] {
-    width: 200px;
+    width: 23%;
     margin: 8px 0;
     padding: 8px;
     border: 1px solid #ccc;
@@ -82,6 +82,8 @@ input[type="submit"]:hover {
 #search-form {
     display: flex; /* Use Flexbox to align inputs in a row */
     align-items: center; /* Vertically center the inputs */
+    width: 100%;
+    max-width: 900px;
     gap: 10px; /* Add space between inputs */
 }
 
