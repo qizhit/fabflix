@@ -104,23 +104,21 @@ public class MovieListServlet extends HttpServlet {
         // Construct sort statement
         String orderByClause = "";
         if ("title".equals(sortBy)) {
-            orderByClause = "ORDER BY m.title " + sortOrder1 + ", m.rating " + sortOrder2;  // ORDER BY m.title ase, r.rating ase
+            orderByClause = "ORDER BY m.title " + sortOrder1 + ", r.rating " + sortOrder2;  // ORDER BY m.title ase, r.rating ase
         } else if ("rating".equals(sortBy)) {
-            orderByClause = "ORDER BY m.rating " + sortOrder1 + ", m.title " + sortOrder2;
+            orderByClause = "ORDER BY r.rating " + sortOrder1 + ", m.title " + sortOrder2;
         }
 
         // Get a connection from dataSource and let resource manager close the connection after usage.
         try (Connection conn = dataSource.getConnection()) {
             // Construct the query for selecting movies
             StringBuilder queryBuilder = new StringBuilder(
-                    "SELECT m.id, m.title, m.year, m.director, m.rating, m.price " +
-                            "FROM ( " +
-                            "   SELECT DISTINCT m.id, m.title, m.year, m.director, r.rating, m.price " +
-                            "   FROM movies m " +
-                            "   LEFT JOIN ratings r ON m.id = r.movieId " +
-                            "   LEFT JOIN stars_in_movies sim ON m.id = sim.movieId " +
-                            "   LEFT JOIN stars s ON sim.starId = s.id " +
-                            "   WHERE 1=1 ");
+                    "SELECT DISTINCT m.id, m.title, m.year, m.director, r.rating, m.price " +
+                            "FROM movies m " +
+                            "LEFT JOIN ratings r ON m.id = r.movieId " +
+                            "LEFT JOIN stars_in_movies sim ON m.id = sim.movieId " +
+                            "LEFT JOIN stars s ON sim.starId = s.id " +
+                            "WHERE 1=1 ");
 
             // Browsing function: filter by genres or title(first letter)
             if (browseGenre != null && !browseGenre.isEmpty()) {
@@ -157,11 +155,9 @@ public class MovieListServlet extends HttpServlet {
                 queryBuilder.append("AND LOWER(s.name) LIKE ? ");
             }
 
-            queryBuilder.append(") AS m "); // Close subquery!!!
-
             // Sorting and paginatioin function
             queryBuilder.append(orderByClause);
-            queryBuilder.append(" LIMIT ? OFFSET ?;");
+            queryBuilder.append(" LIMIT ? OFFSET ?");
 
             // prepare the query statement and pass parameters
             PreparedStatement movieStatement = conn.prepareStatement(queryBuilder.toString());

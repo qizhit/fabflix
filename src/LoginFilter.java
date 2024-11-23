@@ -24,7 +24,7 @@ public class LoginFilter implements Filter {
         // Check if this URL is allowed to access without logging in
         if (this.isUrlAllowedWithoutLogin(url)) {
             // Keep default action: pass along the filter chain
-            System.out.println(url + "is allow to access without login");
+            System.out.println(url + " is allow to access without login");
             chain.doFilter(request, response);
             return;
         }
