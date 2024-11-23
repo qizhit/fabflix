@@ -1,4 +1,9 @@
 /**
+ * Global cache for storing previous query results
+ */
+let cache = [];
+
+/**
  * Process the JSON data returned from the Servlet and fill genres and titles into HTML pages.
  */
 function handleMainResult(resultData) {
@@ -19,9 +24,9 @@ function handleMainResult(resultData) {
         let titleLink = `<a href="movie-list.html?browse_title=${encodeURIComponent(title)}">${title}</a> `;
         titleListElement.append(titleLink); // Add a title hyperlink dynamically
     });
+
+    window.location.replace("movie-list.html");
 }
-
-
 
 /*
  * This function is called by the library when it needs to lookup a query.
@@ -34,15 +39,21 @@ function handleLookup(query, doneCallback) {
     console.log("autocomplete initiated")
     console.log("sending AJAX request to backend Java Servlet")
 
-    // TODO: if you want to check past query results first, you can do it here
+    // Check if query results exist in the cache
+    let cachedResult = cache.find(item => item.query === query);
+    if (cachedResult) {
+        console.log("Using cached result for query:", query);
+        console.log(cachedResult)
+        doneCallback({ suggestions: cachedResult.suggestions });
+        return;
+    }
 
-    // sending the HTTP GET request to the Java Servlet endpoint hero-suggestion
-    // with the query data
+    // If not cached, send AJAX request to the backend
+    console.log("Sending AJAX request for query:", query);
     jQuery.ajax({
         "method": "GET",
-        // generate the request url from the query.
         // escape the query string to avoid errors caused by special characters
-        "url": "hero-suggestion?query=" + escape(query),
+        "url": "movie-suggestion?query=" + escape(query),
         "success": function(data) {
             // pass the data, query, and doneCallback function into the success handler
             handleLookupAjaxSuccess(data, query, doneCallback)
@@ -69,7 +80,8 @@ function handleLookupAjaxSuccess(data, query, doneCallback) {
     var jsonData = JSON.parse(data);
     console.log(jsonData)
 
-    // TODO: if you want to cache the result into a global variable you can do it here
+    // Cache the result
+    cache.push({ query: query, suggestions: suggestions });
 
     // call the callback function provided by the autocomplete library
     // add "{suggestions: jsonData}" to satisfy the library response format according to
@@ -85,7 +97,7 @@ function handleLookupAjaxSuccess(data, query, doneCallback) {
  * You can redirect to the page you want using the suggestion data.
  */
 function handleSelectSuggestion(suggestion) {
-    // TODO: jump to the specific result page based on the selected suggestion
+    // Jump to the specific result page based on the selected suggestion
     console.log("Jumping to single movie page " + suggestion["value"] + " with ID " + suggestion["data"]["movieId"])
     let url = "single-movie.html?id="+suggestion["data"]["movieId"];
     console.log(url);
@@ -113,8 +125,7 @@ $('#autocomplete').autocomplete({
     },
     // set delay time
     deferRequestBy: 300,
-    // there are some other parameters that you might want to use to satisfy all the requirements
-    // TODO: add other parameters, such as minimum characters
+    // minimum characters = 3
     minChars:3
 });
 
@@ -123,13 +134,20 @@ $('#autocomplete').autocomplete({
  * do normal full text search if no suggestion is selected
  */
 function handleNormalSearch (query) {
-    console.log("doing normal search with query: " + query);
+    // search by genres or first character
+    console.log("Performing normal search for query: " + query);
     jQuery.ajax({
         dataType: "json", // Setting return data type
         method: "GET", // Setting request method
         url: "api/genres-titles",
         success: (resultData) => handleMainResult(resultData)
     });
+}
+
+function handleNormalAdvancedSearch (query) {
+    // advanced search
+    console.log("Performing normal search for query: " + query);
+    window.location.replace("movie-list.html");
 }
 
 // bind pressing enter key to a handler function
@@ -141,6 +159,9 @@ $('#autocomplete').keypress(function(event) {
     }
 })
 
-// TODO: if you have a "search" button, you may want to bind the onClick event as well of that button
-
-
+// Bind the Search button click event to handleNormalSearch
+jQuery("#search-form").submit(function(event) {
+    event.preventDefault(); // Prevent default form submission
+    console.log("Search button clicked");
+    handleNormalAdvancedSearch($('#autocomplete').val());
+});
