@@ -46,7 +46,7 @@
               maxTotal="100" maxIdle="30" maxWaitMillis="10000"
               username="mytestuser"
               password="My6$Password"
-              url="jdbc:mysql://172.31.2.115:3306/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"/>
+              url="jdbc:mysql://localhost:3306/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"/>
         <Resource name="jdbc/readconnect"
               auth="Container"
               driverClassName="com.mysql.cj.jdbc.Driver"
