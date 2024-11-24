@@ -1,21 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--<Context>-->
-
-<!--    &lt;!&ndash; Defines a Data Source Connecting to localhost moviedb&ndash;&gt;-->
-<!--    <Resource name="jdbc/moviedb"-->
-<!--              auth="Container"-->
-<!--              driverClassName="com.mysql.cj.jdbc.Driver"-->
-<!--              type="javax.sql.DataSource"-->
-
-<!--              factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"-->
-<!--              maxTotal="100" maxIdle="30" maxWaitMillis="10000"-->
-
-<!--              username="mytestuser"-->
-<!--              password="My6$Password"-->
-<!--              url="jdbc:mysql://localhost:3306/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"/>-->
-<!--</Context>-->
-
 <Context>
     <!-- Defines Data Source Connecting to local moviedb in different instance-->
     <Environment name="DB_ENV" value="dev" type="java.lang.String"/>
@@ -46,7 +30,7 @@
               maxTotal="100" maxIdle="30" maxWaitMillis="10000"
               username="mytestuser"
               password="My6$Password"
-              url="jdbc:mysql://localhost:3306/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"/>
+              url="jdbc:mysql://172.31.2.115:3306/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"/>
         <Resource name="jdbc/readconnect"
               auth="Container"
               driverClassName="com.mysql.cj.jdbc.Driver"
