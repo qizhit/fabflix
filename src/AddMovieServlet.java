@@ -62,8 +62,8 @@ public class AddMovieServlet extends HttpServlet {
             }
         }
 
-        try {
-            Connection conn1 = readDataSource.getConnection();
+        try (Connection conn1 = readDataSource.getConnection(); Connection conn2 = writeDataSource.getConnection()) {
+
             String checkQuery = "SELECT id FROM movies WHERE title = ? AND year = ? AND director = ?";
             PreparedStatement checkStmt = conn1.prepareStatement(checkQuery);
             checkStmt.setString(1, movieTitle);
@@ -71,7 +71,6 @@ public class AddMovieServlet extends HttpServlet {
             checkStmt.setString(3, movieDirector);
 
             ResultSet rs = checkStmt.executeQuery();
-            checkStmt.close();
 
             if (rs.next()) {
                 // Movie with the same title, year, and director exists
@@ -80,7 +79,6 @@ public class AddMovieServlet extends HttpServlet {
                 return;
             }
 
-            Connection conn2 = writeDataSource.getConnection();
             // Prepare to call the stored procedure
             CallableStatement stmt = conn2.prepareCall("{CALL add_movie(?, ?, ?, ?, ?,?)}");
             stmt.setString(1, movieTitle);
@@ -96,7 +94,6 @@ public class AddMovieServlet extends HttpServlet {
 
             // Execute the stored procedure
             stmt.execute();
-            stmt.close();
 
             // Retrieve the inserted IDs for movie, star, and genre
             String movieId = getMovieId(conn1, movieTitle, movieYear, movieDirector);
@@ -108,7 +105,7 @@ public class AddMovieServlet extends HttpServlet {
                     movieId, starId, genreId
             ));
 
-        } catch (SQLException e) {
+            } catch (SQLException e) {
             e.printStackTrace();
             response.setStatus(500);
             response.getWriter().write("{\"success\": false, \"message\": \"An error occurred while adding the movie.\"}");

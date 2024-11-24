@@ -56,9 +56,9 @@ public class AddStarServlet extends HttpServlet {
             }
         }
 
-        try (Connection conn1 = readDataSource.getConnection(); Connection conn2 = readDataSource.getConnection()) {
+        try (Connection conn1 = readDataSource.getConnection(); Connection conn2 = writeDataSource.getConnection()) {
             // Prepare the callable statement for the stored procedure
-            CallableStatement stmt = conn1.prepareCall("{CALL add_star(?, ?)}");
+            CallableStatement stmt = conn2.prepareCall("{CALL add_star(?, ?)}");
             stmt.setString(1, starName);  // Set star name
 
             if (birthYear != null) {
@@ -72,7 +72,7 @@ public class AddStarServlet extends HttpServlet {
             stmt.executeUpdate();
 
             String getStarIdSQL = "SELECT id FROM stars WHERE name = ? AND (birthYear = ? OR birthYear IS NULL) LIMIT 1";
-            try (PreparedStatement stmt1 = conn2.prepareStatement(getStarIdSQL)) {
+            try (PreparedStatement stmt1 = conn1.prepareStatement(getStarIdSQL)) {
                 stmt1.setString(1, starName);
                 if (birthYear != null) {
                     stmt1.setInt(2, birthYear);
@@ -83,7 +83,6 @@ public class AddStarServlet extends HttpServlet {
                 try (ResultSet rs = stmt1.executeQuery()) {
                     if (rs.next()) {
                         String starId = rs.getString("id");
-                        System.out.println(starId);
                         response.getWriter().write("{\"success\": true, \"starId\": \"" + starId + "\"}");
                     } else {
                         response.getWriter().write("{\"success\": false, \"message\": \"Star not found.\"}");
