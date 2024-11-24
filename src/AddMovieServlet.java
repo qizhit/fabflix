@@ -15,16 +15,11 @@ import java.sql.*;
 public class AddMovieServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 
-    private DataSource readDataSource;
-    private DataSource writeDataSource;
+    private DataSource dataSource;
 
     public void init(ServletConfig config) {
         try {
-            InitialContext context = new InitialContext();
-
-            // Lookup DataSources directly without checking the environment
-            readDataSource = (DataSource) context.lookup("java:comp/env/jdbc/readconnect");
-            writeDataSource = (DataSource) context.lookup("java:comp/env/jdbc/writeconnect");
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/writeconnect");
         } catch (NamingException e) {
             e.printStackTrace();
         }
@@ -62,10 +57,10 @@ public class AddMovieServlet extends HttpServlet {
             }
         }
 
-        try (Connection conn1 = readDataSource.getConnection(); Connection conn2 = writeDataSource.getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
 
             String checkQuery = "SELECT id FROM movies WHERE title = ? AND year = ? AND director = ?";
-            PreparedStatement checkStmt = conn1.prepareStatement(checkQuery);
+            PreparedStatement checkStmt = conn.prepareStatement(checkQuery);
             checkStmt.setString(1, movieTitle);
             checkStmt.setInt(2, movieYear);
             checkStmt.setString(3, movieDirector);
@@ -80,7 +75,7 @@ public class AddMovieServlet extends HttpServlet {
             }
 
             // Prepare to call the stored procedure
-            CallableStatement stmt = conn2.prepareCall("{CALL add_movie(?, ?, ?, ?, ?,?)}");
+            CallableStatement stmt = conn.prepareCall("{CALL add_movie(?, ?, ?, ?, ?,?)}");
             stmt.setString(1, movieTitle);
             stmt.setInt(2, movieYear);
             stmt.setString(3, movieDirector);
@@ -96,9 +91,9 @@ public class AddMovieServlet extends HttpServlet {
             stmt.execute();
 
             // Retrieve the inserted IDs for movie, star, and genre
-            String movieId = getMovieId(conn1, movieTitle, movieYear, movieDirector);
-            String starId = getStarId(conn1, starName, starBirthYear);
-            String genreId = getGenreId(conn1, genreName);
+            String movieId = getMovieId(conn, movieTitle, movieYear, movieDirector);
+            String starId = getStarId(conn, starName, starBirthYear);
+            String genreId = getGenreId(conn, genreName);
 
             response.getWriter().write(String.format(
                     "{\"success\": true, \"message\": \"Movie, star, and genre added successfully.\", \"movieId\": \"%s\", \"starId\": \"%s\", \"genreId\": \"%s\"}",
