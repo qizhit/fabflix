@@ -24,7 +24,7 @@ public class MainServlet extends HttpServlet {
     // Initialize the data source and connect to the database connection pool
     public void init(ServletConfig config) {
         try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/readconnect");
         } catch (NamingException e) {
             e.printStackTrace();
         }
