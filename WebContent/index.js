@@ -1,9 +1,4 @@
 /**
- * Global cache for storing previous query results
- */
-let cache = [];
-
-/**
  * Process the JSON data returned from the Servlet and fill genres and titles into HTML pages.
  */
 function handleMainResult(resultData) {
@@ -36,17 +31,17 @@ function handleMainResult(resultData) {
 function handleLookup(query, doneCallback) {
     console.log("autocomplete initiated")
 
-    // Check if query results exist in the cache
-    let cachedResult = cache.find(item => item.query === query);
+    // Check if the query results exist in sessionStorage
+    let cachedResult = sessionStorage.getItem(query);
     if (cachedResult) {
         console.log("Using cached result for query:", query);
-        console.log(cachedResult)
-        doneCallback({ suggestions: cachedResult.suggestions });
+        console.log(JSON.parse(cachedResult))
+        doneCallback({ suggestions: JSON.parse(cachedResult) });
         return;
     }
 
     // If not cached, send AJAX request to the backend
-    console.log("sending AJAX request to backend Java Servlet for query: ", query)
+    console.log("sending AJAX request to backend Java Servlet for query:", query)
     jQuery.ajax({
         "method": "GET",
         // escape the query string to avoid errors caused by special characters
@@ -77,8 +72,8 @@ function handleLookupAjaxSuccess(data, query, doneCallback) {
     var jsonData = JSON.parse(data);
     console.log(jsonData)
 
-    // Cache the result
-    cache.push({ query: query, suggestions: jsonData });
+    // Cache the result in sessionStorage
+    sessionStorage.setItem(query, JSON.stringify(jsonData));
 
     // call the callback function provided by the autocomplete library
     // add "{suggestions: jsonData}" to satisfy the library response format according to
