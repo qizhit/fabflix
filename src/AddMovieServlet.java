@@ -15,11 +15,16 @@ import java.sql.*;
 public class AddMovieServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 
-    private DataSource dataSource;
+    private DataSource readDataSource;
+    private DataSource writeDataSource;
 
     public void init(ServletConfig config) {
         try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
+            InitialContext context = new InitialContext();
+
+            // Lookup DataSources directly without checking the environment
+            readDataSource = (DataSource) context.lookup("java:comp/env/jdbc/readconnect");
+            writeDataSource = (DataSource) context.lookup("java:comp/env/jdbc/writeconnect");
         } catch (NamingException e) {
             e.printStackTrace();
         }
@@ -57,15 +62,16 @@ public class AddMovieServlet extends HttpServlet {
             }
         }
 
-        try (Connection conn = dataSource.getConnection()) {
-
+        try {
+            Connection conn1 = readDataSource.getConnection();
             String checkQuery = "SELECT id FROM movies WHERE title = ? AND year = ? AND director = ?";
-            PreparedStatement checkStmt = conn.prepareStatement(checkQuery);
+            PreparedStatement checkStmt = conn1.prepareStatement(checkQuery);
             checkStmt.setString(1, movieTitle);
             checkStmt.setInt(2, movieYear);
             checkStmt.setString(3, movieDirector);
 
             ResultSet rs = checkStmt.executeQuery();
+            checkStmt.close();
 
             if (rs.next()) {
                 // Movie with the same title, year, and director exists
@@ -74,8 +80,9 @@ public class AddMovieServlet extends HttpServlet {
                 return;
             }
 
+            Connection conn2 = writeDataSource.getConnection();
             // Prepare to call the stored procedure
-            CallableStatement stmt = conn.prepareCall("{CALL add_movie(?, ?, ?, ?, ?,?)}");
+            CallableStatement stmt = conn2.prepareCall("{CALL add_movie(?, ?, ?, ?, ?,?)}");
             stmt.setString(1, movieTitle);
             stmt.setInt(2, movieYear);
             stmt.setString(3, movieDirector);
@@ -89,18 +96,19 @@ public class AddMovieServlet extends HttpServlet {
 
             // Execute the stored procedure
             stmt.execute();
+            stmt.close();
 
             // Retrieve the inserted IDs for movie, star, and genre
-            String movieId = getMovieId(conn, movieTitle, movieYear, movieDirector);
-            String starId = getStarId(conn, starName, starBirthYear);
-            String genreId = getGenreId(conn, genreName);
+            String movieId = getMovieId(conn1, movieTitle, movieYear, movieDirector);
+            String starId = getStarId(conn1, starName, starBirthYear);
+            String genreId = getGenreId(conn1, genreName);
 
             response.getWriter().write(String.format(
                     "{\"success\": true, \"message\": \"Movie, star, and genre added successfully.\", \"movieId\": \"%s\", \"starId\": \"%s\", \"genreId\": \"%s\"}",
                     movieId, starId, genreId
             ));
 
-            } catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             response.setStatus(500);
             response.getWriter().write("{\"success\": false, \"message\": \"An error occurred while adding the movie.\"}");

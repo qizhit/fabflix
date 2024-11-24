@@ -15,13 +15,18 @@ import java.sql.*;
 public class AddStarServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
 
-    private DataSource dataSource;
+    private DataSource readDataSource;
+    private DataSource writeDataSource;
 
 
     public void init(ServletConfig config) {
         System.out.println("Initializing AddStarServlet");
         try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
+            InitialContext context = new InitialContext();
+
+            // Lookup DataSources directly without checking the environment
+            readDataSource = (DataSource) context.lookup("java:comp/env/jdbc/readconnect");
+            writeDataSource = (DataSource) context.lookup("java:comp/env/jdbc/writeconnect");
         } catch (NamingException e) {
             e.printStackTrace();
         }
@@ -51,9 +56,9 @@ public class AddStarServlet extends HttpServlet {
             }
         }
 
-        try (Connection conn = dataSource.getConnection()) {
+        try (Connection conn1 = readDataSource.getConnection(); Connection conn2 = readDataSource.getConnection()) {
             // Prepare the callable statement for the stored procedure
-            CallableStatement stmt = conn.prepareCall("{CALL add_star(?, ?)}");
+            CallableStatement stmt = conn1.prepareCall("{CALL add_star(?, ?)}");
             stmt.setString(1, starName);  // Set star name
 
             if (birthYear != null) {
@@ -67,7 +72,7 @@ public class AddStarServlet extends HttpServlet {
             stmt.executeUpdate();
 
             String getStarIdSQL = "SELECT id FROM stars WHERE name = ? AND (birthYear = ? OR birthYear IS NULL) LIMIT 1";
-            try (PreparedStatement stmt1 = conn.prepareStatement(getStarIdSQL)) {
+            try (PreparedStatement stmt1 = conn2.prepareStatement(getStarIdSQL)) {
                 stmt1.setString(1, starName);
                 if (birthYear != null) {
                     stmt1.setInt(2, birthYear);

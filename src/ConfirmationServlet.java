@@ -28,7 +28,8 @@ public class ConfirmationServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) {
         try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/moviedb");
+            InitialContext context = new InitialContext();
+            dataSource = (DataSource) context.lookup("java:comp/env/jdbc/readconnect");
         } catch (NamingException e) {
             e.printStackTrace();
         }

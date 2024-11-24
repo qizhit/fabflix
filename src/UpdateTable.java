@@ -1,3 +1,6 @@
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.*;
@@ -19,13 +22,19 @@ public class UpdateTable{
     private static final String StarID_PREFIX = "nm";
     private static HashMap<String, HashSet<String>> insertedStarsInMovies = new HashMap<>();
     private static HashMap<String, HashSet<Integer>> insertedGenresInMovies = new HashMap<>();
+    private static DataSource readDataSource;
+    private static DataSource writeDataSource;
 
     public static void main(String[] args) throws Exception {
-        // Establish database connection
-        String dbUrl = "jdbc:mysql://localhost:3306/moviedb";
-        String dbUser = "mytestuser";
-        String dbPassword = "My6$Password";
-        try (Connection dbConnection = DriverManager.getConnection(dbUrl, dbUser, dbPassword)) {
+        try {
+            InitialContext context = new InitialContext();
+            readDataSource = (DataSource) context.lookup("java:comp/env/jdbc/readconnect");
+            writeDataSource = (DataSource) context.lookup("java:comp/env/jdbc/writeconnect");
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+
+        try (Connection dbConnection = readDataSource.getConnection()) {
             // Call the add_star method to parse and insert stars
             System.out.println("Database connection established.");
 
@@ -87,7 +96,7 @@ public class UpdateTable{
 
     private static void add_star(Connection dbConnection) throws SQLException {
         // Retrieve existing stars from the database to avoid duplicates
-        PreparedStatement statement = dbConnection.prepareStatement("SELECT name, birthYear FROM stars;");
+        PreparedStatement statement = dbConnection.prepareStatement("SELECT name, birthYear FROM stars");
         HashMap<String, Integer> existingStars = new HashMap<>();
         ResultSet resultSet = statement.executeQuery();
         while (resultSet.next()) {
