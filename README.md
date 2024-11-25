@@ -6,11 +6,11 @@ In this phase of the project, we implemented advanced features to enhance the ap
 Key features include:
 - Full-text search and autocomplete for efficient user experience.
 - JDBC Connection Pooling for optimized query handling.
-- Load balancing between master and slave databases for read/write operations.
+- Load balancing between master and slave databases.
 - Advanced database routing for optimized performance.
 
 ## Demo Video
-A demo video showcasing the setup and features can be found here:
+A demo video showcasing the setup and features can be found here: https://youtu.be/PlvibSJA1MM
 
 ## Instruction of deployment
 This application is deployed on an AWS EC2 instance, which is configured with the necessary software to support the application, including:
@@ -24,13 +24,13 @@ Deployment Steps:
 - Restart the instance to ensure a clean state.
 - SSH into the EC2 instance again and perform a fresh Git clone of this project.
 - Use the prepared SQL files to create and populate the MySQL database
-- Use Maven to package the project and deploy the WAR file
+- Use Maven to package the project (master, slave) and deploy the WAR file
 - Once the deployment is complete, the application is accessible via the EC2 instance’s public IP
 
 ## Connection Pooling
 1. Code and Configuration Files
-- META-INF/context.xml (pool configuration)
-- All files using PreparedStatement, listed in the Prepared Statements section.
+- META-INF/context.xml (pool configuration):environment separation, write/read separation, /moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true
+- Usage: All files using PreparedStatement, listed in the Prepared Statements section.
 
 2. How Connection Pooling is Utilized
 - The context.xml file defines a connection pool using org.apache.tomcat.jdbc.pool.DataSourceFactory.
@@ -44,12 +44,14 @@ Deployment Steps:
 
 ## Master/Slave
 1. Code and Configuration Files
-- META-INF/context.xml (database configurations)
+- META-INF/context.xml (database configurations): environment separation, write/read separation(jdbc/writeconnect, jdbc/readconnect) /moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true
+- load balancer apache config: /etc/apache2/sites-enabled/000-default.conf (session-enabled configuration)
 - All files using PreparedStatement, listed in Prepared Statements section.
 
-2. Query Routing to Master/Slave SQL 
+2. Query Routing to Master/Slave SQL
+- The main instance sticks to one instance(master/slave) instance to run Fabflix.
 - Write Requests: Write queries are routed to the master database to ensure data consistency.
-- Read Requests: Read queries are routed to the slave database to offload workload from the master and enhance performance. Servlets like MovieListServlet dynamically determine whether a query is read-only and route it accordingly.
+- Read Requests: Read queries are routed to the slave/master database to offload workload from the master and enhance performance. Servlets like MovieListServlet dynamically determine whether a query is read-only and route it accordingly.
 
 ## Project Structure
 This project is designed with a clear separation of frontend and backend functionality.
