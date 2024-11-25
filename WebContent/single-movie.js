@@ -27,6 +27,7 @@ function getParameterByName(target) {
 function handleResult(resultData) {
     console.log("handleResult: populating movie info from resultData");
 
+    let genres = resultData[0]["genres"] || "N/A";
     let stars = resultData[0]["stars"] || "N/A";
     let starIds = resultData[0]["star_ids"] || "N/A";
     let rating = resultData[0]["rating"] || "N/A";
@@ -52,11 +53,15 @@ function handleResult(resultData) {
     rowHTML += "<th>" + resultData[0]["director"] + "</th>";  // Director
 
     // Genres as hyperlinks, sorted alphabetically
-    let genres = resultData[0]["genres"].split(", ");
-    let genreLinks = genres.map(genre => {
-        return `<a href='movie-list.html?browse_genre=${encodeURIComponent(genre)}'>${genre}</a>`;
-    }).join(", ");
+    let genreLinks = "N/A";
+    if (genres !== "N/A") {
+        let genreNames = genres.split(", ");
+        genreLinks = genreNames.map(genre => {
+            return `<a href='movie-list.html?browse_genre=${encodeURIComponent(genre)}'>${genre}</a>`;
+        }).join(", ");
+    }
     rowHTML += `<th>${genreLinks}</th>`;
+
     // Stars as hyperlinks: split the stars string and create individual hyperlinks
     let starLinks = "N/A";
     if (stars !== "N/A" && starIds !== "N/A") {
