@@ -19,16 +19,13 @@ import java.util.ArrayList;
 @WebServlet(name = "PaymentServlet", urlPatterns = "/api/payment")
 public class PaymentServlet extends HttpServlet {
     private static final long serialVersionUID = 2L;
-
-    private DataSource readDataSource;  // For read operations
-    private DataSource writeDataSource; // For write operations
+    private DataSource dataSource;
 
 
     public void init(ServletConfig config) {
         try {
             InitialContext context = new InitialContext();
-            readDataSource = (DataSource) context.lookup("java:comp/env/jdbc/readconnect");
-            writeDataSource = (DataSource) context.lookup("java:comp/env/jdbc/writeconnect");
+            dataSource = (DataSource) context.lookup("java:comp/env/jdbc/ReadWrite");
 
         } catch (NamingException e) {
             e.printStackTrace();
@@ -44,11 +41,11 @@ public class PaymentServlet extends HttpServlet {
 
         JsonObject responseJson = new JsonObject();
 
-        try (Connection readConn = readDataSource.getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             // Verify credit card information
             String cardQuery = "SELECT cc.id AS cardNumber, c.id AS customerId FROM creditcards AS cc, customers AS c " +
                     "WHERE cc.id = ? AND cc.firstName = ? AND cc.lastName = ? AND cc.expiration = ? AND cc.id = c.ccId";
-            PreparedStatement cardStmt = readConn.prepareStatement(cardQuery);
+            PreparedStatement cardStmt = conn.prepareStatement(cardQuery);
             cardStmt.setString(1, creditCardNumber);
             cardStmt.setString(2, firstName);
             cardStmt.setString(3, lastName);
@@ -66,10 +63,8 @@ public class PaymentServlet extends HttpServlet {
                         responseJson.addProperty("message", "Your shopping cart is empty.");
                     } else {
                         // Insert sales record
-                        try (Connection writeConn = writeDataSource.getConnection()) {
-                            String saleInsert = "INSERT INTO sales (customerId, movieId, saleDate, quantity) VALUES (?, ?, ?, ?)";
-                            PreparedStatement saleStmt = writeConn.prepareStatement(saleInsert);
-
+                        String saleInsert = "INSERT INTO sales (customerId, movieId, saleDate, quantity) VALUES (?, ?, ?, ?)";
+                        try (PreparedStatement saleStmt = conn.prepareStatement(saleInsert)) {
                             int customerId = Integer.parseInt(rs.getString("customerId"));
                             for (CartItem item : cart) {
                                 saleStmt.setInt(1, customerId);
@@ -78,10 +73,10 @@ public class PaymentServlet extends HttpServlet {
                                 saleStmt.setInt(4, item.getQuantity());
                                 saleStmt.executeUpdate();
                             }
-
-                            responseJson.addProperty("success", true);
-                            responseJson.addProperty("message", "Order placed successfully.");
                         }
+
+                        responseJson.addProperty("success", true);
+                        responseJson.addProperty("message", "Order placed successfully.");
                     }
                 }
             }

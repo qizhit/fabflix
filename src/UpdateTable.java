@@ -22,19 +22,17 @@ public class UpdateTable{
     private static final String StarID_PREFIX = "nm";
     private static HashMap<String, HashSet<String>> insertedStarsInMovies = new HashMap<>();
     private static HashMap<String, HashSet<Integer>> insertedGenresInMovies = new HashMap<>();
-    private static DataSource readDataSource;
-    private static DataSource writeDataSource;
+    private static DataSource dataSource;
 
     public static void main(String[] args) throws Exception {
         try {
             InitialContext context = new InitialContext();
-            readDataSource = (DataSource) context.lookup("java:comp/env/jdbc/readconnect");
-            writeDataSource = (DataSource) context.lookup("java:comp/env/jdbc/writeconnect");
+            dataSource = (DataSource) context.lookup("java:comp/env/jdbc/ReadWrite");
         } catch (NamingException e) {
             e.printStackTrace();
         }
 
-        try (Connection dbConnection = readDataSource.getConnection()) {
+        try (Connection dbConnection = dataSource.getConnection()) {
             // Call the add_star method to parse and insert stars
             System.out.println("Database connection established.");
 
@@ -83,12 +81,12 @@ public class UpdateTable{
 
 
     // Helper method to generate a new unique star ID
-    private static String generateNewStarId(Connection dbConnection) throws SQLException {
+    private static String generateNewStarId() throws SQLException {
         currentMaxStarIdNumericPart++; // Increasing value part
         return StarID_PREFIX + String.format("%07d", currentMaxStarIdNumericPart);
     }
 
-    private static String generateNewMovieId(Connection dbConnection) throws SQLException {
+    private static String generateNewMovieId() throws SQLException {
         currentMaxMovieIdNumericPart++; // Increasing value part
         return MovieID_PREFIX + String.format("%07d", currentMaxMovieIdNumericPart);
     }
@@ -132,7 +130,7 @@ public class UpdateTable{
             String birthYearStr = star[1];
 
             // Generate a new unique ID for the star
-            String newStarId = generateNewStarId(dbConnection);
+            String newStarId = generateNewStarId();
 
             // Set parameters for insertion
             insertStatement.setString(1, newStarId);
@@ -214,7 +212,7 @@ public class UpdateTable{
 
                 if (movieId == null) {  // Movie does not exist, so insert everything
                     new_movies++;
-                    movieId = generateNewMovieId(dbConnection);
+                    movieId = generateNewMovieId();
                     // generate a random price for movies table
                     Random random = new Random();
                     double price = 5 + (random.nextDouble() * 45);
@@ -325,7 +323,7 @@ public class UpdateTable{
         }
         // Star doesn't exist, insert new star
         new_stars++;
-        String starId = generateNewStarId(dbConnection);
+        String starId = generateNewStarId();
         String insertQuery = "INSERT INTO stars (id, name) VALUES (?, ?)";
         try (PreparedStatement insertStmt = dbConnection.prepareStatement(insertQuery)) {
             insertStmt.setString(1, starId);

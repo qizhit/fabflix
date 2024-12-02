@@ -21,7 +21,7 @@ public class AddStarServlet extends HttpServlet {
     public void init(ServletConfig config) {
         System.out.println("Initializing AddStarServlet");
         try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/writeconnect");
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/ReadWrite");
         } catch (NamingException e) {
             e.printStackTrace();
         }

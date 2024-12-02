@@ -19,7 +19,7 @@ public class AddMovieServlet extends HttpServlet {
 
     public void init(ServletConfig config) {
         try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/writeconnect");
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/ReadWrite");
         } catch (NamingException e) {
             e.printStackTrace();
         }

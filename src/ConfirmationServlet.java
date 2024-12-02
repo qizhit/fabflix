@@ -29,7 +29,7 @@ public class ConfirmationServlet extends HttpServlet {
     public void init(ServletConfig config) {
         try {
             InitialContext context = new InitialContext();
-            dataSource = (DataSource) context.lookup("java:comp/env/jdbc/readconnect");
+            dataSource = (DataSource) context.lookup("java:comp/env/jdbc/ReadOnly");
         } catch (NamingException e) {
             e.printStackTrace();
         }

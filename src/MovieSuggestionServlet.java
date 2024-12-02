@@ -22,7 +22,7 @@ public class MovieSuggestionServlet extends HttpServlet {
 
     public void init(ServletConfig config) {
         try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/readconnect");
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/ReadOnly");
         } catch (NamingException e) {
             e.printStackTrace();
         }

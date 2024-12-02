@@ -28,7 +28,7 @@ public class LoginServlet extends HttpServlet {
     // Initialize the data source and connect to the database connection pool
     public void init(ServletConfig config) {
         try {
-            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/readconnect");
+            dataSource = (DataSource) new InitialContext().lookup("java:comp/env/jdbc/ReadOnly");
         } catch (NamingException e) {
             e.printStackTrace();
         }
