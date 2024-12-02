@@ -170,7 +170,7 @@ buildNumber.properties
 # End of https://www.gitignore.io/api/java,maven,eclipse,java-web,intellij
 
 # Additional
-.idea
-.parse
+.idea/
+.parse/
 *.iml
 .DS_Store
