@@ -2,26 +2,6 @@
 
 <Context>
     <!-- Defines Data Source Connecting to local moviedb in different instance-->
-<!--    <Environment name="DB_ENV" value="dev" type="java.lang.String"/>-->
-<!--        <Resource name="jdbc/ReadWrite"-->
-<!--              auth="Container"-->
-<!--              driverClassName="com.mysql.cj.jdbc.Driver"-->
-<!--              type="javax.sql.DataSource"-->
-<!--              factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"-->
-<!--              maxTotal="100" maxIdle="30" maxWaitMillis="10000"-->
-<!--              username="mytestuser"-->
-<!--              password="My6$Password"-->
-<!--              url="jdbc:mysql://host.docker.internal:3306/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"/>-->
-<!--        <Resource name="jdbc/ReadOnly"-->
-<!--              auth="Container"-->
-<!--              driverClassName="com.mysql.cj.jdbc.Driver"-->
-<!--              type="javax.sql.DataSource"-->
-<!--              factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"-->
-<!--              maxTotal="100" maxIdle="30" maxWaitMillis="10000"-->
-<!--              username="mytestuser"-->
-<!--              password="My6$Password"-->
-<!--              url="jdbc:mysql://host.docker.internal:3306/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"/>-->
-<!--    <Environment name="DB_ENV" value="prod" type="java.lang.String"/>-->
         <Resource name="jdbc/ReadWrite"
               auth="Container"
               driverClassName="com.mysql.cj.jdbc.Driver"
@@ -30,7 +10,7 @@
               maxTotal="100" maxIdle="30" maxWaitMillis="10000"
               username="mytestuser"
               password="My6$Password"
-              url="jdbc:mysql://172.31.2.115:3306/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"/>
+              url="jdbc:mysql://host.docker.internal:3306/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"/>
         <Resource name="jdbc/ReadOnly"
               auth="Container"
               driverClassName="com.mysql.cj.jdbc.Driver"
@@ -39,5 +19,5 @@
               maxTotal="100" maxIdle="30" maxWaitMillis="10000"
               username="mytestuser"
               password="My6$Password"
-              url="jdbc:mysql://172.31.5.106:3306/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"/>
+              url="jdbc:mysql://host.docker.internal:3306/moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true"/>
 </Context>

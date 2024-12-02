@@ -16,7 +16,7 @@
     </resource-ref>
 
     <resource-ref>
-        <description>MySQL DataSource Master</description>
+        <description>MySQL DataSource Slave</description>
         <res-ref-name>jdbc/ReadOnly</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
