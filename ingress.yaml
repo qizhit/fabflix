@@ -15,7 +15,7 @@ spec:
         paths:
           - backend:
               service:
-                name: fabflix-service # Points to the service named "mfabflix-servics". The value should match the name of the service.
+                name: fabflix-service # Points to the service named "fabflix-servics". The value should match the name of the service.
                 port:
                   number: 8080 # Specifies that the service is listening on port 8080.
             path: / # # Defines the path to match incoming requests. Here, "/" means the root path.
