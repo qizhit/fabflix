@@ -21,7 +21,6 @@ function handleLoginResult(resultDataString) {
         console.log("show error message");
         console.log(resultDataJson["message"]);
         $("#login_error_message").text(resultDataJson["message"]);
-        grecaptcha.reset();
     }
 }
 
@@ -38,19 +37,11 @@ function submitLoginForm(formSubmitEvent) {
      */
     formSubmitEvent.preventDefault();
 
-    let recaptchaResponse = grecaptcha.getResponse();
-
-    // Check if reCAPTCHA is completed
-    if (!recaptchaResponse) {
-        $("#login_error_message").text("Please complete the reCAPTCHA");
-        return;
-    }
-
     $.ajax(
         "api/login", {
             method: "POST",
             // Serialize the login form to the data sent by POST request
-            data: login_form.serialize() + "&g-recaptcha-response=" + recaptchaResponse,
+            data: login_form.serialize(),
             success: handleLoginResult
         }
     );
