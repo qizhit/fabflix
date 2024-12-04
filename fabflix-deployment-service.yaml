@@ -15,6 +15,7 @@ spec:
       containers:
         - name: fabflix-container # Names the container within the pod as "fabflix-container".
           image: qizhit/cs122b-project-fabflix:v2 # Uses the Docker image "https://hub.docker.com/repository/docker/qizhit/cs122b-project-fabflix" for the container.
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 8080 # Exposes port 8080 of the container.
