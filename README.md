@@ -1,25 +1,21 @@
-# Fablix Application - Project 4: Fabflix Advanced Features
+# Fablix Application - Project 5: Fabflix Advanced Features
 
 ## Project Overview
-Fabflix is an advanced web application for browsing, searching, shopping, and managing movie information.
-In this phase of the project, we implemented advanced features to enhance the application's performance, scalability, and reliability.
+Fabflix is a full-featured web application enabling users to browse, search, shop, and manage movie information. In Project 5, we focused on implementing advanced features and deploying the application to a Kubernetes (K8s) cluster for enhanced performance, scalability, and reliability.
 Key features include:
-- Full-text search and autocomplete for efficient user experience.
 - JDBC Connection Pooling for optimized query handling.
-- Load balancing between master and slave databases.
-- Advanced database routing for optimized performance.
-
-## Demo Video
-A demo video showcasing the setup and features can be found here: https://youtu.be/PlvibSJA1MM
+- Kubernetes Deployment with scalability and load balancing.
+- Performance Testing using Apache JMeter.
 
 ## Instruction of deployment
 This application is deployed on an AWS EC2 instance, which is configured with the necessary software to support the application, including:
-- Java 11
-- Tomcat 10
-- MySQL 8.0
+- Kubernetes Tools: Kops, kubectl.
+- Application Components: Java 11, Tomcat 10, MySQL 8.0.
+- Docker: Build and push Fabflix Docker images.
+- JMeter: Test performance.
 
 Deployment Steps:
-- Access the EC2 instance(main, master, slave) via ssh
+- Access the EC2 instance(k8s-admin) via ssh
 - Prepared the instance, the existing database and Git repository are cleared, and the movie-data.sql and create_table.sql files are stored for later use.
 - Restart the instance to ensure a clean state.
 - SSH into the EC2 instance again and perform a fresh Git clone of this project.
@@ -27,31 +23,52 @@ Deployment Steps:
 - Use Maven to package the project (master, slave) and deploy the WAR file
 - Once the deployment is complete, the application is accessible via the EC2 instance’s public IP
 
-## Connection Pooling
-1. Code and Configuration Files
-- META-INF/context.xml (pool configuration):environment separation, write/read separation, /moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true
-- Usage: All files using PreparedStatement, listed in the Prepared Statements section.
+## Performance Testing with JMeter
+Objectives: Stress test the Fabflix search feature using 10 threads.
+Measure throughput under:
+- 2 Fabflix pods and 3 worker nodes.
+- 3 Fabflix pods and 4 worker nodes.
 
-2. How Connection Pooling is Utilized
-- The context.xml file defines a connection pool using org.apache.tomcat.jdbc.pool.DataSourceFactory.
-- The pool is initialized and managed by Tomcat, allowing servlets to lease and release connections efficiently.
-- Servlets obtain connections from the pool via a DataSource (separating read/write operations), reducing the overhead of creating new connections for every request.
+Test Plan:
+- Use query_load.txt as input for search titles.
+- Create a JMeter test plan (fabflix.jmx):
+- Login and send search requests.
+- Iterate through query_load.txt in an infinite loop.
+- Disable reCAPTCHA for testing.
+- Run test
+- Collect Results
 
-3. Connection Pooling with Two Backend SQL Databases
-- Separate connection pools are configured for the master and slave databases in context.xml.
-- Queries are routed dynamically based on type: Write queries go to the master database. Read queries go to the slave database.
-- This setup allows for load balancing and performance optimization.
+# Result of Performance Testing
 
-## Master/Slave
-1. Code and Configuration Files
-- META-INF/context.xml (database configurations): environment separation, write/read separation(jdbc/writeconnect, jdbc/readconnect) /moviedb?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;cachePrepStmts=true
-- load balancer apache config: /etc/apache2/sites-enabled/000-default.conf (session-enabled configuration)
-- All files using PreparedStatement, listed in Prepared Statements section.
+- # JMeter TS/TJ Time Logs
+    - #### Instructions of how to use the `log_processing.*` script to process the JMeter logs.
 
-2. Query Routing to Master/Slave SQL
-- The main instance sticks to one instance(master/slave) instance to run Fabflix.
-- Write Requests: Write queries are routed to the master database to ensure data consistency.
-- Read Requests: Read queries are routed to the slave/master database to offload workload from the master and enhance performance. Servlets like MovieListServlet dynamically determine whether a query is read-only and route it accordingly.
+
+- # JMeter TS/TJ Time Measurement Report
+| **Single-instance Version Test Plan**          | **Graph Results Screenshot** | **Average Query Time(ms)** | **Average Search Servlet Time(ms)** | **Average JDBC Time(ms)** | **Analysis** |
+|------------------------------------------------|------------------------------|----------------------------|-------------------------------------|---------------------------|--------------|
+| Case 1: HTTP/1 thread                          | ![](path to image in img/)   | ??                         | ??                                  | ??                        | ??           |
+| Case 2: HTTP/10 threads                        | ![](path to image in img/)   | ??                         | ??                                  | ??                        | ??           |
+| Case 3: HTTPS/10 threads                       | ![](path to image in img/)   | ??                         | ??                                  | ??                        | ??           |
+| Case 4: HTTP/10 threads/No connection pooling  | ![](path to image in img/)   | ??                         | ??                                  | ??                        | ??           |
+
+
+| **Scaled Version Test Plan**                   | **Graph Results Screenshot** | **Average Query Time(ms)** | **Average Search Servlet Time(ms)** | **Average JDBC Time(ms)** | **Analysis** |
+|------------------------------------------------|------------------------------|----------------------------|-------------------------------------|---------------------------|--------------|
+| Case 1: HTTP/1 thread                          | ![](path to image in img/)   | ??                         | ??                                  | ??                        | ??           |
+| Case 2: HTTP/10 threads                        | ![](path to image in img/)   | ??                         | ??                                  | ??                        | ??           |
+| Case 3: HTTP/10 threads/No connection pooling  | ![](path to image in img/)   | ??                         | ??                                  | ??                        | ??           |
+
+## Demo Video
+A demo video showcasing the setup and features can be found here:
+
+## Application Features
+Master-Slave Database Replication:
+- Write requests: Routed to the master database.
+- Read requests: Routed to the slave database for load balancing.
+JDBC Connection Pooling:
+- Defined in META-INF/context.xml for both master and slave databases.
+- Reduces connection overhead and improves query efficiency.
 
 ## Project Structure
 This project is designed with a clear separation of frontend and backend functionality.
@@ -60,22 +77,13 @@ It was developed using following technologies:
 - Frontend: HTML provides user interface styled with CSS and Bootstrap for responsive design, JavaScript dynamically fetches and renders data from server.
 - Database: MySQL stores all the data that used in this project, including movies, stars, genres, and ratings.
 - Database connection: Tomcat handles servlet requests, and manage the connection between the servlets and database.
-
-## Prepared Statements
-Prepared statements are used in the following files to secure database operations:
-- LoginServlet: emailQuery
-- MainServlet: query
-- MovieListServlet: queryBuilder, genreQuery, starQuery, countQuery
-- SingleMovieServlet: query
-- SingleStarServlet: query
-- PaymentServlet: cardQuery, saleInsert
-- ConfirmationServlet: querySalesSQL
-- UpdateTable: statement, insertStarSQL
-- AddMovieServlet:getMovieId, getStarId, getGenreId
-- AddStarServlet: getStarIdSQL
+Key Configuration Files:
+- Dockerfile: Defines the Docker image for the application.
+- fabflix-deployment-service.yaml: Kubernetes deployment configuration.
+- ingress.yaml: Ingress setup for load balancing.
 
 ## Team Contributions
-We collaborated on demo recording and implementation JDBC Connection Pooling functionality.
+We collaborated on demo recording
 Our specific contributions were as follows:
-- Xuan Gu: wrote the README file, Load balancing functionalities.
-- Qizhi Tian: Developed full text search and autocomplete functionalities.
+- Xuan Gu: wrote the README file, 
+- Qizhi Tian: 
