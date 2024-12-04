@@ -59,9 +59,8 @@ public class LoginServlet extends HttpServlet {
                     request.getServletContext().log("Login failed");
                 } else {
                     // Step 2: Check if the password matches
-                    String encryptedPassword = emailResultSet.getString("password");
-                    boolean success = new StrongPasswordEncryptor().checkPassword(password, encryptedPassword);
-                    if (success) {
+                    String userPassword = emailResultSet.getString("password");
+                    if (userPassword.equals(password)) {
                         // Login success: store user in session
                         request.getSession().setAttribute("user", new User(username));
 
