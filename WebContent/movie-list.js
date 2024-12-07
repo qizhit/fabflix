@@ -15,24 +15,31 @@ function handleMovieResult(resultData) {
     // Iterate through the movie data and fill the table
     resultData.movies.forEach(movie => {
         let rowHTML = "<tr>";
-        rowHTML += `<th><a href='single-movie.html?id=${movie.movieId}'>${movie.title}</a></th>`;
-        rowHTML += `<th>${movie.year}</th>`;
-        rowHTML += `<th>${movie.director}</th>`;
+        rowHTML += `<th><a href='single-movie.html?id=${movie.movieId}'>${movie.title || 'N/A'}</a></th>`;
+        rowHTML += `<th>${movie.year || 'N/A'}</th>`;
+        rowHTML += `<th>${movie.director || 'N/A'}</th>`;
 
         // Split the genres string and create individual hyperlinks
-        const genres = movie.genres.split(", ");
-        let genreLinks = genres.map(genre =>
-            `<a href='movie-list.html?browse_genre=${encodeURIComponent(genre.trim())}'>${genre}</a>`
-        ).join(", ");
+        let genreLinks = "N/A";
+        if (movie.genres !== "N/A") {
+            let genreNames = movie.genres.split(", ");
+            genreLinks = genreNames.map(genre => {
+                return `<a href='movie-list.html?browse_genre=${encodeURIComponent(genre.trim())}'>${genre}</a>`;
+            }).join(", ");
+        }
         rowHTML += `<th>${genreLinks}</th>`;
 
         // Split the stars string and create individual hyperlinks
-        const stars = movie.stars.split(", ");
-        const star_ids = movie.star_ids.split(", ");
-        let starLinks = stars.map((name, index) =>
-            `<a href='single-star.html?id=${encodeURIComponent(star_ids[index])}'>${name}</a>`
-        ).join(", ");
-        rowHTML += `<th>${starLinks}</th>`;
+        let starLinks = "N/A";
+        if (movie.stars !== "N/A" &&  movie.star_ids !== "N/A") {
+            const starNames = movie.stars.split(", ");
+            const starIdArray = movie.star_ids.split(", ");
+            starLinks = starNames.map((name, index) => {
+                const encodedStarId = encodeURIComponent(starIdArray[index]);
+                return `<a href='single-star.html?id=${encodedStarId}'>${name}</a>`;
+            }).join(", ");
+        }
+        rowHTML += "<th>" + starLinks + "</th>";  // Stars
 
         rowHTML += `<th>${movie.rating || 'N/A'}</th>`;
         // Add to Cart

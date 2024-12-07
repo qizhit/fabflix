@@ -215,75 +215,78 @@ public class MovieListServlet extends HttpServlet {
             movieRs.close();
             movieStatement.close();
 
-            // Format the list of movie ids into a string format in SQL, prepare for genres and stars query
-            String movieIdListPlaceholders = movieMap.keySet().stream()
-                    .map(id -> "?")
-                    .reduce((a, b) -> a + "," + b)
-                    .orElse("");
+            if (!movieMap.isEmpty()) {
 
-            // first three genres: sort by alphabetical order
-            // Batch query "genres"
-            String genreQuery = "WITH RankedGenres AS (\n" +
-                    "    SELECT gm.movieId, g.name, \n" +
-                    "    ROW_NUMBER() OVER (PARTITION BY gm.movieId ORDER BY g.name ASC) AS genre_rank \n" +
-                    "    FROM genres_in_movies gm\n" +
-                    "    JOIN genres g ON gm.genreId = g.id\n" +
-                    "    WHERE gm.movieId IN (" + movieIdListPlaceholders + ")\n" +
-                    "    ORDER BY g.name)\n" +
-                    "SELECT movieId, GROUP_CONCAT(name ORDER BY name ASC SEPARATOR ', ') AS genres\n" +
-                    "    FROM RankedGenres WHERE genre_rank <= 3\n" +
-                    "    GROUP BY movieId";
-            PreparedStatement genreStatement = conn.prepareStatement(genreQuery);
-            int genreParamIndex = 1;
-            for (String movieId : movieMap.keySet()) {
-                genreStatement.setString(genreParamIndex++, movieId);
+                // Format the list of movie ids into a string format in SQL, prepare for genres and stars query
+                String movieIdListPlaceholders = movieMap.keySet().stream()
+                        .map(id -> "?")
+                        .reduce((a, b) -> a + "," + b)
+                        .orElse("");
+
+                // first three genres: sort by alphabetical order
+                // Batch query "genres"
+                String genreQuery = "WITH RankedGenres AS (\n" +
+                        "    SELECT gm.movieId, g.name, \n" +
+                        "    ROW_NUMBER() OVER (PARTITION BY gm.movieId ORDER BY g.name ASC) AS genre_rank \n" +
+                        "    FROM genres_in_movies gm\n" +
+                        "    JOIN genres g ON gm.genreId = g.id\n" +
+                        "    WHERE gm.movieId IN (" + movieIdListPlaceholders + ")\n" +
+                        "    ORDER BY g.name)\n" +
+                        "SELECT movieId, GROUP_CONCAT(name ORDER BY name ASC SEPARATOR ', ') AS genres\n" +
+                        "    FROM RankedGenres WHERE genre_rank <= 3\n" +
+                        "    GROUP BY movieId";
+                PreparedStatement genreStatement = conn.prepareStatement(genreQuery);
+                int genreParamIndex = 1;
+                for (String movieId : movieMap.keySet()) {
+                    genreStatement.setString(genreParamIndex++, movieId);
+                }
+                ResultSet genreRs = genreStatement.executeQuery();
+
+                // Fill the genres into a genre corresponding to film objects
+                while (genreRs.next()) {
+                    String movieId = genreRs.getString("movieId");
+                    String genres = genreRs.getString("genres");
+                    movieMap.get(movieId).addProperty("genres", genres);
+                }
+                genreRs.close();
+                genreStatement.close();
+
+                // first three genres: sort by the star's movie count desc, then use alphabetical order to break ties.
+                // Batch query "stars"
+                String starQuery = "WITH RankedStars AS (" +
+                        "SELECT sim.movieId, s.id, s.name, COUNT(sim2.movieId) AS movie_count," +
+                        "    ROW_NUMBER() OVER (PARTITION BY sim.movieId ORDER BY COUNT(sim2.movieId) DESC, s.name ASC) AS star_rank" +
+                        "    FROM stars_in_movies sim" +
+                        "    JOIN stars s ON sim.starId = s.id" +
+                        "    JOIN stars_in_movies sim2 ON s.id = sim2.starId" +
+                        "    WHERE sim.movieId IN (" + movieIdListPlaceholders + ")" +
+                        "    GROUP BY sim.movieId, s.id, s.name)" +
+                        "SELECT movieId," +
+                        "    GROUP_CONCAT(name ORDER BY movie_count DESC, name ASC SEPARATOR ', ') AS stars_name,\n" +
+                        "    GROUP_CONCAT(id ORDER BY movie_count DESC, name ASC SEPARATOR ', ') AS star_ids\n" +
+                        "    FROM RankedStars\n" +
+                        "    WHERE star_rank <= 3\n" +
+                        "    GROUP BY movieId";
+                PreparedStatement starStatement = conn.prepareStatement(starQuery);
+                int starParamIndex = 1;
+                for (String movieId : movieMap.keySet()) {
+                    starStatement.setString(starParamIndex++, movieId);
+                }
+                ResultSet starRs = starStatement.executeQuery();
+
+                // Fill stars and star_ids into the corresponding movie object
+                while (starRs.next()) {
+                    String movieId = starRs.getString("movieId");
+                    String starName = starRs.getString("stars_name");
+                    String starId = starRs.getString("star_ids");
+
+                    movieMap.get(movieId).addProperty("stars", starName);
+                    movieMap.get(movieId).addProperty("star_ids", starId);
+
+                }
+                starRs.close();
+                starStatement.close();
             }
-            ResultSet genreRs = genreStatement.executeQuery();
-
-            // Fill the genres into a genre corresponding to film objects
-            while (genreRs.next()) {
-                String movieId = genreRs.getString("movieId");
-                String genres = genreRs.getString("genres");
-                movieMap.get(movieId).addProperty("genres", genres);
-            }
-            genreRs.close();
-            genreStatement.close();
-
-            // first three genres: sort by the star's movie count desc, then use alphabetical order to break ties.
-            // Batch query "stars"
-            String starQuery = "WITH RankedStars AS (" +
-                    "SELECT sim.movieId, s.id, s.name, COUNT(sim2.movieId) AS movie_count," +
-                    "    ROW_NUMBER() OVER (PARTITION BY sim.movieId ORDER BY COUNT(sim2.movieId) DESC, s.name ASC) AS star_rank" +
-                    "    FROM stars_in_movies sim" +
-                    "    JOIN stars s ON sim.starId = s.id" +
-                    "    JOIN stars_in_movies sim2 ON s.id = sim2.starId" +
-                    "    WHERE sim.movieId IN (" + movieIdListPlaceholders + ")" +
-                    "    GROUP BY sim.movieId, s.id, s.name)" +
-                    "SELECT movieId," +
-                    "    GROUP_CONCAT(name ORDER BY movie_count DESC, name ASC SEPARATOR ', ') AS stars_name,\n" +
-                    "    GROUP_CONCAT(id ORDER BY movie_count DESC, name ASC SEPARATOR ', ') AS star_ids\n" +
-                    "    FROM RankedStars\n" +
-                    "    WHERE star_rank <= 3\n" +
-                    "    GROUP BY movieId";
-            PreparedStatement starStatement = conn.prepareStatement(starQuery);
-            int starParamIndex = 1;
-            for (String movieId : movieMap.keySet()) {
-                starStatement.setString(starParamIndex++, movieId);
-            }
-            ResultSet starRs = starStatement.executeQuery();
-
-            // Fill stars and star_ids into the corresponding movie object
-            while (starRs.next()) {
-                String movieId = starRs.getString("movieId");
-                String starName = starRs.getString("stars_name");
-                String starId = starRs.getString("star_ids");
-
-                movieMap.get(movieId).addProperty("stars", starName);
-                movieMap.get(movieId).addProperty("star_ids", starId);
-
-            }
-            starRs.close();
-            starStatement.close();
 
             JsonArray jsonArray = new JsonArray();  // used to store all movie jsonObject
 
