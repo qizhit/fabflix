@@ -22,7 +22,7 @@
       </ThreadGroup>
       <hashTree>
         <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults" enabled="true">
-          <stringProp name="HTTPSampler.domain">ec2-18-237-63-79.us-west-2.compute.amazonaws.com</stringProp>
+          <stringProp name="HTTPSampler.domain">a811d5c27874b4174abe8ea2c4db862a-546566210.us-west-2.elb.amazonaws.com</stringProp>
           <stringProp name="HTTPSampler.port">80</stringProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
             <collectionProp name="Arguments.arguments"/>
@@ -37,7 +37,6 @@
         </CookieManager>
         <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login Request" enabled="true">
-          <stringProp name="HTTPSampler.domain">ec2-18-237-63-79.us-west-2.compute.amazonaws.com</stringProp>
           <stringProp name="HTTPSampler.port">80</stringProp>
           <stringProp name="HTTPSampler.path">/cs122b-project/api/login</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
@@ -82,9 +81,8 @@
           </CSVDataSet>
           <hashTree/>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Search Request" enabled="true">
-            <stringProp name="HTTPSampler.domain">ec2-18-237-63-79.us-west-2.compute.amazonaws.com</stringProp>
             <stringProp name="HTTPSampler.port">80</stringProp>
-            <stringProp name="HTTPSampler.path">cs122b-project5-fabflix/search</stringProp>
+            <stringProp name="HTTPSampler.path">/cs122b-project/api/genre-title</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <stringProp name="HTTPSampler.method">GET</stringProp>
             <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
