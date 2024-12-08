@@ -39,12 +39,12 @@ Test Plan:
 
 ## Result of Performance Testing
 - # JMeter TS/TJ Time Measurement Report
-| **3 nodes  Test Plan** | **Graph Results Screenshot**            | **Graph Results Screenshot**             | **Throughout**  | **Average** |
+| **3 nodes  Test Plan** | **Nodes States Screenshot**             | **Graph Results Screenshot**             | **Throughout**  | **Average** |
 |------------------------|-----------------------------------------|------------------------------------------|-----------------|-------------|
 | Case 1: HTTP/10 thread | ![3nodes_states.jpg](3nodes_states.jpg) | ![3nodes_result.jpg](3nodes_result.jpg)  | 9923.177/minute | 57          |
 
 
-| **4 nodes Test Plan**  | **Graph Results Screenshot**            | **Graph Results Screenshot**            | **Throughout**    | **Average** |
+| **4 nodes Test Plan**  | **Nodes States Screenshot**             | **Graph Results Screenshot**            | **Throughout**    | **Average** |
 |------------------------|-----------------------------------------|-----------------------------------------|-------------------|-------------|
 | Case 1: HTTP/10 thread | ![4nodes_states.jpg](4nodes_states.jpg) | ![4nodes_result.jpg](4nodes_result.jpg) | 10012.464/min     | 57          |
 
@@ -62,5 +62,5 @@ Key Configuration Files:
 ## Team Contributions
 We collaborated on demo recording and Jmeter testing.
 Our specific contributions were as follows:
-- Xuan Gu: wrote the README file, implemented K8s cluster functionalities.
-- Qizhi Tian: implemented Docker functionalities, finalized the Fabflix application.
+- Xuan Gu: wrote the README file, implemented K8s cluster functionalities, measured the performance using Jmeter.
+- Qizhi Tian: implemented Docker functionalities, measured the performance using Jmeter, finalized the Fabflix application.
