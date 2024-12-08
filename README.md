@@ -39,14 +39,14 @@ Test Plan:
 
 ## Result of Performance Testing
 - # JMeter TS/TJ Time Measurement Report
-| **3 nodes  Test Plan** | **Graph Results Screenshot**             | **Throughout**  | **Average** |
-|------------------------|------------------------------------------|-----------------|-------------|
-| Case 1: HTTP/10 thread | ![3nodes_result.jpg](3nodes_result.jpg)  | 9923.177/minute | 57          |
+| **3 nodes  Test Plan** | **Graph Results Screenshot**            | **Graph Results Screenshot**             | **Throughout**  | **Average** |
+|------------------------|-----------------------------------------|------------------------------------------|-----------------|-------------|
+| Case 1: HTTP/10 thread | ![3nodes_states.jpg](3nodes_states.jpg) | ![3nodes_result.jpg](3nodes_result.jpg)  | 9923.177/minute | 57          |
 
 
-| **4 nodes Test Plan**  | **Graph Results Screenshot**            | **Throughout**    | **Average** |
-|------------------------|-----------------------------------------|-------------------|-------------|
-| Case 1: HTTP/10 thread | ![4nodes_result.jpg](4nodes_result.jpg) | 10012.464/min     | 57          |
+| **4 nodes Test Plan**  | **Graph Results Screenshot**            | **Graph Results Screenshot**            | **Throughout**    | **Average** |
+|------------------------|-----------------------------------------|-----------------------------------------|-------------------|-------------|
+| Case 1: HTTP/10 thread | ![4nodes_states.jpg](4nodes_states.jpg) | ![4nodes_result.jpg](4nodes_result.jpg) | 10012.464/min     | 57          |
 
 ## Demo Video
 A demo video showcasing the setup and features can be found here: https://www.youtube.com/watch?v=Ot35snQ_FZg
