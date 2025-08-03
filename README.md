@@ -1,4 +1,4 @@
-# Fablix Application - Final Version: Fabflix Advanced Features
+# Fabflix - Full-Stack Movie Database Web App
 
 ## Project Overview
 **Notes:** Originally developed at UC Irvine and hosted under my school GitHub account ([QZT168](https://github.com/QZT168)), this project is now forked to my personal GitHub for long-term access.
