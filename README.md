@@ -119,27 +119,6 @@ Key Configuration Files:
 - fabflix.jmx: Jmeter test file.
 
 ## Team Contributions
-Milestone 1: 
-- Qizhi Tian:  Developed the Single Star feature, created the style.css file, and set up the AWS instance.
-- Xuan Gu: Developed the Single Movie feature, wrote the README.md file, and created the moviedb database.
-
-Milestone 2:
-- Qizhi Tian: Developed the Login, Movie List, AddtoCart, Checkout, and Payment functionalities; designed the sorting, searching, and pagination features; and worked on page styling.
-- Xuan Gu: wrote the README.md file, implemented the single-movie and single-star functionalities, Checkout/Payment/Confirmation frame and components.
-
-Milestone 3:
-- Qizhi Tian: integrated reCAPTCHA, enabled HTTPS, developed employee dashboard login, and implemented both the CastParser and MovieParser.
-- Xuan Gu: wrote the README.md file, developed dashboard functionalities, and implemented the StarParser.
-
-Milestone 4:
-- Qizhi Tian: Developed full text search and autocomplete functionalities.
-- Xuan Gu: wrote the README file, Load balancing functionalities.
-
-Milestone 5:
-- Qizhi Tian: implemented Docker functionalities, measured the performance using Jmeter, finalized the Fabflix application.
-- Xuan Gu: wrote the README file, implemented K8s cluster functionalities, measured the performance using Jmeter.
-
-  
 This project was developed collaboratively over five milestones as part of a team project.
 
 **Qizhi Tian** contributed to:
